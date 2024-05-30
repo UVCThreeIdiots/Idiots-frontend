@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="button-container">
-        <button @click="login">로그인</button>
+        <button @click="loginSubmit">로그인</button>
         <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
         <button @click="navigateTo('/test/signup.html')">회원가입</button>
       </div>
@@ -54,6 +54,7 @@ const loginSubmit = () => {
     .then((res) => {
       if (res.status === 200) {
         // 로그인 성공시 처리해줘야할 부분
+        navigateTo('/about')
         console.log("로그인 성공");
       }
     })
