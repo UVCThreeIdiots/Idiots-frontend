@@ -1,28 +1,41 @@
 <template>
-  <div id="root" class="container">
+  <div id="signup" class="container">
     <img class="obakuser" src="../components/images/prof_oh.png">
     <div class="border-box">
       <p>
-        <span v-for="(char, index) in typedText" :key="index">
+        <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
           <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
     <div class="border-box">
       <div class="input-container">
-        <div>
+        <div v-if="currentStep === 0">
           <label for="id">ID :</label>
           <input type="text" id="id" v-model="userId" class="custom-input">
         </div>
-        <div>
+        <div v-if="currentStep === 1">
           <label for="pw">PW :</label>
           <input type="password" id="pw" v-model="password" class="custom-input">
         </div>
+        <div v-if="currentStep === 2">
+          <label for="name">NAME :</label>
+          <input type="text" id="name" v-model="name" class="custom-input">
+        </div>
+        <div v-if="currentStep === 3">
+          <label for="age">AGE :</label>
+          <input type="password" id="age" v-model="age" class="custom-input">
+        </div>
+        <div v-if="currentStep === 4">
+          <label for="email">EMAIL :</label>
+          <input type="text" id="email" v-model="email" class="custom-input">
+        </div>
       </div>
       <div class="button-container">
-        <button @click="loginSubmit">로그인</button>
-        <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
-        <button @click="navigateTo('/signup')">회원가입</button>
+        <button v-if="currentStep === 4" @click="signupSubmit">등록</button>
+        <button v-else @click="nextStep">다음</button>
+        <button @click="beforeStep">이전</button>
+        <button @click="navigateTo('/')">초기 화면</button>
       </div>
     </div>
   </div>
@@ -32,30 +45,63 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
+const name = ref('');
+const age = ref('');
 const userId = ref('');
 const password = ref('');
-const typedText = ref('캡슐의 세계에 잘 왔단다! \n이곳에서 너의 캡슐을 만들어보자! ');
+const email = ref('');
+let currentStep = ref(0);
+const stepsInfo = [
+  { label: '아이디 :', model: userId },
+  { label: '비밀번호 :', model: password },
+  { label: '이름 :', model: name },
+  { label: '나이 :', model: age },
+  { label: '이메일 :', model: email }
+];
+const typedText = ref('시작에 앞서, 너에 대해 알려다오!\n아이디는 무엇으로 할까?');
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
-const loginSubmit = () => {
+const nextStep = () => {
+  if (currentStep.value < stepsInfo.length - 1) {
+    currentStep.value++;
+    if (currentStep.value  <= 0)
+      typedText.value= '시작에 앞서, 너에 대해 알려다오!\n아이디는 무엇으로 할까?'
+    else if (currentStep.value === 1)
+      typedText.value = `그렇다면 비밀번호는 무엇으로 할까?`;
+    else if (currentStep.value === 2)
+      typedText.value = `그렇다면 너의 이름을 알려다오!\n(주의 : 페이지 내에서 해당 이름이 사용됩니다.)`;
+    else if (currentStep.value === 3)
+      typedText.value = `이번에는 나이를 알려다오!`;
+    else if (currentStep.value === 4)
+      typedText.value = `마지막으로 이메일을 알려다오!\n(주의 : 아이디/비밀번호 찾기 및 알림 전송에 사용됩니다.)`;
+  }
+};
+const beforeStep = () => {
+  currentStep.value -= 2;
+  nextStep();
+}
+const signupSubmit = () => {
   const saveData = {
+    name: name.value,
+    age: age.value,
     userId: userId.value,
-    password: password.value
+    password: password.value,
+    email: email.value,
   };
 
-  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
+  axios.post("", JSON.stringify(saveData), {
       headers: {
         "Content-Type": "application/json",
       },
     })
     .then((res) => {
       if (res.status === 200) {
-        // 로그인 성공시 처리해줘야할 부분
-        navigateTo('/about')
-        console.log("로그인 성공");
+        // 유저 정보 등록 성공시 처리해줘야할 부분
+        navigateTo('/')
+        console.log("등록 성공");
       }
     })
     .catch((error) => {
@@ -75,7 +121,7 @@ const loginSubmit = () => {
 }
 
 body {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,10 +150,8 @@ body {
 
 .input-container {
   display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-  margin-left: 100px;
-  margin-right: 100px;
+  flex-direction: column;
+  margin-left: 30px;
 }
 
 .input-container div {
@@ -119,7 +163,7 @@ body {
 .input-container label {
   margin-right: 10px;
   font-size: 24px;
-  color: black;
+  color : black;
 }
 
 .input-container input {
@@ -177,6 +221,7 @@ p {
 .border-box {
   border: 2px solid black;
   padding: 5px;
+
   margin: 20px;
   border-radius: 15px;
 }
