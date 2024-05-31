@@ -1,12 +1,12 @@
-<script setup>
+<!-- <script setup>
 // import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
-</script>
+</script> -->
 
 <template>
   <RouterView />
 </template>
-
+<!-- 
 <style scoped>
 header {
   line-height: 1.5;
@@ -69,4 +69,4 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
-</style>
+</style> -->
