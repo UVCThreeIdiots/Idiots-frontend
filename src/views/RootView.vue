@@ -1,12 +1,12 @@
 <template>
   <div id="root" class="container">
-    <img class="obakuser" src="../components/images/prof_oh.png">
+    <img class="img" src="../components/images/prof_oh.png">
     <div class="border-box">
-      <p>
+      <div class="npc">
         <span v-for="(char, index) in typedText" :key="index">
           <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
-      </p>
+      </div>
     </div>
     <div class="border-box">
       <div class="input-container">
@@ -20,9 +20,10 @@
         </div>
       </div>
       <div class="button-container">
-        <button @click="loginSubmit">로그인</button>
-        <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
         <button @click="navigateTo('/signup')">회원가입</button>
+        <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
+        <button @click="loginSubmit">로그인</button>
+
       </div>
     </div>
   </div>
@@ -35,7 +36,7 @@ import axios from 'axios';
 
 const userId = ref('');
 const password = ref('');
-const typedText = ref('캡슐의 세계에 잘 왔단다! \n이곳에서 너의 캡슐을 만들어보자! ');
+const typedText = ref('캡슐의 세계에 잘 왔단다! \n이 곳에서 너의 캡슐을 만들어보자! ');
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -82,8 +83,8 @@ const loginSubmit = () => {
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
 }
 
-.id-pw {
-  width: 40px;
+label{
+  width: 65px;
 }
 
 body {
@@ -107,7 +108,7 @@ body {
   position: relative;
 }
 
-.obakuser {
+.img {
   width: 250px;
   height: 250px;
   display: block;
@@ -116,10 +117,9 @@ body {
 
 .input-container {
   display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-  margin-left: 100px;
-  margin-right: 100px;
+  justify-content: space-around;
+  margin: 15px;
+  margin-bottom: 30px;
 }
 
 .input-container div {
@@ -160,7 +160,7 @@ body {
   font-size: 24px;
 }
 
-p {
+.npc {
   margin-top: 10px;
   white-space: pre-wrap;
   overflow: hidden;

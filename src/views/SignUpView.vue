@@ -1,10 +1,10 @@
 <template>
   <div id="dummy" class="container">
-    <img class="obakuser" src="../components/images/prof_oh.png">
+    <img class="img" src="../components/images/prof_oh.png">
     <div class="border-box">
-      <p>
+      <p class="npc">
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.075) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
@@ -13,29 +13,39 @@
         <div v-if="currentStep === 0">
           <label for="id">ID :</label>
           <input type="text" id="id" v-model="userId" class="custom-input">
+          <p v-if="userId.length <1" class="warn">ID는 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidUserId" class="warn">영문 및 숫자를 사용해야합니다!</p>
         </div>
         <div v-if="currentStep === 1">
           <label for="pw">PW :</label>
           <input type="password" id="pw" v-model="password" class="custom-input">
+          <p v-if="!isValidPassword" class="warn">4자리 이상 설정해야 합니다!</p>
         </div>
         <div v-if="currentStep === 2">
           <label for="name">NAME :</label>
           <input type="text" id="name" v-model="name" class="custom-input">
+          <p v-if="name.length <1" class="warn">NAME은 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidName" class="warn">한글, 영문 및 숫자를 사용해야합니다!</p>
         </div>
         <div v-if="currentStep === 3">
           <label for="age">AGE :</label>
           <input type="text" id="age" v-model="age" class="custom-input">
+          <p v-if="age.length <1" class="warn">AGE은 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidAge" class="warn">나이는 숫자를 사용해야합니다!</p>
         </div>
         <div v-if="currentStep === 4">
           <label for="email">EMAIL :</label>
           <input type="text" id="email" v-model="email" class="custom-input">
+          <p v-if="email.length <1" class="warn">EMAIL은 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidEmail" class="warn">잘못된 이메일 형식입니다!</p>
         </div>
       </div>
       <div class="button-container">
-        <button v-if="currentStep === 4" @click="openModal">등록</button>
-        <button v-else @click="nextStep">다음</button>
-        <button :disabled="currentStep < 1" @click="beforeStep">이전</button>
         <button @click="navigateTo('/')">초기 화면</button>
+        <button v-if="currentStep === 0" @click="checkSameUserId">중복검사</button>
+        <button v-else :disabled="currentStep < 1" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 4" @click="openModal" :disabled="!isValidEmail">등록</button>
+        <button v-else @click="nextStep" :disabled="(currentStep <=0 && !isValidUserId)|| (currentStep === 1 && !isValidPassword) ||(currentStep === 2 && !isValidName) ||(currentStep === 3 && !isValidAge)">다음</button>
       </div>
     </div>
 
@@ -48,16 +58,18 @@
         <p>NAME: {{ name }}</p>
         <p>AGE: {{ age }}</p>
         <p>EMAIL: {{ email }}</p>
-        <p>해당 유저정보로 가입하시겠습니까?</p>
-        <button @click="signupSubmit">확인</button>
+        <p>해당 유저정보로 가입하시겠습니까?  YES:<input v-model="isChecked" type="checkbox" class="checkbox"/></p>
+        
         <button @click="closeModal">취소</button>
+        <button @click="signupSubmit" :disabled="!isChecked">확인</button>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
 
 const name = ref('');
@@ -66,6 +78,7 @@ const userId = ref('');
 const password = ref('');
 const email = ref('');
 let currentStep = ref(0);
+const isChecked = ref(false);
 const showModal = ref(false);
 const stepsInfo = [
   { label: '아이디 :', model: userId },
@@ -74,7 +87,7 @@ const stepsInfo = [
   { label: '나이 :', model: age },
   { label: '이메일 :', model: email }
 ];
-const typedText = ref('시작에 앞서, 너에 대해 알려다오!\n아이디는 무엇으로 할까?');
+const typedText = ref('시작에 앞서, 너에 대해 알려다오! 아이디는 무엇으로 할까?\n아이디는 영어/숫자의 조합으로 작성하렴!');
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -84,9 +97,9 @@ const nextStep = () => {
   if (currentStep.value < stepsInfo.length - 1) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '시작에 앞서, 너에 대해 알려다오!\n아이디는 무엇으로 할까?';
+      typedText.value = '시작에 앞서, 너에 대해 알려다오! 아이디는 무엇으로 할까?';
     else if (currentStep.value === 1)
-      typedText.value = '그렇다면 비밀번호는 무엇으로 할까?';
+      typedText.value = '그렇다면 비밀번호는 무엇으로 할까?\n비밀번호는 4자리 이상 설정하렴!';
     else if (currentStep.value === 2)
       typedText.value = '그렇다면 너의 이름을 알려다오!\n(주의 : 페이지 내에서 해당 이름이 사용됩니다.)';
     else if (currentStep.value === 3)
@@ -95,6 +108,32 @@ const nextStep = () => {
       typedText.value = '마지막으로 이메일을 알려다오!\n(주의 : 아이디/비밀번호 찾기 및 알림 전송에 사용됩니다.)';
   }
 };
+// 유효성 검사
+const isValidUserId = computed(()=>{
+  if (userId.value.length < 1)return false;
+  const regex = /^[a-zA-Z0-9]*$/;
+  return regex.test(userId.value);
+});
+const isValidPassword = computed(()=>{
+  const minLen = 4;
+  if (password.value.length < minLen) return false;
+  else return true;
+});
+const isValidName = computed(()=>{
+  if (name.value.length < 1) return false;
+  const regex = /^[가-힣a-zA-Z0-9]*$/;
+  return regex.test(name.value);
+});
+const isValidAge = computed(()=>{
+  if (age.value.length <1) return false;
+  const regex = /^[0-9]*$/;
+  return regex.test(age.value);
+});
+const isValidEmail = computed(()=>{
+  if (email.value.length <1) return false;
+  const regex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  return regex.test(email.value);
+})
 
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -137,15 +176,26 @@ const signupSubmit = () => {
 </script>
 
 <style scoped>
+/* 폰트 관련 */
 @font-face {
   font-family: 'CustomFont';
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
 }
-
-.id-pw {
-  width: 40px;
+.hidden-char {
+  visibility: hidden;
+  animation: reveal 3s steps(40, end) forwards;
+  color: black;
 }
 
+@keyframes reveal {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+/* 바디 */
 body {
   background-color: #ffffff;
   display: flex;
@@ -154,7 +204,7 @@ body {
   height: 100vh;
   margin: 0;
 }
-
+/* 최외각 프레임 */
 .container {
   font-family: 'CustomFont', Arial, sans-serif;
   width: 900px;
@@ -167,12 +217,15 @@ body {
   position: relative;
 }
 
-.obakuser {
+/* 이미지 부분 */
+.img {
   width: 250px;
   height: 250px;
   display: block;
   margin: 0 auto 20px;
 }
+
+
 
 .input-container {
   display: flex;
@@ -184,12 +237,6 @@ body {
   display: flex;
   align-items: center;
   margin: 10px 0;
-}
-
-.input-container label {
-  margin-right: 10px;
-  font-size: 24px;
-  color: black;
 }
 
 .input-container input {
@@ -217,8 +264,13 @@ body {
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
 }
-
-p {
+label {
+  width:100px;
+  font-size: 24px;
+  color: black;
+  margin-left : 50px;
+}
+.npc {
   margin-top: 10px;
   white-space: pre-wrap;
   overflow: hidden;
@@ -227,21 +279,12 @@ p {
   padding-top: 10px;
   font-size: 24px;
   margin-left: 30px;
-}
-
-.hidden-char {
-  visibility: hidden;
-  animation: reveal 3s steps(40, end) forwards;
   color: black;
 }
-
-@keyframes reveal {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
+.warn
+{
+  color : red;
+  font-size : 18px;
 }
 
 .border-box {
@@ -298,4 +341,18 @@ p {
   margin: 10px;
   color: black; /* Ensure button text color is black */
 }
+.checkbox{
+  width:20px;
+  height: 20px;
+}
+button:disabled {
+  background-color: #f0f0f0;
+  color: grey; /* 비활성화 상태 버튼의 글자색 */
+  cursor: not-allowed; /* 커서 모양 */
+  opacity: 0.6; /* 불투명도 */
+}
+.custom-input{
+  width:250px;
+}
+
 </style>
