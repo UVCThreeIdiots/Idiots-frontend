@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+import useStore from 'vuex'
 import { ref } from 'vue';
 import axios from 'axios';
 
@@ -52,6 +53,17 @@ const loginSubmit = () => {
       },
     })
     .then((res) => {
+      res.body = {
+        "id": 9,
+        "userId": "jun",
+        "password": "KA0oeAchXMBTfnzkx8ia6tUxObadZa0ytmPLjPinRMlgHl83mPVlioNv/u4vRpFalvjF9ya189D+biHjnwlG3Q==.13ebe6b2c0cad23e2747746847f14d2a36523e93b0cb849e51f74f2f3328419d3cb04076c8054090767f79306ce2288fc30956abde4dcdb74e3117b2c1ea03ce",
+        "name": "junse",
+        "age": 20,
+        "email": "userbruce@naver.com",
+        "updatedAt": "2024-05-30T08:05:50.691Z",
+        "createdAt": "2024-05-30T08:05:50.691Z",
+        "deletedAt": null
+      }
       if (res.status === 200) {
         // 로그인 성공시 처리해줘야할 부분
         navigateTo('/about')
