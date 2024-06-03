@@ -6,7 +6,7 @@ import MainView from '../views/MainView.vue'
 import MakeTimeView from '../views/MakeTimeView.vue'
 import MakeGoalView from '../views/MakeGoalView.vue'
 import ProgressView from '../views/ProgressView.vue'
-import EncyclopediaView from '../views/EncyclopediaView.vue'
+import EncyclopediaView from '../views/ProgressDetail.vue'
 import UpdateUserInfoView from '../views/UpdateUserInfoView.vue'
 import DummyFile from '../views/DummyFile.vue'
 
