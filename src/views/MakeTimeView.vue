@@ -3,7 +3,7 @@
     <div class="border-box">
       <p>
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
@@ -21,6 +21,9 @@
               <div class="date-value">{{ unit }}</div>
               <button class="date-button" @click="decrementDateUnit(index)">▼</button>
             </div>
+            <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
+            <p v-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
+            
           </div>
         </div>
         <div v-if="currentStep === 2">
@@ -30,16 +33,16 @@
           </div>
         </div>
         <div v-if="currentStep === 3">
-          <label for="age">AGE :</label>
+          <label for="age">여기 사진 추가</label>
         </div>
       </div>
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button v-if="currentStep === 1" @click="openModal">등록</button>
-        <button v-else @click="nextStep">다음</button>
-        <button :disabled= "currentStep < 1" @click="beforeStep">이전</button>
-        <button @click="navigateTo('/main')">메인 메뉴</button>
+        <button @click="navigateTo('/main')" :disabled="currentStep===2">메인 메뉴</button>
+        <button :disabled= "currentStep < 1 || currentStep >=2" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 1" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
+        <button v-else @click="nextStep" :disabled="currentStep >= 2">다음</button>
       </div>
     </div>
 
@@ -73,27 +76,48 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 
-const name = ref('');
-const age = ref('');
-const userId = ref('');
-const password = ref('');
-const email = ref('');
 const message = ref('이곳에 내용을 입력하자!');
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
 const currentStep = ref(0);
 const showModal = ref(false);
-const dateUnits = ref(['Y', 'Y', 'Y', 'Y', 'M', 'M', 'D', 'D']);
-const stepsInfo = [
-  { label: '아이디 :', model: userId },
-  { label: '비밀번호 :', model: password },
-  { label: '이름 :', model: name },
-  { label: '나이 :', model: age },
-  { label: '이메일 :', model: email }
-];
+const stepsInfo = 4
+const currentDate = new Date();
+const year = currentDate.getFullYear().toString(); // 연도
+const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (0부터 시작하므로 +1, padStart로 2자리로 맞춤)
+const date = currentDate.getDate().toString().padStart(2, '0');
+const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
+
+const isValidDueDate = computed(()=> {
+  let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
+  let month = dateUnits.value[4] + dateUnits.value[5];
+  let date = dateUnits.value[6] + dateUnits.value[7];
+  let dueDate = new Date(year, month - 1, date);
+  return dueDate > currentDate;
+})
+const isValidDateType = computed(() => {
+  const year = parseInt(dateUnits.value.slice(0, 4).join(''));
+  const month = parseInt(dateUnits.value.slice(4, 6).join(''));
+  const day = parseInt(dateUnits.value.slice(6, 8).join(''));
+
+  // 각 부분이 숫자인지 확인
+  const isYearNumeric = !isNaN(year);
+  const isMonthNumeric = !isNaN(month);
+  const isDayNumeric = !isNaN(day);
+
+  // 각 부분의 범위를 확인
+  const isYearValid = year >= 1000 && year <= 9999;
+  const isMonthValid = month >= 1 && month <= 12;
+  const isDayValid = day >= 1 && day <= 31;
+
+  // 모든 조건이 충족되면 true 반환
+  return isYearNumeric && isMonthNumeric && isDayNumeric && isYearValid && isMonthValid && isDayValid;
+});
+
+
 
 
 const nextStep = () => {
-  if (currentStep.value < stepsInfo.length - 1) {
+  if (currentStep.value < stepsInfo) {
     currentStep.value++;
     if (currentStep.value <= 0)
       typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?';
@@ -105,7 +129,9 @@ const nextStep = () => {
       typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
   }
 };
-
+const navigateTo = (route) => {
+  window.location.href = route;
+};
 const beforeStep = () => {
   currentStep.value -= 2;
   nextStep();
@@ -121,21 +147,35 @@ const closeModal = () => {
 
 const incrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '0');
+
+  // 각 자릿수에 따른 최대 값 설정
+  const maxValues = [9, 9, 9, 9, 1, 2, 3, 1];
+
+  // 현재 값과 최대 값 비교하여 조정
+  if (parseInt(unit) < maxValues[index]) {
+    dateUnits.value.splice(index, 1, String(parseInt(unit) + 1));
   } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) + 1) % 10));
+    // 최대 값이면 0으로 조정
+    dateUnits.value.splice(index, 1, '0');
   }
 };
 
 const decrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '9');
+
+  // 각 자릿수에 따른 최소 값 설정
+  const minValues = [2, 0, 0, 0, 0, 0, 0, 0];
+
+  // 현재 값과 최소 값 비교하여 조정
+  if (parseInt(unit) > minValues[index]) {
+    dateUnits.value.splice(index, 1, String(parseInt(unit) - 1));
   } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) - 1 + 10) % 10));
+    // 최소 값이면 최대 값으로 조정
+    const maxValues = [3, 9, 9, 9, 1, 2, 3, 9];
+    dateUnits.value.splice(index, 1, String(maxValues[index]));
   }
 };
+
 
 const formattedDate = computed(() => {
   const year = dateUnits.value.slice(0, 4).join('');
@@ -146,11 +186,7 @@ const formattedDate = computed(() => {
 
 const timecapsuleSubmit = () => {
   const saveData = {
-    name: name.value,
-    age: age.value,
-    userId: userId.value,
-    password: password.value,
-    email: email.value,
+
     dueDate: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
     message: message.value,
   };
@@ -178,7 +214,7 @@ const testtimecapsulesubmit = () => {
   console.log(`${postDate}`)
   setTimeout(() => {
         nextStep();
-      }, 50000);
+      }, 5000);
 }
 </script>
 
@@ -405,5 +441,9 @@ p {
 }
 .loading{
   margin-left : 150px;
+}
+.warn{
+  color : red;
+  font-size : 24px;
 }
 </style>
