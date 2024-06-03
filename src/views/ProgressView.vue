@@ -1,77 +1,48 @@
 <template>
   <div id="progress" class="container">
-    <img class="obakuser" src="../components/images/prof_oh.png">
     <div class="border-box">
-      <p>
+      <img class="obakuser" src="../components/images/prof_oh.png">
+      <div class="text-box">
+        <p class="obakuser-text">
         <span v-for="(char, index) in typedText" :key="index">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.05) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
+      </div>
     </div>
-    <div class="border-box">
-      <div class="input-container">
+    <div class="parent">
+      <div class="child" v-for="capsule in capsuleName" :key=capsule>
+        <img class="capsule" src="../components/images/capsule.gif">
         <div>
-          <label for="id">ID :</label>
-          <input type="text" id="id" v-model="userId" class="custom-input">
-        </div>
-        <div>
-          <label for="pw">PW :</label>
-          <input type="password" id="pw" v-model="password" class="custom-input">
+          <a href="/encyclopedia" class="capsule-name">{{ capsule }}</a>
         </div>
       </div>
-      <div class="button-container">
-        <button @click="loginSubmit">로그인</button>
-        <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
-        <button @click="navigateTo('/signup')">회원가입</button>
-      </div>
+    </div>
+    <div class="button-container">
+      <button @click="navigateTo('/main')">뒤로가기</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
 
-const userId = ref('');
-const password = ref('');
 const typedText = ref('여긴 진척도 확인하는 곳! ');
+
+const capsuleName = ref(['책읽기', '프로그래밍', '운동', '강의듣기', '물마시기', '씻기', '밥먹기', '잠자기']);
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
-const loginSubmit = () => {
-  const saveData = {
-    userId: userId.value,
-    password: password.value
-  };
 
-  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-      if (res.status === 200) {
-        // 로그인 성공시 처리해줘야할 부분
-        navigateTo('/about')
-        console.log("로그인 성공");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
+
 </script>
 
 <style scoped>
 @font-face {
   font-family: 'CustomFont';
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
-}
-
-.id-pw {
-  width: 40px;
 }
 
 body {
@@ -81,6 +52,70 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.button-container {
+  display: flex;
+  /* justify-content: space-around; */
+  margin-top: 8px;
+  margin-left: 12px;
+}
+
+.button-container button {
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+}
+
+.capsule-name {
+  font-family: 'CustomFont';
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+.capsule-list {
+  height: 200px;
+  width: 200px;
+  border: 2px solid #000;
+  border-radius: 15px;
+  position: absolute;
+  text-align: center;
+} .capsule {
+  width: 100px;
+  height: 100px;
+}
+
+.parent {
+  margin: 1px;
+  padding: 10px;
+  text-align: justify;
+  height: 70%;
+  width: 97%;
+  overflow: auto;
+}
+.child {
+  display: inline-block;
+  border: 2px solid black;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 20px;
+  height: 200px;
+  width: 170px;
+  color: black;
+  text-align: center;
+}
+
+.list-box {
+  width: 95%;
+  height: 75%;
+  border: 2px solid black;
+  padding: 5px;
+  margin: 20px;
+  border-radius: 15px;
 }
 
 .container {
@@ -96,10 +131,7 @@ body {
 }
 
 .obakuser {
-  width: 250px;
-  height: 250px;
-  display: block;
-  margin: 0 auto 20px;
+  width: 100px;
 }
 
 .input-container {
@@ -148,16 +180,14 @@ body {
   font-size: 24px;
 }
 
-p {
-  margin-top: 10px;
-  white-space: pre-wrap;
-  overflow: hidden;
-  width: 100%;
-  height: 100px;
-  padding-top: 10px;
-  font-size: 24px;
-  margin-left: 30px;
+.text-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
+
 
 .hidden-char {
   visibility: hidden;
@@ -175,9 +205,16 @@ p {
 }
 
 .border-box {
+  display: flex;
   border: 2px solid black;
   padding: 5px;
-  margin: 20px;
   border-radius: 15px;
+}
+.obakuser-text {
+  display: ruby;
+  white-space: pre-wrap;
+  overflow: hidden;
+  font-size: 24px;
+  margin-left: 30px;
 }
 </style>

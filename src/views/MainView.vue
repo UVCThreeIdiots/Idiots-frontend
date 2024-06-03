@@ -13,10 +13,9 @@
         <div>
           <a href="/maketime"> ▶ 새로운 타임캡슐을 만든다 </a>
           <a href="/makegoal"> ▶ 새로운 골캡슐을 만든다 </a>
-          <a href="/progress"> ▶ 진척도를 확인한다 </a>
+          <a href="/progress"> ▶ 도감/진척도를 확인한다 </a>
         </div>
         <div>
-          <a href="/encyclopedia"> ▶ 캡슐 도감을 연다 </a>
           <a href="/updateuserinfo"> ▶ 내 정보를 변경한다 </a>
           <a href="/"> ▶ 로그아웃</a>
         </div>
