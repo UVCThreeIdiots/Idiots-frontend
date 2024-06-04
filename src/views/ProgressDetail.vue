@@ -17,7 +17,7 @@
           <img src="../components/images/capsule.gif">
         </div>
         <div class="capsule"> 
-          <p>책읽기</p>
+          <p>{{ capsuleDetail.title }}</p>
         </div>
       </div>
 
@@ -25,7 +25,7 @@
         <div class="inner-board">
           <div class="board-top">
             <div class="capsule-name">
-              <p>책읽기: {{ progress }}%</p>
+              <p>{{ capsuleDetail.title }}: {{ progress }}%</p>
             </div>
             <div class="progress">
               <div class="progress-bar-container">
@@ -50,10 +50,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 
+const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
-const progress = ref(50); // 프로그래스 초기값, 0%로 설정
+const progress = ref(0); // 프로그래스 초기값, 0%로 설정
+const capsuleDetail = ref([]);
+
+const GCapsuleDetails = () => {
+  const goalId = route.params.goalId;
+  axios.get(`http://localhost:3000/goal/${goalId}`)
+  .then(response => {
+    console.log(response.data);
+    capsuleDetail.value = response.data;
+  })
+  .catch(error => {
+    console.error(error);
+  })
+}
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -71,7 +87,7 @@ const decreaseProgress = () => {
   }
 };
 
-
+onMounted(GCapsuleDetails);
 </script>
 
 <style scoped>

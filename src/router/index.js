@@ -41,14 +41,15 @@ const router = createRouter({
       component : MakeGoalView
     },
     {
-      path: '/progress',
+      path: '/progress/:id',
       name: 'progress',
       component : ProgressView
     },
     {
-      path: '/encyclopedia',
+      path: '/encyclopedia/goal/:goalId',
       name: 'encyclopedia',
-      component : EncyclopediaView
+      component : EncyclopediaView,
+      props: true,
     },
     {
       path: '/updateuserinfo',
