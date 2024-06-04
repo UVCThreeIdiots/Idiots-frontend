@@ -40,6 +40,9 @@ const navigateTo = (route) => {
 const maketime = () => {
   navigateTo(`/maketime/${userId.value}`);
 }
+const updateuserinfo = () => {
+  navigateTo(`/updateuserinfo/${userId.value}`);
+}
 </script>
 
 <style scoped>
