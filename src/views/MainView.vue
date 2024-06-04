@@ -29,27 +29,6 @@ import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
 
 const useStore = useUserStore();
-<<<<<<< HEAD
-console.log("🚀 ~ useStore:", useStore.getUser())
-console.log("🚀 ~ useStore:", useStore.name)
-
-const userName = ref(useStore.getUser().name);
-const help = useStore.getUser.name;
-console.log(`${help}`)
-const typedText = `${userName.value}는 무엇을 할까?`;
-console.log(`${userName.value}`);
-console.log(`${userName.value} ${useStore.id}`);
-
-const navigateTo = (route) => {
-  window.location.href = route;
-}
-
-const userId = ref(useStore.getUser().id);
-const updateuserinfo = () => {
-  navigateTo(`/updateuserinfo/${userId.value}`);
-}
-
-=======
 const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
 const typedText = `${userName.value}는 무엇을 할까?`;
@@ -60,7 +39,9 @@ const navigateTo = (route) => {
 const maketime = () => {
   navigateTo(`/maketime/${userId.value}`);
 }
->>>>>>> main
+
+
+
 </script>
 
 <style scoped>
