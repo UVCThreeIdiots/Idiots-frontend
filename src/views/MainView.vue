@@ -11,7 +11,7 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <a href="/maketime"> ▶ 새로운 타임캡슐을 만든다 </a>
+          <a @click="maketime"> ▶ 새로운 타임캡슐을 만든다 </a>
           <a href="/makegoal"> ▶ 새로운 골캡슐을 만든다 </a>
           <a href="/progress"> ▶ 도감/진척도를 확인한다 </a>
         </div>
@@ -29,6 +29,7 @@ import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
 
 const useStore = useUserStore();
+<<<<<<< HEAD
 console.log("🚀 ~ useStore:", useStore.getUser())
 console.log("🚀 ~ useStore:", useStore.name)
 
@@ -48,9 +49,19 @@ const updateuserinfo = () => {
   navigateTo(`/updateuserinfo/${userId.value}`);
 }
 
+=======
+const userName = ref(useStore.getUser().name);
+const userId = ref(useStore.getUser().id);
+const typedText = `${userName.value}는 무엇을 할까?`;
+const navigateTo = (route) => {
+  window.location.href = route;
+};
+
+const maketime = () => {
+  navigateTo(`/maketime/${userId.value}`);
+}
+>>>>>>> main
 </script>
-
-
 
 <style scoped>
 @font-face {

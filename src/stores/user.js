@@ -17,7 +17,11 @@ export const useUserStore = defineStore('user', {
       this.name = '';
     },
     getUser() {
+<<<<<<< HEAD
       const user = { id : this.id, name : this.name };
+=======
+      const user = { id : this.id, name : this.name};
+>>>>>>> main
       return user;
     },
   },
