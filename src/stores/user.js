@@ -17,7 +17,8 @@ export const useUserStore = defineStore('user', {
       this.name = '';
     },
     getUser() {
-      return this.name;
+      const user = { id : this.id, name : this.name };
+      return user;
     },
   },
   persist: {

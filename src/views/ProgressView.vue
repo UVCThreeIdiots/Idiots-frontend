@@ -51,12 +51,6 @@ const navigateTo = (route) => {
 };
 
 const capsuleData = () => {
-  // axios.get('http://localhost:3000/user/2')
-  // .then(response => {
-  //   capsuleList.value = response.data.gCapsules;
-  // }) .catch(error => {
-  //   console.error(error);
-  // });
   const userId = route.params.id;
   axios.get(`http://localhost:3000/user/${userId}`)
   .then(response => {
