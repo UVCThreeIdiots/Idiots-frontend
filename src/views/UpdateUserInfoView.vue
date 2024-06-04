@@ -11,10 +11,10 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <router-link :to="{ name: 'updateUserEmail', params: { userId: params.id }}"> 
+          <a @click="UpdateUserEmail"> 
             ▶ 등록된 이메일을 변경한다
-          </router-link>
-          <a href="/UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
+          </a>
+          <a @click="UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
         </div>
       </div>
     </div>
@@ -24,33 +24,34 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
 import axios from 'axios';
 
-const route = useRoute();
+
 const userInfo = ref('');
 const useStore = useUserStore();
 console.log("🚀 ~ useStore:", useStore.getUser())
 console.log("🚀 ~ useStore:", useStore.name)
 
-const userName = ref(useStore.getUser());
+const userName = ref(useStore.getUser().name);
+const userId = ref(useStore.getUser().id);
 const help = useStore.getUser.name;
 console.log(`${help}`)
 const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
 console.log(`${userName.value}`);
 console.log(`${userName.value} ${useStore.id}`);
 
-const capsuleData = () => {
-  const userId = route.params.id;
-  axios.get(`http://localhost:3000/user/${userId}`)
-  .then(response => {
-    console.log(response.data);
-    userInfo.value = response.data.gCapsules;
-  })
-  .catch(error => {
-    console.error(error);
-  })
-}
+const navigateTo = (route) => {
+  window.location.href = route;
+};
+
+const UpdateUserEmail = () => {
+  navigateTo(`/UpdateUserEmail/${userId.value}`);
+};
+
+const UpdateUserPassword = () => {
+  navigateTo(`/UpdateUserPassword/${userId.value}`);
+};
+
 </script>
 
 
