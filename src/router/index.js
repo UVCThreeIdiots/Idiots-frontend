@@ -26,7 +26,7 @@ const router = createRouter({
       // component: DummyFile
     },
     {
-      path: '/main',
+      path: '/main/:id',
       name: 'main',
       component : MainView
     },
