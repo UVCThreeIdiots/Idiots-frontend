@@ -11,10 +11,19 @@
       </div>
     </div>
     <div class="parent">
-      <div class="child" v-for="capsule in capsuleName" :key=capsule>
+      <div class="child" v-for="capsule in capsuleList" :key=capsule.id>
         <img class="capsule" src="../components/images/capsule.gif">
         <div>
-          <a href="/encyclopedia" class="capsule-name">{{ capsule }}</a>
+          <!-- <a href="/encyclopedia" class="capsule-name">{{ capsule.title }}</a> -->
+          <router-link :to="{ name: 'encyclopedia', params: { goalId: capsule.id }}">
+            {{ capsule.title }}
+          </router-link>
+        </div>
+        <div class="progress">
+          <div class="progress-bar-container">
+            <div class="progress-bar" :style="{ width: progress + '%' }" />
+          </div>
+          <p>{{ progress }}%</p>
         </div>
       </div>
     </div>
@@ -25,18 +34,43 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+
+const route = useRoute();
+const capsuleList = ref([]);
+const progress = ref(0); // 프로그래스 초기값, 0%로 설정
 
 const typedText = ref('여긴 진척도 확인하는 곳! ');
 
-const capsuleName = ref(['책읽기', '프로그래밍', '운동', '강의듣기', '물마시기', '씻기', '밥먹기', '잠자기']);
+// const capsuleName = ref(['책읽기', '프로그래밍', '운동', '강의듣기', '물마시기', '씻기', '밥먹기', '잠자기']);
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
+const capsuleData = () => {
+  // axios.get('http://localhost:3000/user/2')
+  // .then(response => {
+  //   capsuleList.value = response.data.gCapsules;
+  // }) .catch(error => {
+  //   console.error(error);
+  // });
+  const userId = route.params.id;
+  axios.get(`http://localhost:3000/user/${userId}`)
+  .then(response => {
+    console.log(response.data);
+    capsuleList.value = response.data.gCapsules;
+  })
+  .catch(error => {
+    console.error(error);
+  })
+};
 
 
+
+onMounted(capsuleData);
 </script>
 
 <style scoped>
@@ -52,6 +86,29 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.progress {
+  display: flex;
+  width: 85%;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.progress-bar-container {
+  width: 50%;
+  background-color: #e0e0e0;
+  overflow: hidden;
+  height: 16px;
+  margin: 16px 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #000;
+  width: 0;
+  transition: width 1.5s ease-in-out;
 }
 
 .button-container {
