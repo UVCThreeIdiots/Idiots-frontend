@@ -25,11 +25,22 @@
 </template>
 
 <script setup>
+import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
-const typedText = ref('"USER"는 무엇을 할까? ');
 
+const useStore = useUserStore();
+console.log("🚀 ~ useStore:", useStore.getUser())
+console.log("🚀 ~ useStore:", useStore.name)
 
+const userName = ref(useStore.getUser());
+const help = useStore.getUser.name;
+console.log(`${help}`)
+const typedText = `${userName.value}는 무엇을 할까?`;
+console.log(`${userName.value}`);
+console.log(`${userName.value} ${useStore.id}`);
 </script>
+
+
 
 <style scoped>
 @font-face {

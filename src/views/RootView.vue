@@ -8,7 +8,7 @@
         </span>
       </div>
     </div>
-    <div class="border-box">
+    <div class="userData.userId;-box">
       <div class="input-container">
         <div>
           <label for="id">ID :</label>
@@ -30,50 +30,69 @@
 </template>
 
 <script setup>
-import useStore from 'vuex'
+import { useUserStore } from '../stores/user.js';  // User 스토어를 import
 import { ref } from 'vue';
 import axios from 'axios';
 
 const userId = ref('');
 const password = ref('');
 const typedText = ref('캡슐의 세계에 잘 왔단다! \n이 곳에서 너의 캡슐을 만들어보자! ');
-
+const useStore = useUserStore();
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
-const loginSubmit = () => {
-  const saveData = {
-    userId: userId.value,
-    password: password.value
-  };
+// const loginSubmit = () => {
+//   const saveData = {
+//     userId: userId.value,
+//     password: password.value
+//   };
 
-  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-      res.body = {
-        "id": 9,
-        "userId": "jun",
-        "password": "KA0oeAchXMBTfnzkx8ia6tUxObadZa0ytmPLjPinRMlgHl83mPVlioNv/u4vRpFalvjF9ya189D+biHjnwlG3Q==.13ebe6b2c0cad23e2747746847f14d2a36523e93b0cb849e51f74f2f3328419d3cb04076c8054090767f79306ce2288fc30956abde4dcdb74e3117b2c1ea03ce",
-        "name": "junse",
-        "age": 20,
-        "email": "userbruce@naver.com",
-        "updatedAt": "2024-05-30T08:05:50.691Z",
-        "createdAt": "2024-05-30T08:05:50.691Z",
-        "deletedAt": null
-      }
-      if (res.status === 200) {
-        // 로그인 성공시 처리해줘야할 부분
-        navigateTo('/about')
-        console.log("로그인 성공");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+//   axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//     })
+//     .then((res) => {
+//       res.body = {
+//         "id": 9,
+//         "userId": "jun",
+//         "password": "KA0oeAchXMBTfnzkx8ia6tUxObadZa0ytmPLjPinRMlgHl83mPVlioNv/u4vRpFalvjF9ya189D+biHjnwlG3Q==.13ebe6b2c0cad23e2747746847f14d2a36523e93b0cb849e51f74f2f3328419d3cb04076c8054090767f79306ce2288fc30956abde4dcdb74e3117b2c1ea03ce",
+//         "name": "junseob",
+//         "age": 20,
+//         "email": "userbruce@naver.com",
+//         "updatedAt": "2024-05-30T08:05:50.691Z",
+//         "createdAt": "2024-05-30T08:05:50.691Z",
+//         "deletedAt": null
+//       }
+//       // if (res.status === 200) {
+//         // 로그인 성공시 처리해줘야할 부분
+//         const loginedId = res.body.id;
+//         const loginedName = res.body.name;
+//         useUserStore.setUser(loginedId, loginedName);
+//         navigateTo('/about')
+//         console.log("로그인 성공");
+//         console.log(`${loginedId, loginedName}`)
+//       // }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// };
+
+
+const loginSubmit = () => {
+
+// if (res.status === 200) {
+  // 로그인 성공시 처리해줘야할 부분
+  const loginedId = 9;
+  const loginedName = "junseob";
+  useStore.setUser(loginedId, loginedName);
+  navigateTo(`/main/${loginedId}`)
+  console.log("로그인 성공");
+  console.log("loginedId:", loginedId);
+  console.log("loginedName:", loginedName);      // }
+  console.log(`test : ${useStore.id} ${useStore.name}`);
 };
 </script>
 
