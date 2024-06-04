@@ -65,7 +65,7 @@
         <p>{{ message }}</p>
         <p>설정된 날짜: {{ formattedDate }}</p>
         <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
-        <button @click="testtimecapsulesubmit">확인</button>
+        <button @click="timecapsuleSubmit">확인</button>
         <button @click="closeModal">취소</button>
       </div>
     </div>
@@ -75,7 +75,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { useUserStore } from '../stores/user.js';
 
+const useStore = useUserStore();
 const message = ref('이곳에 내용을 입력하자!');
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
 const currentStep = ref(0);
@@ -149,7 +151,7 @@ const incrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
 
   // 각 자릿수에 따른 최대 값 설정
-  const maxValues = [9, 9, 9, 9, 1, 2, 3, 1];
+  const maxValues = [9, 9, 9, 9, 1, 2, 3, 9];
 
   // 현재 값과 최대 값 비교하여 조정
   if (parseInt(unit) < maxValues[index]) {
@@ -183,15 +185,17 @@ const formattedDate = computed(() => {
   const day = dateUnits.value.slice(6, 8).join('');
   return `${year}-${month}-${day}`;
 });
+const userId = ref(useStore.getUser().id);
 
 const timecapsuleSubmit = () => {
   const saveData = {
-
-    dueDate: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    message: message.value,
+    userId : userId.value,
+    // expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
+    expired: "2024-06-04T16:40:00+09:00", // datetime 형식으로 변환된 값
+    body: message.value,
   };
 
-  axios.post("http://localhost:3000/user", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -205,6 +209,13 @@ const timecapsuleSubmit = () => {
   .catch((error) => {
     console.error(error);
   });
+  closeModal();
+  nextStep();
+  let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
+  console.log(`${postDate}`)
+  setTimeout(() => {
+        nextStep();
+      }, 5000);
 };
 
 const testtimecapsulesubmit = () => {
