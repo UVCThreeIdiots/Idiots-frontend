@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
       this.name = '';
     },
     getUser() {
-      const user = { id : this.id, name : this.name };
+      const user = { id : this.id, name : this.name};
       return user;
     },
   },

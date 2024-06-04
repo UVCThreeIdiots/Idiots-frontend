@@ -8,7 +8,7 @@
         </span>
       </div>
     </div>
-    <div class="userData.userId;-box">
+    <div class="border-box">
       <div class="input-container">
         <div>
           <label for="id">ID :</label>
@@ -23,7 +23,6 @@
         <button @click="navigateTo('/signup')">회원가입</button>
         <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
         <button @click="loginSubmit">로그인</button>
-
       </div>
     </div>
   </div>
@@ -42,58 +41,52 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 
-// const loginSubmit = () => {
-//   const saveData = {
-//     userId: userId.value,
-//     password: password.value
-//   };
-
-//   axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//     })
-//     .then((res) => {
-//       res.body = {
-//         "id": 9,
-//         "userId": "jun",
-//         "password": "KA0oeAchXMBTfnzkx8ia6tUxObadZa0ytmPLjPinRMlgHl83mPVlioNv/u4vRpFalvjF9ya189D+biHjnwlG3Q==.13ebe6b2c0cad23e2747746847f14d2a36523e93b0cb849e51f74f2f3328419d3cb04076c8054090767f79306ce2288fc30956abde4dcdb74e3117b2c1ea03ce",
-//         "name": "junseob",
-//         "age": 20,
-//         "email": "userbruce@naver.com",
-//         "updatedAt": "2024-05-30T08:05:50.691Z",
-//         "createdAt": "2024-05-30T08:05:50.691Z",
-//         "deletedAt": null
-//       }
-//       // if (res.status === 200) {
-//         // 로그인 성공시 처리해줘야할 부분
-//         const loginedId = res.body.id;
-//         const loginedName = res.body.name;
-//         useUserStore.setUser(loginedId, loginedName);
-//         navigateTo('/about')
-//         console.log("로그인 성공");
-//         console.log(`${loginedId, loginedName}`)
-//       // }
-//     })
-//     .catch((error) => {
-//       console.error(error);
-//     });
-// };
-
-
 const loginSubmit = () => {
+  const saveData = {
+    userId: userId.value,
+    password: password.value
+  };
+  console.log({userId, password});
+  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
 
-// if (res.status === 200) {
-  // 로그인 성공시 처리해줘야할 부분
-  const loginedId = 9;
-  const loginedName = "junseob";
-  useStore.setUser(loginedId, loginedName);
-  navigateTo(`/main/${loginedId}`)
-  console.log("로그인 성공");
-  console.log("loginedId:", loginedId);
-  console.log("loginedName:", loginedName);      // }
-  console.log(`test : ${useStore.id} ${useStore.name}`);
+    .then((res) => {
+      // 응답 상태 코드 확인
+      console.log(res.data);
+      if (res.status === 200) {
+        console.log('여기 까진 성공');
+        // 응답 바디 파싱
+        const userData = res.data;
+        const loginedId = userData.id;
+        const loginedName = userData.name;
+        useStore.setUser(loginedId, loginedName);
+        navigateTo(`/main/${loginedId}`);
+        console.log("로그인 성공");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
+
+
+
+// const loginSubmit = () => {
+
+// // if (res.status === 200) {
+//   // 로그인 성공시 처리해줘야할 부분
+//   const loginedId = 9;
+//   const loginedName = "junseob";
+//   useStore.setUser(loginedId, loginedName);
+//   navigateTo(`/main/${loginedId}`)
+//   console.log("로그인 성공");
+//   console.log("loginedId:", loginedId);
+//   console.log("loginedName:", loginedName);      // }
+//   console.log(`test : ${useStore.id} ${useStore.name}`);
+// };
 </script>
 
 <style scoped>
