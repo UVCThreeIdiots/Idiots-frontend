@@ -9,8 +9,8 @@
         </span>
       </p>
       </div>
-    </div>
-    
+    </div>   
+  
     <div class="board">
       <div class="left-board">
         <div class="capsule">

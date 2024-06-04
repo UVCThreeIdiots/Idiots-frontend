@@ -31,12 +31,12 @@ const router = createRouter({
       component : MainView
     },
     {
-      path: '/maketime',
+      path: '/maketime/:id',
       name: 'maketime',
       component : MakeTimeView
     },
     {
-      path: '/makegoal',
+      path: '/makegoal/:id',
       name: 'makegoal',
       component : MakeGoalView
     },
@@ -52,7 +52,7 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/updateuserinfo',
+      path: '/updateuserinfo/:id',
       name: 'updateuserinfo',
       component : UpdateUserInfoView
     }

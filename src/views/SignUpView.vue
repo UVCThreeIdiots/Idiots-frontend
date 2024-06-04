@@ -13,30 +13,32 @@
         <div v-if="currentStep === 0">
           <label for="id">ID :</label>
           <input type="text" id="id" v-model="userId" class="custom-input">
-          <p v-if="userId.length <1" class="warn">ID는 공백으로 사용할 수 없습니다!</p>
-          <p v-else-if="!isValidUserId" class="warn">영문 및 숫자를 사용해야합니다!</p>
+          <p v-if="userId.length <1" class="warn">아이디는 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="userId.length >=1 && userId.length <4" class="warn">ID는 최소 4자리를 사용해야 합니다!</p>
+          <p v-else-if="!isValidUserId" class="warn">아이디는 영문 및 숫자를 사용해야 합니다!</p>
         </div>
         <div v-if="currentStep === 1">
           <label for="pw">PW :</label>
           <input type="password" id="pw" v-model="password" class="custom-input">
-          <p v-if="!isValidPassword" class="warn">4자리 이상 설정해야 합니다!</p>
+          <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
         </div>
         <div v-if="currentStep === 2">
           <label for="name">NAME :</label>
           <input type="text" id="name" v-model="name" class="custom-input">
-          <p v-if="name.length <1" class="warn">NAME은 공백으로 사용할 수 없습니다!</p>
-          <p v-else-if="!isValidName" class="warn">한글, 영문 및 숫자를 사용해야합니다!</p>
+          <p v-if="name.length <1" class="warn">이름은 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidName" class="warn">이름은 한글, 영문 및 숫자를 사용해야합니다!</p>
         </div>
         <div v-if="currentStep === 3">
           <label for="age">AGE :</label>
           <input type="text" id="age" v-model="age" class="custom-input">
-          <p v-if="age.length <1" class="warn">AGE은 공백으로 사용할 수 없습니다!</p>
+          <p v-if="age.length <1" class="warn">나이는 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="age < 1" class="warn">나이는 0보다 커야 합니다!</p>
           <p v-else-if="!isValidAge" class="warn">나이는 숫자를 사용해야합니다!</p>
         </div>
         <div v-if="currentStep === 4">
           <label for="email">EMAIL :</label>
           <input type="text" id="email" v-model="email" class="custom-input">
-          <p v-if="email.length <1" class="warn">EMAIL은 공백으로 사용할 수 없습니다!</p>
+          <p v-if="email.length <1" class="warn">이메일은 공백으로 사용할 수 없습니다!</p>
           <p v-else-if="!isValidEmail" class="warn">잘못된 이메일 형식입니다!</p>
         </div>
       </div>
@@ -111,6 +113,7 @@ const nextStep = () => {
 // 유효성 검사
 const isValidUserId = computed(()=>{
   if (userId.value.length < 1)return false;
+  if (userId.value.length >=1 && userId.value.length <4) return false;
   const regex = /^[a-zA-Z0-9]*$/;
   return regex.test(userId.value);
 });
@@ -126,6 +129,7 @@ const isValidName = computed(()=>{
 });
 const isValidAge = computed(()=>{
   if (age.value.length <1) return false;
+  if (age.value < 1) return false;
   const regex = /^[0-9]*$/;
   return regex.test(age.value);
 });
@@ -202,6 +206,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width : 100vh;
   margin: 0;
 }
 /* 최외각 프레임 */
