@@ -1,68 +1,59 @@
 <template>
-  <div id="maketime" class="container">
+  <div id="main" class="container">
     <img class="obakuser" src="../components/images/prof_oh.png">
     <div class="border-box">
       <p>
         <span v-for="(char, index) in typedText" :key="index">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.05) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
     <div class="border-box">
-      <div class="input-container">
+      <div class="link-container">
         <div>
-          <label for="id">ID :</label>
-          <input type="text" id="id" v-model="userId" class="custom-input">
+          <router-link :to="{ name: 'updateUserEmail', params: { userId: params.id }}"> 
+            ▶ 등록된 이메일을 변경한다
+          </router-link>
+          <a href="/UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
         </div>
-        <div>
-          <label for="pw">PW :</label>
-          <input type="password" id="pw" v-model="password" class="custom-input">
-        </div>
-      </div>
-      <div class="button-container">
-        <button @click="loginSubmit">로그인</button>
-        <button @click="navigateTo('/findinfo')">아이디 / 비밀번호 찾기</button>
-        <button @click="navigateTo('/signup')">회원가입</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 
-const userId = ref('');
-const password = ref('');
-const typedText = ref('여긴 유저정보 수정하는 곳! ');
+const route = useRoute();
+const userInfo = ref('');
+const useStore = useUserStore();
+console.log("🚀 ~ useStore:", useStore.getUser())
+console.log("🚀 ~ useStore:", useStore.name)
 
-const navigateTo = (route) => {
-  window.location.href = route;
-};
+const userName = ref(useStore.getUser());
+const help = useStore.getUser.name;
+console.log(`${help}`)
+const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
+console.log(`${userName.value}`);
+console.log(`${userName.value} ${useStore.id}`);
 
-const loginSubmit = () => {
-  const saveData = {
-    userId: userId.value,
-    password: password.value
-  };
-
-  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-      if (res.status === 200) {
-        // 로그인 성공시 처리해줘야할 부분
-        navigateTo('/about')
-        console.log("로그인 성공");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
+const capsuleData = () => {
+  const userId = route.params.id;
+  axios.get(`http://localhost:3000/user/${userId}`)
+  .then(response => {
+    console.log(response.data);
+    userInfo.value = response.data.gCapsules;
+  })
+  .catch(error => {
+    console.error(error);
+  })
+}
 </script>
+
+
 
 <style scoped>
 @font-face {
@@ -70,8 +61,13 @@ const loginSubmit = () => {
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
 }
 
-.id-pw {
-  width: 40px;
+@keyframes reveal {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
 }
 
 body {
@@ -102,51 +98,28 @@ body {
   margin: 0 auto 20px;
 }
 
-.input-container {
+.link-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Spread items evenly */
+  flex-wrap: wrap; /* Allow items to wrap */
   margin: 10px 0;
-  margin-left: 100px;
-  margin-right: 100px;
+  font-size : 24px;
 }
-
-.input-container div {
+.link-container div {
+  flex-basis: 30%; /* Each column takes up 30% of the container */
   display: flex;
-  align-items: center;
-  margin: 10px 0;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center items horizontally */
 }
 
-.input-container label {
-  margin-right: 10px;
-  font-size: 24px;
-  color: black;
+.link-container a{
+  color : black;
+  width : 340px;
+  margin-left : 30px;
+  margin-right: 30px;
+  margin-bottom : 10px;
 }
 
-.input-container input {
-  align-items: middle;
-  padding: 5px;
-  border: 2px solid black;
-  border-radius: 5px;
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.button-container button {
-  padding: 10px 20px;
-  border: 2px solid black;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
-}
 
 p {
   margin-top: 10px;
@@ -165,19 +138,16 @@ p {
   color: black;
 }
 
-@keyframes reveal {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
-}
+
 
 .border-box {
   border: 2px solid black;
   padding: 5px;
   margin: 20px;
   border-radius: 15px;
+}
+.disabled {
+  pointer-events: none; /* Disable click */
+  color: grey; /* Optional: Change color to indicate disabled state */
 }
 </style>

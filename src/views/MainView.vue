@@ -16,7 +16,7 @@
           <a href="/progress"> ▶ 도감/진척도를 확인한다 </a>
         </div>
         <div>
-          <a href="/updateuserinfo"> ▶ 내 정보를 변경한다 </a>
+          <a @click="updateuserinfo"> ▶ 내 정보를 변경한다 </a>
           <a href="/"> ▶ 로그아웃</a>
         </div>
       </div>
@@ -35,6 +35,7 @@ const typedText = `${userName.value}는 무엇을 할까?`;
 const navigateTo = (route) => {
   window.location.href = route;
 };
+
 
 const maketime = () => {
   navigateTo(`/maketime/${userId.value}`);

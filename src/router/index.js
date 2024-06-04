@@ -8,6 +8,8 @@ import MakeGoalView from '../views/MakeGoalView.vue'
 import ProgressView from '../views/ProgressView.vue'
 import EncyclopediaView from '../views/ProgressDetail.vue'
 import UpdateUserInfoView from '../views/UpdateUserInfoView.vue'
+import UpdateUserEmailView from '../views/UpdateUserEmail.vue'
+import UpdateUserPasswordView from '../views/UpdateUserPassword.vue'
 import DummyFile from '../views/DummyFile.vue'
 
 const router = createRouter({
@@ -55,6 +57,16 @@ const router = createRouter({
       path: '/updateuserinfo/:id',
       name: 'updateuserinfo',
       component : UpdateUserInfoView
+    },
+    {
+      path: '/updateUserEmail/:userId',
+      name: 'updateUserEmail',
+      component : UpdateUserEmailView
+    },
+    {
+      path: '/updateUserPassword/:userId',
+      name: 'updateUserPassword',
+      component : UpdateUserPasswordView
     }
   ]
 })
