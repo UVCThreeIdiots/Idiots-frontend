@@ -65,7 +65,7 @@
         <p>{{ message }}</p>
         <p>설정된 날짜: {{ formattedDate }}</p>
         <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
-        <button @click="timecapsuleSubmit">확인</button>
+        <button @click="timeCapsuleSubmit">확인</button>
         <button @click="closeModal">취소</button>
       </div>
     </div>
@@ -191,7 +191,7 @@ const formattedDate = computed(() => {
 });
 const userId = ref(useStore.getUser().id);
 
-const timecapsuleSubmit = () => {
+const timeCapsuleSubmit = () => {
   const saveData = {
     userId : userId.value,
     // expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
