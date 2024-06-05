@@ -11,9 +11,7 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <a @click="UpdateUserEmail"> 
-            ▶ 등록된 이메일을 변경한다
-          </a>
+          <a @click="UpdateUserEmail"> ▶ 등록된 이메일을 변경한다. </a>
           <a @click="UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
         </div>
       </div>
@@ -24,18 +22,12 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
-import axios from 'axios';
 
-
-const userInfo = ref('');
 const useStore = useUserStore();
-console.log("🚀 ~ useStore:", useStore.getUser())
-console.log("🚀 ~ useStore:", useStore.name)
 
 const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
-const help = useStore.getUser.name;
-console.log(`${help}`)
+
 const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
 console.log(`${userName.value}`);
 console.log(`${userName.value} ${useStore.id}`);

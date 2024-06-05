@@ -19,13 +19,14 @@
     </div>
 
     <div class="bottom">
-      <button class="btn-style">뒤로가기</button>
-      <button class="btn-style">변경하기</button>
+      <button class="btn-style" @click="goBack">뒤로가기</button>
+      <button class="btn-style" @click="updateEmail">변경하기</button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
@@ -41,8 +42,28 @@ const isValidEmail = computed(()=>{
   return regex.test(newEmail.value);
 })
 
-// const userId = route.params.id;
-// axios.put("http://localhost:3000/user/${userId}")
+const useStore = useUserStore();
+const userId = ref(useStore.getUser().id);
+
+const navigateTo = (route) => {
+  window.location.href = route;
+};
+
+const goBack = () => {
+  navigateTo(`/updateuserinfo/${userId.value}`);
+};
+
+const updateEmail = (userId, newEmail) => {
+  try{
+    const response = axios.put(`http://localhost:3000/user/${userId.value}`, {
+      email : newEmail.value,
+    });
+
+    console.log('이메일 업데이트 성공', response);
+  }catch(err){
+    console.log('업데이트실패', err);
+  }
+}
 
 
 

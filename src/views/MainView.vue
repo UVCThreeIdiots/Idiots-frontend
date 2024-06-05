@@ -37,7 +37,6 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 
-
 const maketime = () => {
   navigateTo(`/maketime/${userId.value}`);
 }
