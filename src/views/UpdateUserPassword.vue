@@ -8,21 +8,67 @@
     </div>
 
     <div class="middle">
-      
+      <div class="input-container">
+        <label for="pw">PW :</label>
+        <input type="password" id="pw" v-model="newPassword" class="custom-input">
+        <div>
+          <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
+        </div>
+      </div>
     </div>
 
     <div class="bottom">
-      <button class="btn-style">뒤로가기</button>
-      <button class="btn-style">수정완료</button>
+      <button class="btn-style" @click="goBack">뒤로가기</button>
+      <button class="btn-style" @click="updatePassword">변경하기</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useUserStore } from '../stores/user.js';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const typedText = ref('강력한 암호를 입력해주렴 ! ! !');
 
+const newPassword = ref('');
+
+const isValidPassword = computed(()=>{
+  const minLen = 4;
+  if (newPassword.value.length < minLen) return false;
+  else return true;
+});
+
+const useStore = useUserStore();
+const userId = ref(useStore.getUser().id);
+
+const navigateTo = (route) => {
+  window.location.href = route;
+};
+
+const goBack = () => {
+  navigateTo(`/updateuserinfo/${userId.value}`);
+};
+
+const updatePassword = () => {
+  const saveData = {
+    password: newPassword.value,
+  };
+
+  axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => {
+    if(response.status == 200) {
+      console.log('비밀번호 변경 성공');
+    }
+  }).catch((error) => {
+    console.log('비밀번호 변경 실패', error);
+  });
+}
 
 </script>
 
@@ -123,6 +169,38 @@ body {
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
   margin: 8px 16px 8px 16px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  margin-left: 100px;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.input-container input {
+  align-items: middle;
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+}
+
+label {
+  width:56px;
+  font-size: 24px;
+  color: black;
+}
+
+.custom-input{
+  width:250px;
+}
+
+.warn{
+  color : red;
+  font-size : 18px;
 }
 
 </style>
