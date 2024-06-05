@@ -51,42 +51,25 @@ const loginSubmit = () => {
   headers: {
     "Content-Type": "application/json"
   }
-})
-
-    .then((res) => {
-      // 응답 상태 코드 확인
-      console.log(res.data);
-      if (res.status === 200) {
-        console.log('여기 까진 성공');
-        // 응답 바디 파싱
-        const userData = res.data;
-        const loginedId = userData.id;
-        const loginedName = userData.name;
-        useStore.setUser(loginedId, loginedName);
-        navigateTo(`/main/${loginedId}`);
-        console.log("로그인 성공");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+}).then((res) => {
+    // 응답 상태 코드 확인
+    console.log(res.data);
+    if (res.status === 200) {
+      console.log('여기 까진 성공');
+      // 응답 바디 파싱
+      const userData = res.data;
+      const loginedId = userData.id;
+      const loginedName = userData.name;
+      useStore.setUser(loginedId, loginedName);
+      navigateTo(`/main/${loginedId}`);
+      console.log("로그인 성공");
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 };
 
-
-
-// const loginSubmit = () => {
-
-// // if (res.status === 200) {
-//   // 로그인 성공시 처리해줘야할 부분
-//   const loginedId = 9;
-//   const loginedName = "junseob";
-//   useStore.setUser(loginedId, loginedName);
-//   navigateTo(`/main/${loginedId}`)
-//   console.log("로그인 성공");
-//   console.log("loginedId:", loginedId);
-//   console.log("loginedName:", loginedName);      // }
-//   console.log(`test : ${useStore.id} ${useStore.name}`);
-// };
 </script>
 
 <style scoped>

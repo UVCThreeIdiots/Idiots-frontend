@@ -53,18 +53,23 @@ const goBack = () => {
   navigateTo(`/updateuserinfo/${userId.value}`);
 };
 
-const updateEmail = (userId, newEmail) => {
-  try{
-    const response = axios.put(`http://localhost:3000/user/${userId.value}`, {
-      email : newEmail.value,
-    });
+const updateEmail = () => {
+  const saveData = {
+    email: newEmail.value,
+  };
 
-    console.log('이메일 업데이트 성공', response);
-  }catch(err){
-    console.log('업데이트실패', err);
-  }
+  axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => {
+    if(response.status == 200) {
+      console.log('이메일 변경 성공');
+    }
+  }).catch((error) => {
+    console.log('이메일 변경 실패', error);
+  });
 }
-
 
 
 
