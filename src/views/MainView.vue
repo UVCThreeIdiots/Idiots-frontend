@@ -18,7 +18,7 @@
         <div>
           <a @click="updateuserinfo"> ▶ 내 정보를 변경한다 </a>
           <a href="/"> ▶ 로그아웃</a>
-          <a href="/developer"> ▶ 개발자 도구</a>
+          <a @click="developer"> ▶ 개발자 도구</a>
         </div>
       </div>
     </div>
@@ -48,6 +48,9 @@ const updateuserinfo = () => {
 }
 const progress = () => {
   navigateTo(`/progress/${userId.value}`);
+}
+const developer = () => {
+  navigateTo(`/developer/${userId.value}`);
 }
 </script>
 

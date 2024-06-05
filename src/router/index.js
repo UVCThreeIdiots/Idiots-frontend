@@ -69,7 +69,7 @@ const router = createRouter({
       component : UpdateUserPasswordView
     },
     {
-      path : '/developer',
+      path : '/developer/:id',
       name : 'developer',
       component : DeveloperView
     }

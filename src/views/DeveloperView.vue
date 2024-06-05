@@ -1,67 +1,48 @@
 <template>
-  <div id="makegoal" class="container">
+  <div id="dummy" class="container">
     <div class="border-box">
       <p>
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
     <div class="border-box">
       <div class="settings">
         <div v-if="currentStep === 0">
-          <label for="goal"></label>
-          <div class="blur">
-            <div class="blurdiv1">{{ goal }}</div> 를
-            <div class="blurdiv2">{{ inputDue }}</div> 주 동안
-            <div class="blurdiv2">{{ inputReps }}</div> 회
-          </div>
-          <div class="unblur">
-            <input v-model="goal">
-            <p class="false" v-if="goal.length > 16"> 주의 : 원칙에 따라 최대 16자를 넘길 수 없습니다. </p>
-            <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
-          </div>
+          <label for="message"></label>
+          <textarea type="text" id="message" v-model="message" class="custom-textarea"></textarea>
         </div>
         <div v-if="currentStep === 1">
-          <label for="due"></label>
-          <div class="blur">
-            <div class="blurdiv1">{{ goal }}</div> 를
-            <div class="blurdiv2">{{ inputDue }}</div> 주 동안
-            <div class="blurdiv2">{{ inputReps }}</div> 회
-          </div>
-          <div class="unblur">
-            <input v-model="inputDue">
-            <p class="false" v-if="inputDue>52"> 주의 : 52주가 넘는 목표기간은 설정 할 수 없습니다. </p>
-            <p class="false" v-else-if="inputDue<1"> 주의 : 최소 1주 이상의 목표기간을 설정해야 합니다. </p>
-            <p class="true" v-else> 주의 : 최소 1주에서 52주 이내 선택 가능합니다.</p>
+          <label for="dueDate"></label>
+          <div class="date-picker">
+            <div v-for="(unit, index) in dateUnits" :key="index" class="date-unit">
+              <button class="date-button" @click="incrementDateUnit(index)">▲</button>
+              <div class="date-value">{{ unit }}</div>
+              <button class="date-button" @click="decrementDateUnit(index)">▼</button>
+            </div>
+            <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
+            <p v-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
+            
           </div>
         </div>
         <div v-if="currentStep === 2">
-          <label for="reps"></label>
-          <div class="blur">
-            <div class="blurdiv1">{{ goal }}</div> 를
-            <div class="blurdiv2">{{ inputDue }}</div> 주 동안
-            <div class="blurdiv2">{{ inputReps }}</div> 회
-          </div>
-          <div class="unblur">
-            <input v-model="inputReps"> 
-            <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
-            <p class="true" v-else> 주의 : 목표는 하루에 최대 1회를 원칙으로 합니다.</p>
+          <div class="loading">
+            <label for="loading">Loading...</label>
+            <img src="../components/images/loading.gif" class="loading-image"/>
           </div>
         </div>
         <div v-if="currentStep === 3">
-          <label for="age">"여기에 사진 넣어야함."</label>
+          <label for="age">여기 사진 추가</label>
         </div>
       </div>
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain">메인 메뉴</button>
-        <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
-        <button v-if="currentStep === 2" @click="openModal" :disabled="inputReps > maxReps ">등록</button>
-        <button v-else @click="nextStep" :disabled="currentStep >=3|| goal.length > 16 || inputDue < 1 || inputDue > 52">다음</button>
-
-
+        <button @click="movemain" :disabled="currentStep===2">메인 메뉴</button>
+        <button :disabled= "currentStep < 1 || currentStep >=2" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 1" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
+        <button v-else @click="nextStep" :disabled="currentStep >= 2">다음</button>
       </div>
     </div>
 
@@ -80,14 +61,12 @@
     <!-- Test용 Modal / 서버 연결 없이 다음 진행-->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
-        <h2> </h2>
-        <p>목표 : {{ goal }}</p>
-        <p>목표 기간 : {{ inputDue }}</p>
-        <p>목표 횟수 : {{ inputReps }}</p>
-        <p>골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <h2>To. 미래의 나</h2>
+        <p>{{ message }}</p>
+        <p>설정된 날짜: {{ formattedDate }}</p>
+        <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <button @click="timeCapsuleSubmit">확인</button>
         <button @click="closeModal">취소</button>
-        <button @click="testgoalcapsulesubmit">확인</button>
-
       </div>
     </div>
   </div>
@@ -98,39 +77,81 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
 
-const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)');
+const useStore = useUserStore();
+const message = ref('이곳에 내용을 입력하자!');
+const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
 const currentStep = ref(0);
 const showModal = ref(false);
-const dateUnits = ref(['Y', 'Y', 'Y', 'Y', 'M', 'M', 'D', 'D']);
-const stepsInfo = 4;
-const goal = ref('목표를 입력하세요');
-const inputDue = ref('1');
-const inputReps = ref('1');
-const maxReps = computed(() => inputDue.value * 7);
+const stepsInfo = 4
+const currentDate = new Date();
+const year = currentDate.getFullYear().toString(); // 연도
+const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (0부터 시작하므로 +1, padStart로 2자리로 맞춤)
+const date = currentDate.getDate().toString().padStart(2, '0');
+const hour = currentDate.getHours().toString().padStart(2, '0');
+const minute = currentDate.getMinutes().toString().padStart(2, '0');
+const second = currentDate.getSeconds().toString().padStart(2, '0');
+const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1], hour[0], hour[1], minute[0], minute[1], second[0], second[1]]);
+
+const isValidDueDate = computed(()=> {
+  let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
+  let month = dateUnits.value[4] + dateUnits.value[5];
+  let date = dateUnits.value[6] + dateUnits.value[7];
+  let hour = dateUnits.value[8] + dateUnits.value[9];
+  let minute = dateUnits.value[10] + dateUnits.value[11];
+  let second = dateUnits.value[12] + dateUnits.value[13];
+  let dueDate = new Date(year, month - 1, date, hour, minute, second);
+  return dueDate > currentDate;
+})
+const isValidDateType = computed(() => {
+  const year = parseInt(dateUnits.value.slice(0, 4).join(''));
+  const month = parseInt(dateUnits.value.slice(4, 6).join(''));
+  const day = parseInt(dateUnits.value.slice(6, 8).join(''));
+  const hour = parseInt(dateUnits.value.slice(8, 10).join(''));
+  const minute = parseInt(dateUnits.value.slice(10, 12).join(''));
+  const second = parseInt(dateUnits.value.slice(12, 14).join(''));
+
+  // 각 부분이 숫자인지 확인
+  const isYearNumeric = !isNaN(year);
+  const isMonthNumeric = !isNaN(month);
+  const isDayNumeric = !isNaN(day);
+  const isHourNumeric = !isNaN(hour);
+  const isMinuteNumeric = !isNaN(minute);
+  const isSecondNumeric = !isNaN(second);
+
+  // 각 부분의 범위를 확인
+  const isYearValid = year >= 1000 && year <= 9999;
+  const isMonthValid = month >= 1 && month <= 12;
+  const isDayValid = day >= 1 && day <= 31;
+  const isHourValid = hour >= 0 && hour <= 23;
+  const isMinuteValid = minute >= 0 && minute <= 59;
+  const isSecondValid = second >= 0 && second <= 59;
+
+  // 모든 조건이 충족되면 true 반환
+  return isYearNumeric && isMonthNumeric && isDayNumeric && isHourNumeric && isMinuteNumeric && isSecondNumeric && isYearValid && isMonthValid && isDayValid && isHourValid && isMinuteValid && isSecondValid;
+});
+
+
+
+
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
+      typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?';
     else if (currentStep.value === 1)
-      typedText.value = '목표는 몇 주동안 진행할까?';
+      typedText.value = '그렇다면, 타임 캡슐을 언제 전달할까?';
     else if (currentStep.value === 2)
-      typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
-    else if (currentStep.value === 3)
       typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
-    else if (currentStep.value === 4)
-      typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+    else if (currentStep.value === 3)
+      typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
   }
 };
-const useStore = useUserStore();
-const userId = ref(useStore.getUser().id);
-
 const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
   navigateTo(`/main/${userId.value}`);
-}
+};
 const beforeStep = () => {
   currentStep.value -= 2;
   nextStep();
@@ -144,47 +165,72 @@ const closeModal = () => {
   showModal.value = false;
 };
 
+
 const incrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '0');
+
+  // 각 자릿수에 따른 최대 값 설정
+  const maxValues = [9, 9, 9, 9, 1, 2, 3, 9, 2, 9, 5, 9, 5, 9];
+
+  // 현재 값과 최대 값 비교하여 조정
+  if (parseInt(unit) < maxValues[index]) {
+    dateUnits.value.splice(index, 1, String(parseInt(unit) + 1));
   } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) + 1) % 10));
+    // 최대 값이면 0으로 조정
+    dateUnits.value.splice(index, 1, '0');
   }
 };
 
 const decrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '9');
+
+  // 각 자릿수에 따른 최소 값 설정
+  const minValues = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];
+
+  // 현재 값과 최소 값 비교하여 조정
+  if (parseInt(unit) > minValues[index]) {
+    dateUnits.value.splice(index, 1, String(parseInt(unit) - 1));
   } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) - 1 + 10) % 10));
+    // 최소 값이면 최대 값으로 조정
+    const maxValues = [3, 9, 9, 9, 1, 2, 3, 9];
+    dateUnits.value.splice(index, 1, String(maxValues[index]));
   }
 };
+
 
 const formattedDate = computed(() => {
   const year = dateUnits.value.slice(0, 4).join('');
   const month = dateUnits.value.slice(4, 6).join('');
   const day = dateUnits.value.slice(6, 8).join('');
-  return `${year}-${month}-${day}`;
+  const hour = dateUnits.value.slice(8, 10).join('');
+  const minute = dateUnits.value.slice(10, 12).join('');
+  const second = dateUnits.value.slice(12, 14).join('');
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}+09:00`;
 });
+const userId = ref(useStore.getUser().id);
 
-const goalcapsuleSubmit = () => {
+const timeCapsuleSubmit = () => {
   const saveData = {
-    // pk번호 변수 ?? 
-    dueDate: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    message: message.value,
+    userId: userId.value,
+    expired: formattedDate.value, // 수정된 부분
+    body: message.value,
   };
 
-  axios.post("http://localhost:3000/user", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
   })
   .then((res) => {
     if (res.status === 200) {
-      navigateTo('/');
       console.log("등록 성공");
+      closeModal();
+      nextStep();
+      let postDate = formattedDate.value; // 수정된 부분
+      console.log(`${postDate}`);
+      setTimeout(() => {
+        nextStep();
+      }, 5000);
     }
   })
   .catch((error) => {
@@ -192,14 +238,16 @@ const goalcapsuleSubmit = () => {
   });
 };
 
-const testgoalcapsulesubmit = () => {
-  closeModal();
-  nextStep();
 
-  setTimeout(() => {
-        nextStep();
-      }, 5000);
-}
+// const testtimecapsulesubmit = () => {
+//   closeModal();
+//   nextStep();
+//   let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
+//   console.log(`${postDate}`)
+//   setTimeout(() => {
+//         nextStep();
+//       }, 5000);
+// }
 </script>
 
 
@@ -236,46 +284,24 @@ body {
   position: relative;
 }
 
+.obakuser {
+  width: 250px;
+  height: 250px;
+  display: block;
+  margin: 0 auto 20px;
+}
+
 .settings {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  height : 300px;
-  justify-content: center;
-  gap:20px;
-
+  margin-left: 30px;
 }
 
 .settings div {
-  align-items: center;
-  margin: 10px;
-  color: black;
-  font-size : 24px;
-}
-.blur{
   display: flex;
-  flex-direction:row;
-
+  align-items: center;
+  margin: 10px 0;
 }
-.unblur input{
-margin-right:10px;
-}
-.blurdiv1{
-  background : lightgrey;
-  width : 430px;
-  height : 50px;
-  padding: 8px;
-  padding-left : 8px;
-}
-.blurdiv2{
-  background : lightgrey;
-  width : 70px;
-  height : 50px;
-  padding-left : 16px;
-  margin-left : 20px;
-
-}
-
 
 .settings label {
   margin-right: 10px;
@@ -287,12 +313,9 @@ margin-right:10px;
   align-items: middle;
   padding: 5px;
   border: 2px solid black;
-  width : 600px;
-  height : 50px;
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
-  background : white;
 }
 
 .button-container {
@@ -319,18 +342,12 @@ p {
   width: 100%;
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
+  color: black;
   margin-top: 10px;
   font-size: 24px;
   margin-left: 30px;
 }
 
-.true {
-  color: green;
-  
-}
-.false {
-  color: red;
-}
 .hidden-char {
   visibility: hidden;
   animation: reveal 3s steps(40, end) forwards;
@@ -351,6 +368,17 @@ p {
   padding: 5px;
   margin: 20px;
   border-radius: 15px;
+}
+
+.settings{
+  height : 350px;
+}
+
+.settings input {
+  height : 300px;
+  width : 750px;
+  border : none;
+  background : #eee;
 }
 
 .modal-overlay {
@@ -409,7 +437,11 @@ p {
   color: black; /* Ensure button text color is black */
 }
 
-
+.date-picker {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
 .date-unit {
   display: flex;
@@ -425,12 +457,25 @@ p {
   color: black; /* Text color changed to black */
 }
 
-
+.date-button {
+  width: 60px; /* Width increased by 1.5x */
+  height: 60px; /* Height increased by 1.5x */
+  font-size: 36px; /* Font size increased by 1.5x */
+  color: black; /* Text color changed to black */
+  background-color: #f0f0f0;
+  border: 2px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .loading-image {
   width : 300px;
   height : 300px;
 }
 .loading{
   margin-left : 150px;
+}
+.warn{
+  color : red;
+  font-size : 24px;
 }
 </style>
