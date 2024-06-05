@@ -39,7 +39,7 @@
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="navigateTo('/main')" :disabled="currentStep===2">메인 메뉴</button>
+        <button @click="movemain" :disabled="currentStep===2">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=2" @click="beforeStep">이전</button>
         <button v-if="currentStep === 1" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
         <button v-else @click="nextStep" :disabled="currentStep >= 2">다음</button>
@@ -134,6 +134,9 @@ const nextStep = () => {
 const navigateTo = (route) => {
   window.location.href = route;
 };
+const movemain = () => {
+  navigateTo(`/main/${userId.value}`);
+};
 const beforeStep = () => {
   currentStep.value -= 2;
   nextStep();
@@ -146,6 +149,7 @@ const openModal = () => {
 const closeModal = () => {
   showModal.value = false;
 };
+
 
 const incrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
@@ -191,7 +195,7 @@ const timecapsuleSubmit = () => {
   const saveData = {
     userId : userId.value,
     // expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    expired: "2024-06-04T16:40:00+09:00", // datetime 형식으로 변환된 값
+    expired: "2024-06-05T10:27:00+09:00", // 테스트용
     body: message.value,
   };
 
@@ -202,31 +206,31 @@ const timecapsuleSubmit = () => {
   })
   .then((res) => {
     if (res.status === 200) {
-      navigateTo('/');
       console.log("등록 성공");
+      closeModal();
+      nextStep();
+      let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
+      console.log(`${postDate}`)
+      setTimeout(() => {
+        nextStep();
+      }, 5000);
     }
   })
   .catch((error) => {
     console.error(error);
   });
-  closeModal();
-  nextStep();
-  let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
-  console.log(`${postDate}`)
-  setTimeout(() => {
-        nextStep();
-      }, 5000);
+
 };
 
-const testtimecapsulesubmit = () => {
-  closeModal();
-  nextStep();
-  let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
-  console.log(`${postDate}`)
-  setTimeout(() => {
-        nextStep();
-      }, 5000);
-}
+// const testtimecapsulesubmit = () => {
+//   closeModal();
+//   nextStep();
+//   let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
+//   console.log(`${postDate}`)
+//   setTimeout(() => {
+//         nextStep();
+//       }, 5000);
+// }
 </script>
 
 

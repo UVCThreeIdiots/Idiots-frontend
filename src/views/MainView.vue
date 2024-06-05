@@ -12,12 +12,13 @@
       <div class="link-container">
         <div>
           <a @click="maketime"> ▶ 새로운 타임캡슐을 만든다 </a>
-          <a href="/makegoal"> ▶ 새로운 골캡슐을 만든다 </a>
-          <a href="/progress"> ▶ 도감/진척도를 확인한다 </a>
+          <a @click="makegoal"> ▶ 새로운 골캡슐을 만든다 </a>
+          <a @click="progress"> ▶ 도감/진척도를 확인한다 </a>
         </div>
         <div>
           <a @click="updateuserinfo"> ▶ 내 정보를 변경한다 </a>
           <a href="/"> ▶ 로그아웃</a>
+          <a href="/developer"> ▶ 개발자 도구</a>
         </div>
       </div>
     </div>
@@ -40,8 +41,14 @@ const navigateTo = (route) => {
 const maketime = () => {
   navigateTo(`/maketime/${userId.value}`);
 }
+const makegoal = () => {
+  navigateTo(`/makegoal/${userId.value}`);
+}
 const updateuserinfo = () => {
   navigateTo(`/updateuserinfo/${userId.value}`);
+}
+const progress = () => {
+  navigateTo(`/progress/${userId.value}`);
 }
 </script>
 

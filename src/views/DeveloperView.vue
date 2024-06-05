@@ -19,7 +19,6 @@
           <div class="unblur">
             <input v-model="goal">
             <p class="false" v-if="goal.length > 16"> 주의 : 원칙에 따라 최대 16자를 넘길 수 없습니다. </p>
-            <p class="false" v-else-if="goal.length < 1"> 주의 : 목표는 공백으로 사용할 수 없습니다!</p>
             <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
           </div>
         </div>
@@ -33,9 +32,7 @@
           <div class="unblur">
             <input v-model="inputDue">
             <p class="false" v-if="inputDue>52"> 주의 : 52주가 넘는 목표기간은 설정 할 수 없습니다. </p>
-            <p class="false" v-else-if="inputDue.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputDue<1"> 주의 : 최소 1주 이상의 목표기간을 설정해야 합니다. </p>
-            <p class="false" v-else-if="!isValidDue"> 주의 : 숫자를 입력해야 합니다!</p>
             <p class="true" v-else> 주의 : 최소 1주에서 52주 이내 선택 가능합니다.</p>
           </div>
         </div>
@@ -49,9 +46,6 @@
           <div class="unblur">
             <input v-model="inputReps"> 
             <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
-            <p class="false" v-else-if="inputReps.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
-            <p class="false" v-else-if="inputReps < 1"> 주의 : 최소 1회 이상의 횟수를 설정해야 합니다.</p>
-            <p class="false" v-else-if="!isValidReps"> 주의 : 숫자를 입력해야 합니다! </p>
             <p class="true" v-else> 주의 : 목표는 하루에 최대 1회를 원칙으로 합니다.</p>
           </div>
         </div>
@@ -64,8 +58,8 @@
       <div class="button-container">
         <button @click="movemain">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
-        <button v-if="currentStep === 2" @click="openModal" :disabled="!isValidReps">등록</button>
-        <button v-else @click="nextStep" :disabled="currentStep >=3 || (currentStep === 0 && !isValidGoal) || (currentStep === 1 && !isValidDue )">다음</button>
+        <button v-if="currentStep === 2" @click="openModal" :disabled="inputReps > maxReps ">등록</button>
+        <button v-else @click="nextStep" :disabled="currentStep >=3|| goal.length > 16 || inputDue < 1 || inputDue > 52">다음</button>
 
 
       </div>
@@ -128,24 +122,6 @@ const nextStep = () => {
       typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
   }
 };
-
-const isValidDue = computed(()=>{
-  if (inputDue.value.length <1) return false;
-  if (inputDue.value < 1) return false;
-  if (inputDue.value >52) return false;
-  const regex = /^[0-9]*$/;
-  return regex.test(inputDue.value);
-});
-const isValidReps = computed(()=>{
-  if (inputReps.value.length <1) return false;
-  if (inputReps.value < 1) return false;
-  if (inputReps.value > maxReps.value) return false;
-  const regex = /^[0-9]*$/;
-  return regex.test(inputReps.value);
-});
-const isValidGoal = computed(()=>{
-  return (goal.value.length >= 1 && goal.value.length <= 16)
-});
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
 

@@ -11,7 +11,7 @@ import UpdateUserInfoView from '../views/UpdateUserInfoView.vue'
 import UpdateUserEmailView from '../views/UpdateUserEmail.vue'
 import UpdateUserPasswordView from '../views/UpdateUserPassword.vue'
 import DummyFile from '../views/DummyFile.vue'
-
+import DeveloperView from '../views/DeveloperView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -67,6 +67,11 @@ const router = createRouter({
       path: '/updateUserPassword/:userId',
       name: 'updateUserPassword',
       component : UpdateUserPasswordView
+    },
+    {
+      path : '/developer',
+      name : 'developer',
+      component : DeveloperView
     }
   ]
 })
