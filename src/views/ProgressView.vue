@@ -21,14 +21,14 @@
         </div>
         <div class="progress">
           <div class="progress-bar-container">
-            <div class="progress-bar" :style="{ width: progress + '%' }" />
+            <div class="progress-bar" :style="{ width: capsule.progress + '%' }" />
           </div>
-          <p>{{ progress }}%</p>
+          <p>{{ capsule.progress }}%</p>
         </div>
       </div>
     </div>
     <div class="button-container">
-      <button @click="navigateTo('/main')">뒤로가기</button>
+      <button @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
@@ -37,32 +37,39 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { useUserStore } from '../stores/user.js';
 
 const route = useRoute();
 const capsuleList = ref([]);
-const progress = ref(0); // 프로그래스 초기값, 0%로 설정
+const useStore = useUserStore();
+const userId = ref(useStore.getUser().id);
 
 const typedText = ref('여긴 진척도 확인하는 곳! ');
 
-// const capsuleName = ref(['책읽기', '프로그래밍', '운동', '강의듣기', '물마시기', '씻기', '밥먹기', '잠자기']);
-
 const navigateTo = (route) => {
   window.location.href = route;
+};
+
+const goBack = () => {
+  navigateTo(`/main/${userId.value}`);
 };
 
 const capsuleData = () => {
   const userId = route.params.id;
   axios.get(`http://localhost:3000/user/${userId}`)
   .then(response => {
-    console.log(response.data);
-    capsuleList.value = response.data.gCapsules;
+    capsuleList.value = response.data.gCapsules.map(capsule => {
+      const progress = ((capsule.nowCount / capsule.goalCount) * 100).toFixed(1);
+      return {
+        ...capsule,
+        progress: progress,
+      };
+    });
   })
   .catch(error => {
     console.error(error);
   })
 };
-
-
 
 onMounted(capsuleData);
 </script>
