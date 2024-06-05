@@ -90,9 +90,9 @@
         <p>목표 : {{ goal }}</p>
         <p>목표 기간 : {{ inputDue }}</p>
         <p>목표 횟수 : {{ inputReps }}</p>
-        <p>골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <p>골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
         <button @click="closeModal">취소</button>
-        <button @click="testgoalcapsulesubmit">확인</button>
+        <button @click="goalCapsuleSubmit">확인</button>
 
       </div>
     </div>
@@ -168,47 +168,30 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const incrementDateUnit = (index) => {
-  let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '0');
-  } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) + 1) % 10));
-  }
-};
 
-const decrementDateUnit = (index) => {
-  let unit = dateUnits.value[index];
-  if (unit === 'Y' || unit === 'M' || unit === 'D') {
-    dateUnits.value.splice(index, 1, '9');
-  } else {
-    dateUnits.value.splice(index, 1, String((parseInt(unit) - 1 + 10) % 10));
-  }
-};
 
-const formattedDate = computed(() => {
-  const year = dateUnits.value.slice(0, 4).join('');
-  const month = dateUnits.value.slice(4, 6).join('');
-  const day = dateUnits.value.slice(6, 8).join('');
-  return `${year}-${month}-${day}`;
-});
-
-const goalcapsuleSubmit = () => {
+const goalCapsuleSubmit = () => {
   const saveData = {
-    // pk번호 변수 ?? 
-    dueDate: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    message: message.value,
+    userId : userId.value,
+    title : goal.value,
+    body : null,
+    goalCount : inputReps.value,
+    goalTerm : inputDue.value,
   };
 
-  axios.post("http://localhost:3000/user", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/goal", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
   })
   .then((res) => {
     if (res.status === 200) {
-      navigateTo('/');
       console.log("등록 성공");
+      closeModal();
+      nextStep();
+      setTimeout(() => {
+        nextStep();
+      }, 5000);
     }
   })
   .catch((error) => {
