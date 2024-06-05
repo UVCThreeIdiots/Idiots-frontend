@@ -56,8 +56,10 @@ import axios from 'axios';
 
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
-const progress = ref(0); // 프로그래스 초기값, 0%로 설정
 const capsuleDetail = ref([]);
+const now = ref(0);
+const total = ref(0);
+const progress = ref(0); // 프로그래스 초기값, 0%로 설정
 
 const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
@@ -65,6 +67,8 @@ const GCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
+    now.value = response.data.now_count;
+    total.value = response.data.goal_count;
   })
   .catch(error => {
     console.error(error);

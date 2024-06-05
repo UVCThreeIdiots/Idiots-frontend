@@ -11,6 +11,7 @@
       <div class="input-container">
         <label for="pw">PW :</label>
         <input type="password" id="pw" v-model="newPassword" class="custom-input">
+        <input type="password" id="pw" v-model="newPassword" class="custom-input">
         <div>
           <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
         </div>
@@ -28,9 +29,7 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
 const typedText = ref('강력한 암호를 입력해주렴 ! ! !');
 
 const newPassword = ref('');
@@ -177,6 +176,7 @@ body {
   margin-left: 100px;
   align-items: center;
   margin-top: 100px;
+  flex-wrap: wrap;
 }
 
 .input-container input {
