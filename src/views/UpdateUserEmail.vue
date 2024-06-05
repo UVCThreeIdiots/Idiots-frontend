@@ -29,9 +29,8 @@
 import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
+
 const newEmail = ref('');
 
 const typedText = ref('사용하고있는 이메일로 변경해주렴 ! ! !');

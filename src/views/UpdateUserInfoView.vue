@@ -13,6 +13,7 @@
         <div>
           <a @click="UpdateUserEmail"> ▶ 등록된 이메일을 변경한다. </a>
           <a @click="UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
+          <a @click="goBack"> ▶ 돌아간다. </a>
         </div>
       </div>
     </div>
@@ -42,6 +43,10 @@ const UpdateUserEmail = () => {
 
 const UpdateUserPassword = () => {
   navigateTo(`/UpdateUserPassword/${userId.value}`);
+};
+
+const goBack = () => {
+  navigateTo(`/main/${userId.value}`);
 };
 
 </script>
@@ -107,7 +112,7 @@ body {
 
 .link-container a{
   color : black;
-  width : 340px;
+  width : 370px;
   margin-left : 30px;
   margin-right: 30px;
   margin-bottom : 10px;
