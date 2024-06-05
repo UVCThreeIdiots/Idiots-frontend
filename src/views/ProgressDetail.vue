@@ -25,41 +25,55 @@
         <div class="inner-board">
           <div class="board-top">
             <div class="capsule-name">
-              <p>{{ capsuleDetail.title }}: {{ progress }}%</p>
+              <div>
+                <p>{{ capsuleDetail.title }}:</p>
+              </div>
+              <div>
+                <p>{{ progress }}%</p>
+              </div>
             </div>
             <div class="progress">
               <div class="progress-bar-container">
               <div class="progress-bar" :style="{ width: progress + '%' }" />
             </div>
             <div class="check-btn">
-              <button @click="increaseProgress">달성</button>
-              <button @click="decreaseProgress">미달성</button>
+              <button @click="increaseProgress" :disabled="!isChecked">달성</button>
             </div>
             </div>
           </div>
           <div class="board-bottom">
-            <p>달력과 같은 진척도 체크 사항 보여질곳</p>
+            <p>{{now}}</p>
+            <p>{{total}}</p>
+            <p>백분률: {{progress}}</p>
           </div>
         </div>
       </div>    
     </div>
     <div class="button-container">
-      <button @click="navigateTo('/progress')">뒤로가기</button>
+      <button @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
 const capsuleDetail = ref([]);
+const useStore = useUserStore();
+const userId = ref(useStore.getUser().id);
 const now = ref(0);
 const total = ref(0);
-const progress = ref(0); // 프로그래스 초기값, 0%로 설정
+const dailyCheck = ref(0);
+const isChecked = ref(true);
+const progress = computed(() => {
+  let average = (now.value / total.value) * 100;
+  return average.toFixed(1);
+});
 
 const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
@@ -67,8 +81,11 @@ const GCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    now.value = response.data.now_count;
-    total.value = response.data.goal_count;
+    now.value = response.data.nowCount;
+    total.value = response.data.goalCount;
+    dailyCheck.value = response.data.dailyCheck;
+    isChecked.value = !dailyCheck.value;
+    console.log(dailyCheck.value);
   })
   .catch(error => {
     console.error(error);
@@ -79,18 +96,35 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 
+const goBack = () => {
+  navigateTo(`/progress/${userId.value}`);
+};
+
 const increaseProgress = () => {
+  const goalId = route.params.goalId;
   if (progress.value < 100) {
-    progress.value += 10;
-  }
+    now.value++;
+    dailyCheck.value = true;
+    isChecked.value = !dailyCheck.value;
+    const saveData = {
+      nowCount: now.value,
+      dailyCheck : dailyCheck.value,
+    };
+
+    axios.put(`http://localhost:3000/goal/${goalId}`, JSON.stringify(saveData), {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then((response) => {
+      if (response.status === 200){
+        console.log("nowCount 전달 성공");
+      }
+    }).catch((error) => {
+      console.error("전달 실패: " ,error);
+  });
 };
 
-const decreaseProgress = () => {
-  if (progress.value > 0) {
-    progress.value -= 10;
-  }
-};
-
+}
 onMounted(GCapsuleDetails);
 </script>
 
@@ -113,8 +147,8 @@ body {
   display: flex;
   width: 75%;
   flex-direction: row;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: center;
 }
 
 .check-btn {
@@ -259,7 +293,12 @@ body {
 }
 
 .capsule-name {
+  /* border: 2px solid #000; */
   margin: 16px 10px;
+  display: flex;
+}
+
+.capsule-name p {
   font-size: 16px;
 }
 
