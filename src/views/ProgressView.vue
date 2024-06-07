@@ -15,7 +15,7 @@
         <img class="capsule" src="../components/images/capsule.gif">
         <div>
           <!-- <a href="/encyclopedia" class="capsule-name">{{ capsule.title }}</a> -->
-          <router-link :to="{ name: 'encyclopedia', params: { goalId: capsule.id }}">
+          <router-link :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }}">
             {{ capsule.title }}
           </router-link>
         </div>
@@ -56,9 +56,10 @@ const goBack = () => {
 
 const capsuleData = () => {
   const userId = route.params.id;
-  axios.get(`http://localhost:3000/user/${userId}`)
+  axios.get(`http://localhost:3000/goal/user/${userId}`)
   .then(response => {
-    capsuleList.value = response.data.gCapsules.map(capsule => {
+    console.log(response.data);
+    capsuleList.value = response.data.map(capsule => {
       const progress = ((capsule.nowCount / capsule.goalCount) * 100).toFixed(1);
       return {
         ...capsule,
@@ -149,15 +150,16 @@ body {
 
 .parent {
   margin: 8px;
-    padding: 8px;
-    text-align: justify;
-    height: 70%;
-    width: 97%;
-    overflow: auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    row-gap: 8px;
+  padding: 8px;
+  text-align: justify;
+  height: 70%;
+  width: 97%;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 8px;
 }
+
 .child {
   display: inline-block;
   border: 2px solid black;

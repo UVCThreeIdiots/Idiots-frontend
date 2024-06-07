@@ -15,7 +15,7 @@
         <span v-if="showLink1">▶</span><span v-else></span>&nbsp;새로운 타임캡슐을 만든다</a>
           <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="openMakegoalModal">
         <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 골캡슐을 만든다</a>
-          <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="progress">
+          <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="openProgressModal">
         <span v-if="showLink3">▶</span><span v-else></span>&nbsp;도감 / 진척도를 확인한다</a>
         </div>
         <div>
@@ -60,6 +60,19 @@
         <button @click="closeMakegoalModal">취소</button>
       </div>
     </div>
+
+    <div v-if="showProgressModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>원하는 작업을 선택하세요.</h2>
+        <div class="developerToolbox">
+          <a @click="progress">1. 진척도 확인.</a>
+          <a @click="complete">2. 도감 확인.</a>
+        </div>
+        <button @click="closeProgressModal">취소</button>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -72,6 +85,9 @@ const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
 const admin = ref(useStore.getUser().admin);
 const typedText = `${userName.value}는 무엇을 할까?`;
+
+const showModal = ref(false);
+const showProgressModal = ref(false);
 const showDeveloperModal = ref(false);
 const showMaketimeModal = ref(false);
 const showMakegoalModal = ref(false);
@@ -96,16 +112,32 @@ const makegoal = () => {
 const updateuserinfo = () => {
   navigateTo(`/updateuserinfo/${userId.value}`);
 }
+const developer = () => {
+  navigateTo(`/developer/${userId.value}`);
+}
 const progress = () => {
   navigateTo(`/progress/${userId.value}`);
 }
-const developer = () => {
-  navigateTo(`/developer/${userId.value}`);
+const complete = () => {
+  navigateTo(`/complete/${userId.value}`);
 }
 const logout = () => {
   useStore.logout();
   navigateTo(`/`);
 }
+
+
+const openProgressModal = () => {
+  showProgressModal.value = true;
+}
+
+const closeProgressModal = () => {
+  showProgressModal.value = false;
+}
+
+const openModal = () => {
+  showModal.value = true;
+=======
 const maketimeToUser = () => {
   navigateTo(`/maketimeToUser/${userId.value}`);
 }
@@ -114,6 +146,7 @@ const makegoalToUser = () => {
 }
 const openDeveloperModal = () => {
   showDeveloperModal.value = true;
+
 };
 const closeDeveloperModal = () => {
   showDeveloperModal.value = false;

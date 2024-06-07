@@ -6,10 +6,13 @@ import MainView from '../views/MainView.vue'
 import MakeTimeView from '../views/MakeTimeView.vue'
 import MakeGoalView from '../views/MakeGoalView.vue'
 import ProgressView from '../views/ProgressView.vue'
-import EncyclopediaView from '../views/ProgressDetail.vue'
+import ProgressDetail from '../views/ProgressDetail.vue'
 import UpdateUserInfoView from '../views/UpdateUserInfoView.vue'
 import UpdateUserEmailView from '../views/UpdateUserEmail.vue'
 import UpdateUserPasswordView from '../views/UpdateUserPassword.vue'
+import CompleteView from '../views/CompleteView.vue'
+import CompleteGoalDetailView from '../views/CompleteGoalDetail.vue'
+import CompleteTCapsuleDetailView from '../views/CompleteTCapsuleDetail.vue'
 import DummyFile from '../views/DummyFile.vue'
 import DeveloperView from '../views/DeveloperView.vue'
 import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
@@ -51,9 +54,9 @@ const router = createRouter({
       component : ProgressView
     },
     {
-      path: '/encyclopedia/goal/:goalId',
-      name: 'encyclopedia',
-      component : EncyclopediaView,
+      path: '/ProgressDetail/progress/:goalId',
+      name: 'ProgressDetail',
+      component : ProgressDetail,
       props: true,
     },
     {
@@ -77,6 +80,21 @@ const router = createRouter({
       component : DeveloperView
     },
     {
+
+      path : '/complete/:id',
+      name : 'complete',
+      component : CompleteView
+    },
+    {
+      path : '/completeGoalDetail/:id',
+      name : 'completeGoalDetail',
+      component : CompleteGoalDetailView,
+    },
+    {
+      path : '/completeTCapsuleDetail/:id',
+      name : 'completeTCapsuleDetail',
+      component : CompleteTCapsuleDetailView,
+
       path : '/maketimetouser/:id',
       name : 'maketimetouser',
       component : MakeTimeToUserView

@@ -23,40 +23,24 @@
 
       <div class="right-board">
         <div class="inner-board">
-          <div class="board-top">
-            <div class="capsule-name">
-              <div>
-                <p>진행도: </p>
-              </div>
-              <div>
-                <p> {{ progress }}%</p>
-              </div>
-            </div>
-            <div class="progress">
-              <div class="progress-bar-container">
-              <div class="progress-bar" :style="{ width: progress + '%' }" />
-            </div>
-            <div class="check-btn">
-              <button @click="increaseProgress" :disabled="!isChecked">달성</button>
-            </div>
-            </div>
+          <div class="title">
+            <p>제목 : {{capsuleDetail.title}}</p>
           </div>
-          <div class="board-bottom">
-            <p>{{now}}</p>
-            <p>{{total}}</p>
-            <p>백분률: {{progress}}</p>
+          <div class="content">
+            <p>{{capsuleDetail.body}}</p>
           </div>
         </div>
-      </div>    
-    </div>
-    <div class="button-container">
+      </div>
+    
+  </div>
+  <div class="button-container">
       <button @click="goBack">뒤로가기</button>
     </div>
-  </div>
+</div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
@@ -66,26 +50,17 @@ const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
 const capsuleDetail = ref([]);
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
-const now = ref(0);
-const total = ref(0);
-const dailyCheck = ref(0);
-const isChecked = ref(true);
-const progress = computed(() => {
-  let average = (now.value / total.value) * 100;
-  return average.toFixed(1);
-});
+
+
+
 
 const GCapsuleDetails = () => {
-  const goalId = route.params.goalId;
-  axios.get(`http://localhost:3000/goal/${goalId}`)
+  const capsuleId = route.params.id;
+  axios.get(`http://localhost:3000/time/TCapsule/${capsuleId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    now.value = response.data.nowCount;
-    total.value = response.data.goalCount;
-    dailyCheck.value = response.data.dailyCheck;
-    isChecked.value = !dailyCheck.value;
-    console.log(dailyCheck.value);
+    
   })
   .catch(error => {
     console.error(error);
@@ -97,34 +72,9 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/progress/${userId.value}`);
+  navigateTo(`/complete/${userId.value}`);
 };
 
-const increaseProgress = () => {
-  const goalId = route.params.goalId;
-  if (progress.value < 100) {
-    now.value++;
-    dailyCheck.value = true;
-    isChecked.value = !dailyCheck.value;
-    const saveData = {
-      nowCount: now.value,
-      dailyCheck : dailyCheck.value,
-    };
-
-    axios.put(`http://localhost:3000/goal/${goalId}`, JSON.stringify(saveData), {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then((response) => {
-      if (response.status === 200){
-        console.log("nowCount 전달 성공");
-      }
-    }).catch((error) => {
-      console.error("전달 실패: " ,error);
-  });
-};
-
-}
 onMounted(GCapsuleDetails);
 </script>
 
@@ -143,12 +93,27 @@ body {
   margin: 0;
 }
 
+.title {
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.title p {
+  display: flex;
+  margin: 8px 8px 0px 16px;
+}
+
+.content {
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid #000;
+}
+
 .progress {
   display: flex;
   width: 75%;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 }
 
 .check-btn {
@@ -293,13 +258,17 @@ body {
 }
 
 .capsule-name {
-  /* border: 2px solid #000; */
+  border: 2px solid #000;
   margin: 16px 10px;
   display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .capsule-name p {
   font-size: 16px;
+  /* width: 20%; */
+  margin: 8px 0px 8px 8px;
 }
 
 .progress-bar-container {
