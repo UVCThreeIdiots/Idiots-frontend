@@ -16,7 +16,7 @@
         </div>
         <div>
           <label for="pw">PW :</label>
-          <input type="password" id="pw" v-model="password" class="custom-input">
+          <input type="password" id="pw" v-model="password" class="custom-input" @keydown.enter="loginSubmit">
         </div>
       </div>
       <div class="button-container">
@@ -60,7 +60,8 @@ const loginSubmit = () => {
       const userData = res.data;
       const loginedId = userData.id;
       const loginedName = userData.name;
-      useStore.setUser(loginedId, loginedName);
+      const loginedAdmin = userData.admin;
+      useStore.setUser(loginedId, loginedName, loginedAdmin);
       navigateTo(`/main/${loginedId}`);
       console.log("로그인 성공");
     }

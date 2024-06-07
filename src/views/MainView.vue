@@ -11,15 +11,31 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <a @click="maketime"> ▶ 새로운 타임캡슐을 만든다 </a>
-          <a @click="makegoal"> ▶ 새로운 골캡슐을 만든다 </a>
-          <a @click="progress"> ▶ 도감/진척도를 확인한다 </a>
+          <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="maketime">
+        <span v-if="showLink1">▶</span><span v-else></span>&nbsp;새로운 타임캡슐을 만든다</a>
+          <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="makegoal">
+        <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 골캡슐을 만든다</a>
+          <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="progress">
+        <span v-if="showLink3">▶</span><span v-else></span>&nbsp;도감 / 진척도를 확인한다</a>
         </div>
         <div>
-          <a @click="updateuserinfo"> ▶ 내 정보를 변경한다 </a>
-          <a href="/"> ▶ 로그아웃</a>
-          <a @click="developer"> ▶ 개발자 도구</a>
+          <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="updateuserinfo">
+        <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
+          <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="logout">
+        <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
+          <a v-if="admin" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openModal">
+        <span v-if="showLink6">▶</span><span v-else></span>&nbsp;개발자 도구</a>
         </div>
+      </div>
+    </div>
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>원하는 개발자도구를 선택하세요.</h2>
+        <div class="developerToolbox">
+          <a @click="developer">1. 시분초 타임캡슐</a>
+        </div>
+        <p class="warn">개발자 도구도 DB랑 연동되어 있습니다!</p>
+        <button @click="closeModal">취소</button>
       </div>
     </div>
   </div>
@@ -32,7 +48,16 @@ import { ref } from 'vue';
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
+const admin = ref(useStore.getUser().admin);
 const typedText = `${userName.value}는 무엇을 할까?`;
+const showModal = ref(false);
+const showLink1 = ref(false);
+const showLink2 = ref(false);
+const showLink3 = ref(false);
+const showLink4 = ref(false);
+const showLink5 = ref(false);
+const showLink6 = ref(false);
+
 const navigateTo = (route) => {
   window.location.href = route;
 };
@@ -52,6 +77,18 @@ const progress = () => {
 const developer = () => {
   navigateTo(`/developer/${userId.value}`);
 }
+const logout = () => {
+  useStore.logout();
+  navigateTo(`/`);
+}
+
+const openModal = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
 </script>
 
 <style scoped>
@@ -150,5 +187,57 @@ p {
 .disabled {
   pointer-events: none; /* Disable click */
   color: grey; /* Optional: Change color to indicate disabled state */
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 600px;
+  height: 500px;
+  color: black; /* Set text color to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content a {
+  margin-bottom: 5px; /* Reduce gap between paragraphs */
+  font-size: 20px;
+  color: black; /* Ensure paragraph color is black */
+  width: 100%;
+  height: 50px;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin: 10px;
+  color: black; /* Ensure button text color is black */
+}
+.warn{
+  color:red
+}
+.developerToolbox{
+  display: flex;
+  justify-content: center;
+  width : 80%;
+  height : 300px;
 }
 </style>
