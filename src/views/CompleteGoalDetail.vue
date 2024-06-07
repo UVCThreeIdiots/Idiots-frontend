@@ -14,7 +14,10 @@
     <div class="board">
       <div class="left-board">
         <div class="capsule">
-          <img src="../components/images/capsule.gif">
+          <div class="capsule-box">
+            <img src="../components/images/capsule.gif" class="capsule-image">
+            <img src="../components/images/success.png" class="success-image">
+          </div>
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
@@ -24,22 +27,15 @@
       <div class="right-board">
         <div class="inner-board">
           <div class="board-top">
-            <div class="capsule-name">
-              <div>
+              <div class="capsule-name">
                 <p>진행도: </p>
+              <div class="progress">
+                <div class="progress-bar-container">
+                  <div class="progress-bar" :style="{ width: progress + '%' }" />
+                </div>
               </div>
-              <div>
-                <p> {{ progress }}%</p>
-              </div>
-            </div>
-            <div class="progress">
-              <div class="progress-bar-container">
-              <div class="progress-bar" :style="{ width: progress + '%' }" />
-            </div>
-            <div class="check-btn">
-              <button @click="increaseProgress" :disabled="!isChecked">달성</button>
-            </div>
-            </div>
+              <p> {{ progress }}%</p>
+            </div> 
           </div>
           <div class="board-bottom">
             <p>{{now}}</p>
@@ -76,7 +72,7 @@ const progress = computed(() => {
 });
 
 const GCapsuleDetails = () => {
-  const goalId = route.params.goalId;
+  const goalId = route.params.id;
   axios.get(`http://localhost:3000/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
@@ -97,34 +93,9 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/progress/${userId.value}`);
+  navigateTo(`/complete/${userId.value}`);
 };
 
-const increaseProgress = () => {
-  const goalId = route.params.goalId;
-  if (progress.value < 100) {
-    now.value++;
-    dailyCheck.value = true;
-    isChecked.value = !dailyCheck.value;
-    const saveData = {
-      nowCount: now.value,
-      dailyCheck : dailyCheck.value,
-    };
-
-    axios.put(`http://localhost:3000/goal/${goalId}`, JSON.stringify(saveData), {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then((response) => {
-      if (response.status === 200){
-        console.log("nowCount 전달 성공");
-      }
-    }).catch((error) => {
-      console.error("전달 실패: " ,error);
-  });
-};
-
-}
 onMounted(GCapsuleDetails);
 </script>
 
@@ -146,9 +117,6 @@ body {
 .progress {
   display: flex;
   width: 75%;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 }
 
 .check-btn {
@@ -248,6 +216,24 @@ body {
   align-content: center;
 }
 
+.capsule-box {
+  position: relative;
+  display: inline-block;
+}
+
+.capsule-image {
+  display: block;
+}
+
+.success-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
+  width: 50%; /* Adjust the size as needed */
+  height: 50%; /* Adjust the size as needed */
+}
+
 .right-board {
   flex: 2;
   /* border: 2px solid #000; */
@@ -293,13 +279,17 @@ body {
 }
 
 .capsule-name {
-  /* border: 2px solid #000; */
+  border: 2px solid #000;
   margin: 16px 10px;
   display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .capsule-name p {
   font-size: 16px;
+  /* width: 20%; */
+  margin: 8px 0px 8px 8px;
 }
 
 .progress-bar-container {
