@@ -148,12 +148,15 @@ body {
 }
 
 .parent {
-  margin: 1px;
-  padding: 10px;
-  text-align: justify;
-  height: 70%;
-  width: 97%;
-  overflow: auto;
+  margin: 8px;
+    padding: 8px;
+    text-align: justify;
+    height: 70%;
+    width: 97%;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 8px;
 }
 .child {
   display: inline-block;

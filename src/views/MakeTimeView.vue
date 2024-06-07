@@ -1,5 +1,5 @@
 <template>
-  <div id="dummy" class="container">
+  <div id="maketime" class="container">
     <div class="border-box">
       <p>
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
@@ -9,11 +9,13 @@
     </div>
     <div class="border-box">
       <div class="settings">
-        <div v-if="currentStep === 0">
+        <div v-if="currentStep === 0" class="textarea">
+          <label for="title"></label>
+          <textarea type="text" id="title" v-model="title" class="custom-textarea0"></textarea>
           <label for="message"></label>
           <textarea type="text" id="message" v-model="message" class="custom-textarea"></textarea>
         </div>
-        <div v-if="currentStep === 1">
+        <div v-if="currentStep === 1" class="buttons-and-ment">
           <label for="dueDate"></label>
           <div class="date-picker">
             <div v-for="(unit, index) in dateUnits" :key="index" class="date-unit">
@@ -21,9 +23,10 @@
               <div class="date-value">{{ unit }}</div>
               <button class="date-button" @click="decrementDateUnit(index)">▼</button>
             </div>
-            <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
-            <p v-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
-            
+          </div>
+          <div class="warnings">
+          <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
+          <p v-else-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
           </div>
         </div>
         <div v-if="currentStep === 2">
@@ -62,11 +65,13 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <h2>To. 미래의 나</h2>
-        <p>{{ message }}</p>
-        <p>설정된 날짜: {{ formattedDate }}</p>
-        <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
-        <button @click="timeCapsuleSubmit">확인</button>
-        <button @click="closeModal">취소</button>
+        <p class = "modal-message">{{ message }}</p>
+        <p class = "modal-date">설정된 날짜: {{ formattedDate }}</p>
+        <p class = "modal-warn">타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <div class="modal-buttons">
+          <button @click="timeCapsuleSubmit">확인</button>
+          <button @click="closeModal">취소</button>
+        </div>
       </div>
     </div>
   </div>
@@ -78,6 +83,7 @@ import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
 
 const useStore = useUserStore();
+const title = ref('이곳에 제목을 입력하자!')
 const message = ref('이곳에 내용을 입력하자!');
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
 const currentStep = ref(0);
@@ -193,9 +199,10 @@ const userId = ref(useStore.getUser().id);
 
 const timeCapsuleSubmit = () => {
   const saveData = {
+    title: title.value,
     userId : userId.value,
-    // expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    expired: "2024-06-05T10:27:00+09:00", // 테스트용
+    expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
+    // expired: "2024-06-05T10:27:00+09:00", // 테스트용
     body: message.value,
   };
 
@@ -209,8 +216,6 @@ const timeCapsuleSubmit = () => {
       console.log("등록 성공");
       closeModal();
       nextStep();
-      let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
-      console.log(`${postDate}`)
       setTimeout(() => {
         nextStep();
       }, 5000);
@@ -241,18 +246,13 @@ const timeCapsuleSubmit = () => {
   font-family: 'CustomFont';
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
 }
-
-.id-pw {
-  width: 40px;
-}
-
-body {
-  background-color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+@keyframes reveal {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
 }
 
 .container {
@@ -266,31 +266,18 @@ body {
   border-radius: 15px;
   position: relative;
 }
-
-.obakuser {
-  width: 250px;
-  height: 250px;
-  display: block;
-  margin: 0 auto 20px;
-}
-
 .settings {
   display: flex;
-  flex-direction: column;
-  margin-left: 30px;
+  justify-content: center;
 }
 
 .settings div {
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 20px 0;
+  justify-content: center;
 }
 
-.settings label {
-  margin-right: 10px;
-  font-size: 24px;
-  color: black;
-}
 
 .settings input {
   align-items: middle;
@@ -337,14 +324,7 @@ p {
   color: black;
 }
 
-@keyframes reveal {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
-}
+
 
 .border-box {
   border: 2px solid black;
@@ -355,6 +335,7 @@ p {
 
 .settings{
   height : 350px;
+  align-items : flex-start;
 }
 
 .settings input {
@@ -375,10 +356,21 @@ p {
   justify-content: center;
   align-items: center;
 }
-
-.custom-textarea {
-  height: 330px;
+.textarea{
+  display: flex;
+  flex-direction: column;
+}
+.custom-textarea0 {
+  height: 50px;
   width : 750px;
+  resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin-bottom : 20px;
+}
+.custom-textarea {
+  height: 250px;
+  width : 100%;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
@@ -390,8 +382,12 @@ p {
   border-radius: 10px;
   text-align: center;
   width: 600px;
-  height: 500px;
+  height: 700px;
   color: black; /* Set text color to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .modal-content h2 {
@@ -403,9 +399,18 @@ p {
 .modal-content p {
   margin-bottom: 5px; /* Reduce gap between paragraphs */
   font-size: 20px;
-  color: black; /* Ensure paragraph color is black */
-  width: 100%;
-  height: 50px;
+  width: 470px;
+  
+}
+.modal-message {
+  height: 350px;
+}
+.modal-date {
+  height: 40px
+}
+.modal-warn {
+  height: 120px;
+  color:red;
 }
 
 .modal-content button {
@@ -434,16 +439,17 @@ p {
 
 .date-unit div {
   width: 60px; /* Width increased by 1.5x */
-  height: 60px; /* Height increased by 1.5x */
+  height: 30px; /* Height increased by 1.5x */
   text-align: center;
-  font-size: 36px; /* Font size increased by 1.5x */
-  color: black; /* Text color changed to black */
+  font-size: 30px; /* Font size increased by 1.5x */
+  color: black;
+  margin-bottom: 10px /* Text color changed to black */
 }
 
 .date-button {
   width: 60px; /* Width increased by 1.5x */
-  height: 60px; /* Height increased by 1.5x */
-  font-size: 36px; /* Font size increased by 1.5x */
+  height: 30px; /* Height increased by 1.5x */
+  font-size: 24px; /* Font size increased by 1.5x */
   color: black; /* Text color changed to black */
   background-color: #f0f0f0;
   border: 2px solid black;
@@ -458,7 +464,7 @@ p {
   margin-left : 150px;
 }
 .warn{
-  color : red;
-  font-size : 24px;
+  color: red;
 }
+
 </style>
