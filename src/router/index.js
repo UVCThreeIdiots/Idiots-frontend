@@ -12,6 +12,9 @@ import UpdateUserEmailView from '../views/UpdateUserEmail.vue'
 import UpdateUserPasswordView from '../views/UpdateUserPassword.vue'
 import DummyFile from '../views/DummyFile.vue'
 import DeveloperView from '../views/DeveloperView.vue'
+import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
+import MakeGoalToUserView from '../views/MakeGoalToUserView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -72,6 +75,16 @@ const router = createRouter({
       path : '/developer/:id',
       name : 'developer',
       component : DeveloperView
+    },
+    {
+      path : '/maketimetouser/:id',
+      name : 'maketimetouser',
+      component : MakeTimeToUserView
+    },
+    {
+      path : '/makegoaltouser/:id',
+      name : 'makegoaltouser',
+      component : MakeGoalToUserView
     }
   ]
 })
