@@ -9,7 +9,17 @@
     </div>
     <div class="border-box">
       <div class="settings">
-        <div v-if="currentStep === 0">
+        <div v-if="currentStep === 0" class="textarea">
+          <label for="title"></label>
+          <textarea type="text" id="email" v-model="email" class="custom-textarea9"></textarea>
+          <button @click="emailCheck">이메일체크</button>
+          <button>이메일체크(test)</button>
+          <div class="warnings" v-if="isEmailChecked">
+            <p class = "info" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
+            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
+          </div>
+        </div>
+        <div v-if="currentStep === 1">
           <label for="goal"></label>
           <div class="blur">
             <div class="blurdiv1">{{ goal }}</div> 를
@@ -23,7 +33,7 @@
             <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
           </div>
         </div>
-        <div v-if="currentStep === 1">
+        <div v-if="currentStep === 2">
           <label for="due"></label>
           <div class="blur">
             <div class="blurdiv1">{{ goal }}</div> 를
@@ -39,7 +49,7 @@
             <p class="true" v-else> 주의 : 최소 1주에서 52주 이내 선택 가능합니다.</p>
           </div>
         </div>
-        <div v-if="currentStep === 2">
+        <div v-if="currentStep === 3">
           <label for="reps"></label>
           <div class="blur">
             <div class="blurdiv1">{{ goal }}</div> 를
@@ -55,7 +65,7 @@
             <p class="true" v-else> 주의 : 목표는 하루에 최대 1회를 원칙으로 합니다.</p>
           </div>
         </div>
-        <div v-if="currentStep === 3">
+        <div v-if="currentStep === 4">
           <label for="age">"여기에 사진 넣어야함."</label>
         </div>
       </div>
@@ -63,38 +73,24 @@
     <div class="border-box">
       <div class="button-container">
         <button @click="movemain">메인 메뉴</button>
-        <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
-        <button v-if="currentStep === 2" @click="openModal" :disabled="!isValidReps">등록</button>
-        <button v-else @click="nextStep" :disabled="currentStep >=3 || (currentStep === 0 && !isValidGoal) || (currentStep === 1 && !isValidDue )">다음</button>
+        <button :disabled= "currentStep < 1 || currentStep >=4" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 3" @click="openModal" :disabled="!isValidReps">등록</button>
+        <button v-else @click="nextStep" :disabled="currentStep >=4 || (currentStep === 0 && !isEmailChecked)||(currentStep === 1 && !isValidGoal) || (currentStep === 2 && !isValidDue )">다음</button>
 
 
       </div>
     </div>
 
-    <!-- Modal / 서버 연결 있어야함-->
-    <!-- <div v-if="showModal" class="modal-overlay">
-      <div class="modal-content">
-        <h2>To. 미래의 나</h2>
-        <p>{{ message }}</p>
-        <p>설정된 날짜: {{ formattedDate }}</p>
-        <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
-        <button @click="timecapsuleSubmit">확인</button>
-        <button @click="closeModal">취소</button>
-      </div>
-    </div> -->
-
-    <!-- Test용 Modal / 서버 연결 없이 다음 진행-->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <h2> </h2>
         <p>목표 : {{ goal }}</p>
         <p>목표 기간 : {{ inputDue }}</p>
         <p>목표 횟수 : {{ inputReps }}</p>
-        <p class="modal-warn">골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
-        <div class="modal-buttons">
-          <button @click="closeModal">취소</button>
-          <button @click="goalCapsuleSubmit">확인</button>
-        </div>
+        <p>골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
+        <button @click="closeModal">취소</button>
+        <button @click="goalCapsuleSubmit">확인</button>
+
       </div>
     </div>
   </div>
@@ -104,11 +100,14 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
-
-const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)');
+const email = ref('이곳에 이메일 입력!')
+const otherUserid = ref('');
+const otherUserName = ref('');
+const isEmailChecked = ref(false);
+const isEmailExists = ref(false);
+const typedText = ref('이곳에서는 새로운 골 캡슐을 만들어 ');
 const currentStep = ref(0);
 const showModal = ref(false);
-const dateUnits = ref(['Y', 'Y', 'Y', 'Y', 'M', 'M', 'D', 'D']);
 const stepsInfo = 4;
 const goal = ref('목표를 입력하세요');
 const inputDue = ref('1');
@@ -118,15 +117,15 @@ const nextStep = () => {
   if (currentStep.value < stepsInfo) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
+      typedText.value = '이곳에서는 새로운 골 캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
     else if (currentStep.value === 1)
       typedText.value = '목표는 몇 주동안 진행할까?';
     else if (currentStep.value === 2)
       typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
     else if (currentStep.value === 3)
-      typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
+      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
     else if (currentStep.value === 4)
-      typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+      typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
   }
 };
 
@@ -169,7 +168,34 @@ const closeModal = () => {
   showModal.value = false;
 };
 
+const emailCheck = () => {
+  const data = {email : email.value};
+  axios.post("http://localhost:3000/other/email", JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    if (res.status === 200) {
+      console.log("🚀 ~ .then ~ res.data:", res.data)
+      if(res.data) {
+      console.log("조회 성공");
+      isEmailChecked.value = true;
+      isEmailExists.value = true;
+      otherUserName.value = res.data.name;
+      otherUserid.value = res.data.id;
+      }
+      else{
+      isEmailChecked.value = true;
+      }
+    }
 
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+};
 
 const goalCapsuleSubmit = () => {
   const saveData = {
@@ -178,6 +204,8 @@ const goalCapsuleSubmit = () => {
     body : null,
     goalCount : inputReps.value,
     goalTerm : inputDue.value,
+    otherId : otherUserid.value,
+    otherEmail : email.value,
   };
 
   axios.post("http://localhost:3000/goal", JSON.stringify(saveData), {
@@ -200,14 +228,6 @@ const goalCapsuleSubmit = () => {
   });
 };
 
-const testgoalcapsulesubmit = () => {
-  closeModal();
-  nextStep();
-
-  setTimeout(() => {
-        nextStep();
-      }, 5000);
-}
 </script>
 
 
@@ -389,10 +409,6 @@ p {
   width: 600px;
   height: 500px;
   color: black; /* Set text color to black */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
 }
 
 .modal-content h2 {
@@ -408,10 +424,7 @@ p {
   width: 100%;
   height: 50px;
 }
-.modal-warn {
-  height: 120px;
-  color:red;
-}
+
 .modal-content button {
   padding: 10px 20px;
   border: 2px solid black;
@@ -439,7 +452,18 @@ p {
   font-size: 36px; /* Font size increased by 1.5x */
   color: black; /* Text color changed to black */
 }
-
+.custom-textarea9{
+  height: 50px;
+  width : 500px;
+  resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 20px;
+  margin-bottom : 20px;
+}
+.warnings{
+  color:red;
+  font-size: 20px;
+}
 
 .loading-image {
   width : 300px;

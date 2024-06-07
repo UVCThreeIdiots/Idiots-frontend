@@ -1,7 +1,7 @@
 <template>
   <div id="maketime" class="container">
     <div class="border-box">
-      <p>
+      <p class = "title">
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
           <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
@@ -11,11 +11,25 @@
       <div class="settings">
         <div v-if="currentStep === 0" class="textarea">
           <label for="title"></label>
+          <textarea type="text" id="email" v-model="email" class="custom-textarea9"></textarea>
+          <button @click="emailCheck">이메일체크</button>
+          <button>이메일체크(test)</button>
+          <div class="warnings" v-if="isEmailChecked">
+            <p class = "info" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
+            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
+          </div>
+        </div>
+        <div v-if="currentStep === 1" class="textarea">
+          <label for="title"></label>
           <textarea type="text" id="title" v-model="title" class="custom-textarea0"></textarea>
           <label for="message"></label>
           <textarea type="text" id="message" v-model="message" class="custom-textarea"></textarea>
+          <div class="warnings">
+            <p class = "info" v-if="isEmail">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
+            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
+          </div>
         </div>
-        <div v-if="currentStep === 1" class="buttons-and-ment">
+        <div v-if="currentStep === 2" class="buttons-and-ment">
           <label for="dueDate"></label>
           <div class="date-picker">
             <div v-for="(unit, index) in dateUnits" :key="index" class="date-unit">
@@ -27,45 +41,30 @@
           <div class="warnings">
           <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
           <p v-else-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
-          <p v-else class="notwarn">해당 날짜로 캡슐을 보낼 수 있습니다!</p>
           </div>
         </div>
-        <div v-if="currentStep === 2">
+        <div v-if="currentStep === 3">
           <div class="loading">
             <label for="loading">Loading...</label>
             <img src="../components/images/loading.gif" class="loading-image"/>
           </div>
         </div>
-        <div v-if="currentStep === 3">
+        <div v-if="currentStep === 4">
           <label for="age">여기 사진 추가</label>
         </div>
       </div>
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain" :disabled="currentStep===2">메인 메뉴</button>
-        <button :disabled= "currentStep < 1 || currentStep >=2" @click="beforeStep">이전</button>
-        <button v-if="currentStep === 1" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
-        <button v-else @click="nextStep" :disabled="currentStep >= 2">다음</button>
+        <button @click="movemain" :disabled="currentStep===3">메인 메뉴</button>
+        <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 2" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
+        <button v-else @click="nextStep" :disabled="currentStep >= 3 || !isEmailChecked">다음</button>
       </div>
     </div>
-
-    <!-- Modal / 서버 연결 있어야함-->
-    <!-- <div v-if="showModal" class="modal-overlay">
-      <div class="modal-content">
-        <h2>To. 미래의 나</h2>
-        <p>{{ message }}</p>
-        <p>설정된 날짜: {{ formattedDate }}</p>
-        <p>타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
-        <button @click="timecapsuleSubmit">확인</button>
-        <button @click="closeModal">취소</button>
-      </div>
-    </div> -->
-
-    <!-- Test용 Modal / 서버 연결 없이 다음 진행-->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
-        <h2>To. 미래의 나</h2>
+        <h2>To. 미래의 {{ otherUserName }}</h2>
         <p class = "modal-message">{{ message }}</p>
         <p class = "modal-date">설정된 날짜: {{ formattedDate }}</p>
         <p class = "modal-warn">타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
@@ -85,9 +84,12 @@ import { useUserStore } from '../stores/user.js';
 
 const useStore = useUserStore();
 const title = ref('이곳에 제목을 입력하자!')
+const email = ref('이곳에 캡슐을 전송받을 유저의 이메일을 입력하자!')
 const message = ref('이곳에 내용을 입력하자!');
-const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
+const typedText = ref('어떤 유저에게 캡슐을 전달할까?');
 const currentStep = ref(0);
+const otherUserName = ref('');
+const otherUserid = ref('');
 const showModal = ref(false);
 const stepsInfo = 4
 const currentDate = new Date();
@@ -95,6 +97,8 @@ const year = currentDate.getFullYear().toString(); // 연도
 const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (0부터 시작하므로 +1, padStart로 2자리로 맞춤)
 const date = currentDate.getDate().toString().padStart(2, '0');
 const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
+const isEmailChecked = ref(false);
+const isEmailExists = ref(false);
 
 const isValidDueDate = computed(()=> {
   let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
@@ -145,8 +149,34 @@ const isValidDateType = computed(() => {
   return isYearNumeric && isMonthNumeric && isDayNumeric && isYearValid && isMonthValid && isDayValid && isMonthDayValid(year, month, day);
 });
 
+const emailCheck = () => {
+  const data = {email : email.value};
+  axios.post("http://localhost:3000/other/email", JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    if (res.status === 200) {
+      console.log("🚀 ~ .then ~ res.data:", res.data)
+      if(res.data) {
+      console.log("조회 성공");
+      isEmailChecked.value = true;
+      isEmailExists.value = true;
+      otherUserName.value = res.data.name;
+      otherUserid.value = res.data.id;
+      }
+      else{
+      isEmailChecked.value = true;
+      }
+    }
 
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
+};
 
 
 const nextStep = () => {
@@ -186,7 +216,7 @@ const incrementDateUnit = (index) => {
   let unit = dateUnits.value[index];
 
   // 각 자릿수에 따른 최대 값 설정
-  const maxValues = [9, 9, 9, 9, 1, 9, 3, 9];
+  const maxValues = [9, 9, 9, 9, 1, 2, 3, 9];
 
   // 현재 값과 최대 값 비교하여 조정
   if (parseInt(unit) < maxValues[index]) {
@@ -208,7 +238,7 @@ const decrementDateUnit = (index) => {
     dateUnits.value.splice(index, 1, String(parseInt(unit) - 1));
   } else {
     // 최소 값이면 최대 값으로 조정
-    const maxValues = [3, 9, 9, 9, 1, 2, 3, 9];
+    const maxValues = [3, 9, 9, 9, 1, 9, 3, 9];
     dateUnits.value.splice(index, 1, String(maxValues[index]));
   }
 };
@@ -229,6 +259,8 @@ const timeCapsuleSubmit = () => {
     expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
     // expired: "2024-06-05T10:27:00+09:00", // 테스트용
     body: message.value,
+    otherId : otherUserid.value,
+    otherEmail : email.value,
   };
 
   axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
@@ -239,6 +271,7 @@ const timeCapsuleSubmit = () => {
   .then((res) => {
     if (res.status === 200) {
       console.log("등록 성공");
+      console.log(otherUserid.value, email.value)
       closeModal();
       nextStep();
       setTimeout(() => {
@@ -312,7 +345,7 @@ const timeCapsuleSubmit = () => {
   border: 2px solid black;
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .button-container {
@@ -332,7 +365,7 @@ const timeCapsuleSubmit = () => {
   font-size: 24px;
 }
 
-p {
+.title {
   margin-top: 10px;
   white-space: pre-wrap;
   overflow: hidden;
@@ -392,17 +425,28 @@ p {
   width : 750px;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
+  margin-bottom : 20px;
+}
+.custom-textarea9{
+  height: 50px;
+  width : 500px;
+  resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 20px;
   margin-bottom : 20px;
 }
 .custom-textarea {
-  height: 250px;
+  height: 160px;
   width : 100%;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
 }
-
+.warnings p{
+  color : red;
+  font-size : 20px;
+}
 .modal-content {
   background: white;
   padding: 20px;
@@ -492,9 +536,6 @@ p {
 }
 .warn{
   color: red;
-}
-.notwarn{
-  color:green;
 }
 
 </style>

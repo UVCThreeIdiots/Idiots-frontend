@@ -15,6 +15,9 @@ import CompleteGoalDetailView from '../views/CompleteGoalDetail.vue'
 import CompleteTCapsuleDetailView from '../views/CompleteTCapsuleDetail.vue'
 import DummyFile from '../views/DummyFile.vue'
 import DeveloperView from '../views/DeveloperView.vue'
+import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
+import MakeGoalToUserView from '../views/MakeGoalToUserView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -77,6 +80,7 @@ const router = createRouter({
       component : DeveloperView
     },
     {
+
       path : '/complete/:id',
       name : 'complete',
       component : CompleteView
@@ -90,6 +94,15 @@ const router = createRouter({
       path : '/completeTCapsuleDetail/:id',
       name : 'completeTCapsuleDetail',
       component : CompleteTCapsuleDetailView,
+
+      path : '/maketimetouser/:id',
+      name : 'maketimetouser',
+      component : MakeTimeToUserView
+    },
+    {
+      path : '/makegoaltouser/:id',
+      name : 'makegoaltouser',
+      component : MakeGoalToUserView
     }
   ]
 })
