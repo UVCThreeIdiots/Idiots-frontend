@@ -11,9 +11,9 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="maketime">
+          <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="openMaketimeModal">
         <span v-if="showLink1">▶</span><span v-else></span>&nbsp;새로운 타임캡슐을 만든다</a>
-          <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="makegoal">
+          <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="openMakegoalModal">
         <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 골캡슐을 만든다</a>
           <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="progress">
         <span v-if="showLink3">▶</span><span v-else></span>&nbsp;도감 / 진척도를 확인한다</a>
@@ -23,19 +23,41 @@
         <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
           <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="logout">
         <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
-          <a v-if="admin" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openModal">
+          <a v-if="admin" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
         <span v-if="showLink6">▶</span><span v-else></span>&nbsp;개발자 도구</a>
         </div>
       </div>
     </div>
-    <div v-if="showModal" class="modal-overlay">
+    <div v-if="showDeveloperModal" class="modal-overlay">
       <div class="modal-content">
         <h2>원하는 개발자도구를 선택하세요.</h2>
         <div class="developerToolbox">
           <a @click="developer">1. 시분초 타임캡슐</a>
         </div>
         <p class="warn">개발자 도구도 DB랑 연동되어 있습니다!</p>
-        <button @click="closeModal">취소</button>
+        <button @click="closeDeveloperModal">취소</button>
+      </div>
+    </div>
+    <div v-if="showMaketimeModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>원하는 기능을 선택하세요.</h2>
+        <div class="developerToolbox">
+          <a @click="maketime">1. 나에게 만들기</a>
+          <a @click="maketimeToUser">2. 다른 유저에게 전송하기</a>
+        </div>
+        <p class="warn">타임캡슐을 생성합니다!</p>
+        <button @click="closeMaketimeModal">취소</button>
+      </div>
+    </div>
+    <div v-if="showMakegoalModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>원하는 기능을 선택하세요.</h2>
+        <div class="developerToolbox">
+          <a @click="makegoal">1. 나에게 만들기</a>
+          <a @click="makegoalToUser">2. 다른 유저에게 전송하기</a>
+        </div>
+        <p class="warn">골캡슐을 생성합니다!</p>
+        <button @click="closeMakegoalModal">취소</button>
       </div>
     </div>
   </div>
@@ -50,7 +72,10 @@ const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
 const admin = ref(useStore.getUser().admin);
 const typedText = `${userName.value}는 무엇을 할까?`;
-const showModal = ref(false);
+const showDeveloperModal = ref(false);
+const showMaketimeModal = ref(false);
+const showMakegoalModal = ref(false);
+
 const showLink1 = ref(false);
 const showLink2 = ref(false);
 const showLink3 = ref(false);
@@ -81,13 +106,29 @@ const logout = () => {
   useStore.logout();
   navigateTo(`/`);
 }
-
-const openModal = () => {
-  showModal.value = true;
+const maketimeToUser = () => {
+  navigateTo(`/maketimeToUser/${userId.value}`);
+}
+const makegoalToUser = () => {
+  navigateTo(`/makegoalToUser/${userId.value}`);
+}
+const openDeveloperModal = () => {
+  showDeveloperModal.value = true;
 };
-
-const closeModal = () => {
-  showModal.value = false;
+const closeDeveloperModal = () => {
+  showDeveloperModal.value = false;
+};
+const openMaketimeModal = () => {
+  showMaketimeModal.value = true;
+};
+const closeMaketimeModal = () => {
+  showMaketimeModal.value = false;
+};
+const openMakegoalModal = () => {
+  showMakegoalModal.value = true;
+};
+const closeMakegoalModal = () => {
+  showMakegoalModal.value = false;
 };
 </script>
 
@@ -205,7 +246,7 @@ p {
   border-radius: 10px;
   text-align: center;
   width: 600px;
-  height: 500px;
+  height: 300px;
   color: black; /* Set text color to black */
   display: flex;
   flex-direction: column;
@@ -232,12 +273,15 @@ p {
   color: black; /* Ensure button text color is black */
 }
 .warn{
-  color:red
+  color:red;
+  font-size: 20px;
 }
 .developerToolbox{
   display: flex;
   justify-content: center;
   width : 80%;
   height : 300px;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
