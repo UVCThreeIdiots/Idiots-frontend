@@ -49,7 +49,7 @@
       <div class="button-container">
         <button @click="navigateTo('/')">초기 화면</button>
         <button v-if="currentStep < 4" :disabled="currentStep != 0" @click="isUsedUserId">중복검사</button>
-        <button v-else @click="openModalEmail">e중복검사</button>
+        <button v-else @click="isRealEmail">e중복검사</button>
         <button :disabled="currentStep < 1" @click="beforeStep">이전</button>
         <button v-if="currentStep === 4" @click="openModal" :disabled="!isValidEmail || !emailChecked">등록</button>
         <button v-else @click="nextStep" :disabled="(currentStep <=0 && (!isValidUserId || canUseUserIdforMent != 1))|| (currentStep === 1 && !isValidPassword) ||(currentStep === 2 && !isValidName) ||(currentStep === 3 && !isValidAge)">다음</button>
@@ -175,7 +175,7 @@ const closeModal = () => {
 };
 
 const openModalEmail = () => {
-  isRealEmail();
+  showModalEmail.value = true;
 }
 
 const closeModalEmail = () => {
@@ -201,6 +201,8 @@ const checkKey = () => {
     },
   })
   .then((res) => {
+    console.log(res.data);
+    console.log(typeof res.data);
     if (res.data === 'true') { 
       isCheckKey.value = true;
       console.log("인증문자 성공");
