@@ -16,6 +16,10 @@
           <p v-if="userId.length <1" class="warn">아이디는 공백으로 사용할 수 없습니다!</p>
           <p v-else-if="userId.length >=1 && userId.length <4" class="warn">ID는 최소 4자리를 사용해야 합니다!</p>
           <p v-else-if="!isValidUserId" class="warn">아이디는 영문 및 숫자를 사용해야 합니다!</p>
+          <p v-else-if="canUseUserIdforMent===2" class="warn">이미 사용중인 아이디입니다!</p>
+          <p v-else-if="canUseUserIdforMent===1" class="warn">사용가능한 아이디입니다!</p>
+          <p v-else-if="canUseUserIdforMent===0" class="warn"></p>
+
         </div>
         <div v-if="currentStep === 1">
           <label for="pw">PW :</label>
@@ -44,10 +48,11 @@
       </div>
       <div class="button-container">
         <button @click="navigateTo('/')">초기 화면</button>
-        <button v-if="currentStep === 0" @click="checkSameUserId">중복검사</button>
-        <button v-else :disabled="currentStep < 1" @click="beforeStep">이전</button>
-        <button v-if="currentStep === 4" @click="openModal" :disabled="!isValidEmail">등록</button>
-        <button v-else @click="nextStep" :disabled="(currentStep <=0 && !isValidUserId)|| (currentStep === 1 && !isValidPassword) ||(currentStep === 2 && !isValidName) ||(currentStep === 3 && !isValidAge)">다음</button>
+        <button v-if="currentStep < 4" :disabled="currentStep != 0" @click="isUsedUserId">중복검사</button>
+        <button v-else @click="openModalEmail">e중복검사</button>
+        <button :disabled="currentStep < 1" @click="beforeStep">이전</button>
+        <button v-if="currentStep === 4" @click="openModal" :disabled="!isValidEmail || !emailChecked">등록</button>
+        <button v-else @click="nextStep" :disabled="(currentStep <=0 && (!isValidUserId || canUseUserIdforMent != 1))|| (currentStep === 1 && !isValidPassword) ||(currentStep === 2 && !isValidName) ||(currentStep === 3 && !isValidAge)">다음</button>
       </div>
     </div>
 
@@ -64,7 +69,19 @@
         
         <button @click="closeModal">취소</button>
         <button @click="signupSubmit" :disabled="!isChecked">확인</button>
-
+      </div>
+    </div>
+    <div v-if="showModalEmail" class="modal-overlay">
+      <div class="modal-content">
+        <h2>유효 이메일 확인</h2>
+        <p>{{ email }}로 인증문자가 포함된 메일을 발송했습니다.</p>
+        <p>인증문자를 확인 후 아래에 입력해 주세요.</p>
+        <input type="text"/>
+        <button @click="checkKey"></button>
+        <p v-if="isCheckKey">유효한 이메일입니다.</p>
+        <p v-else>잘못된 인증문자 입니다.</p>        
+        <button @click="closeModalEmail">취소</button>
+        <button @click="closeModalEmailwithSuccess" :disabled="!isCheckKey">확인</button>
       </div>
     </div>
   </div>
@@ -82,6 +99,9 @@ const email = ref('');
 let currentStep = ref(0);
 const isChecked = ref(false);
 const showModal = ref(false);
+const showModalEmail = ref(false);
+const emailChecked = ref(false);
+const isCheckKey = ref(false);
 const stepsInfo = [
   { label: '아이디 :', model: userId },
   { label: '비밀번호 :', model: password },
@@ -151,6 +171,101 @@ const openModal = () => {
 const closeModal = () => {
   showModal.value = false;
 };
+
+const openModalEmail = () => {
+  showModalEmail.value = true;
+  isRealEmail();
+}
+
+const closeModalEmail = () => {
+  showModalEmail.value = false;
+};
+const closeModalEmailwithSuccess = () => {
+  showModalEmail.value = false;
+  emailChecked.value = true;
+};
+
+const canUseUserId = ref(false);
+const canUseUserIdforMent = ref(0);
+
+const checkKey = () => {
+  const saveData = {
+    userId: userId.value,
+  };
+
+  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    if (res.data === 'true') { 
+      canUseUserId.value = true;
+      isCheckKey.value = true;
+      console.log("인증문자 성공");
+    } else {
+      canUseUserId.value = false;
+      isCheckKey.value = false;
+      console.log("인증문자 실패");
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+};
+
+const isRealEmail = () => {
+  const saveData = {
+    userId: userId.value,
+  };
+
+  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    if (res.data === 'true') { 
+      canUseUserId.value = true;
+      canUseUserIdforMent.value = 1;
+      console.log("사용 가능 아이디");
+    } else {
+      canUseUserId.value = false;
+      canUseUserIdforMent.value = 2;
+      console.log("이미 사용중인 아이디");
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+};
+
+const isUsedUserId = () => {
+  const saveData = {
+    userId: userId.value,
+  };
+
+  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((res) => {
+    if (res.data === 'true') { 
+      canUseUserId.value = true;
+      canUseUserIdforMent.value = 1;
+      console.log("사용 가능 아이디");
+    } else {
+      canUseUserId.value = false;
+      canUseUserIdforMent.value = 2;
+      console.log("이미 사용중인 아이디");
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+};
+
 
 const signupSubmit = () => {
   const saveData = {
