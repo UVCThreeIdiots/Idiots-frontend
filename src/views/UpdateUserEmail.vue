@@ -20,7 +20,7 @@
 
     <div class="bottom">
       <button class="btn-style" @click="goBack">뒤로가기</button>
-      <button class="btn-style" @click="updateEmail">변경하기</button>
+      <button class="btn-style" @click="updateEmail" :disabled="!isValidEmail">변경하기</button>
     </div>
   </div>
 </template>
@@ -57,21 +57,34 @@ const updateEmail = () => {
     email: newEmail.value,
   };
 
-  axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+  console.log(saveData);
+
+  axios.get(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData),{
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then((response) => {
-    if(response.status == 200) {
-      console.log('이메일 변경 성공');
+  }).then((res) => {
+    if (res.data.email === saveData.email) {
+      alert('기존의 이메일과 동일합니다.');
+      return;
+    } else {
+      axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      }).then((response) => {
+        if(response.status == 200) {
+          console.log('이메일 변경 성공');
+          alert('이메일이 성공적으로 변경되었습니다.');
+          navigateTo(`/main/${userId.value}`)
+        }
+      }).catch((error) => {
+        alert('이미 등록된 메일이 존재합니다.');
+        console.log('이메일 변경 실패', error);
+      });
     }
-  }).catch((error) => {
-    console.log('이메일 변경 실패', error);
-  });
-}
-
-
-
+  }
+)}
 </script>
 
 <style scoped>

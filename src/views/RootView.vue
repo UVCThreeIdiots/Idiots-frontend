@@ -59,9 +59,10 @@ const loginSubmit = () => {
       // 응답 바디 파싱
       const userData = res.data;
       const loginedId = userData.id;
+      const loginUserId = userData.userId
       const loginedName = userData.name;
       const loginedAdmin = userData.admin;
-      useStore.setUser(loginedId, loginedName, loginedAdmin);
+      useStore.setUser(loginedId, loginUserId, loginedName, loginedAdmin);
       navigateTo(`/main/${loginedId}`);
       console.log("로그인 성공");
     }

@@ -9,43 +9,41 @@
 
     <div class="middle">
       <div class="input-container">
-        <label for="pw">PW :</label>
-        <input type="password" id="pw" v-model="newPassword" class="custom-input" placeholder="새로운 비밀번호">
-        <div class="newPasswordCheck">
-          <input type="password" id="pw" v-model="newPasswordCheck" class="custom-input" placeholder="비밀번호 확인">
-        </div>
+        <label for="Name">변경할 이름 :</label>
+        <input type="text" id="newName" v-model="newName" class="custom-input" placeholder="새로운 이름을 작성해주세요.">
         <div>
-          <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
+          <p v-if="newName.length <1" class="warn">이름은 공백으로 사용할 수 없습니다!</p>
+          <p v-else-if="!isValidName" class="warn">이름은 한글, 영문 및 숫자를 사용해야합니다!!</p>
         </div>
       </div>
     </div>
 
     <div class="bottom">
       <button class="btn-style" @click="goBack">뒤로가기</button>
-      <button class="btn-style" @click="updatePassword" :disabled="!isValidPassword">변경하기</button>
+      <button class="btn-style" @click="updateName" :disabled="!isValidName">변경하기</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user.js';
+import { computed, ref } from 'vue';
 import axios from 'axios';
 
-const typedText = ref('강력한 암호로 설정 해주렴 ! ! !');
 
-const newPassword = ref('');
-const newPasswordCheck = ref('');
+const newName = ref('');
 
-const isValidPassword = computed(()=>{
-  const minLen = 4;
-  if (newPassword.value.length < minLen) return false;
-  else return true;
-});
+const typedText = ref('너의 새로운 이름이 궁금하구나 ! ! !');
+
+const isValidName = computed(()=>{
+  if (newName.value.length <1) return false;
+  const regex = /^[가-힣a-zA-Z0-9]*$/;
+  return regex.test(newName.value);
+})
 
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
-const userLoginId = ref(useStore.getUser().userId);
+const userName = ref(useStore.getUser().name);
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -55,43 +53,41 @@ const goBack = () => {
   navigateTo(`/updateuserinfo/${userId.value}`);
 };
 
-const updatePassword = () => {
+const updateName = () => {
   const saveData = {
-    userId: userLoginId.value,
-    password: newPassword.value,
+    name: newName.value,
   };
-  if ( newPassword.value !== newPasswordCheck.value ) {
-    alert('변경하려는 비밀번호와 확인 비밀번호가 서로 일치하지 않습니다.');
+
+  if ( saveData.name === userName.value ) {
+    alert('변경할 이름과 현재 이름이 같습니다.');
     return;
   }
+  axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => {
+    if(response.status == 200) {
+      axios.get(`http://localhost:3000/user/${userId.value}`, JSON.stringify(response), {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then((response) => {
+          const userData = response.data;
+          const loginedId = userData.id;
+          const loginUserId = userData.userId
+          const loginedName = userData.name;
+          const loginedAdmin = userData.admin;
+          useStore.setUser(loginedId, loginUserId, loginedName, loginedAdmin);
+          alert('이름이 성공적으로 변경되었습니다.');
+          navigateTo(`/main/${loginedId}`);
+      })
+    }
+  }).catch((error) => {
+    console.log('이름 변경 실패', error);
+  });
+}
 
-  // 비밀번호 변경 시 login post 요청하여 사용자가 새로 변경할 비밀번호로 로그인이 성공적으로 진행된다면
-  // 기존의 비밀번호와 동일하기 때문에 동일하다는 얼럿 메세지 출력 후 리턴
-  // 만일 로그인이 되지 않는다면 catch구문에서 오히려 비밀번호를 변경해주는 로직
-  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then((res) => {
-        if( res.status === 200) {
-          alert('변경하려는 비밀번호와 기존의 비밀번호가 동일합니다.');
-          return;
-        }}).catch((error) => {
-          if (error.response && error.response.status === 400){
-            axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }).then(() => {
-                console.log('비밀번호 변경 성공');
-                alert('비밀번호가 변경되었습니다.');
-                navigateTo(`/main/${userId.value}`);
-            }).catch((error) => {
-              console.log('비밀번호 변경 실패', error);
-            });
-          }
-        })
-      }
 </script>
 
 <style scoped>
@@ -116,11 +112,6 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-}
-
-.newPasswordCheck {
-  /* border: 2px solid #000; */
-  margin-left: 16px;
 }
 
 .hidden-char {
@@ -176,9 +167,6 @@ body {
   border-radius: 15px;
   height: 300px;
   margin: 16px 0 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .bottom{
@@ -204,9 +192,14 @@ body {
 .input-container {
   display: flex;
   flex-direction: row;
-  margin-left: 100px;
+  margin-left: 30px;
   align-items: center;
-  flex-wrap: wrap;
+}
+
+.input-container div {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
 }
 
 .input-container input {
@@ -216,10 +209,11 @@ body {
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
+  margin-right: 16px;
 }
 
 label {
-  width:56px;
+  width:200px;
   font-size: 24px;
   color: black;
 }
@@ -232,5 +226,4 @@ label {
   color : red;
   font-size : 18px;
 }
-
 </style>
