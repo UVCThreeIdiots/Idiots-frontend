@@ -97,6 +97,7 @@ const userId = ref('');
 const password = ref('');
 const email = ref('');
 let currentStep = ref(0);
+const emailMent = ref(0);
 const isChecked = ref(false);
 const showModal = ref(false);
 const showModalEmail = ref(false);
@@ -173,7 +174,6 @@ const closeModal = () => {
 };
 
 const openModalEmail = () => {
-  showModalEmail.value = true;
   isRealEmail();
 }
 
@@ -193,7 +193,7 @@ const checkKey = () => {
     userId: userId.value,
   };
 
-  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/email", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -216,23 +216,24 @@ const checkKey = () => {
 
 const isRealEmail = () => {
   const saveData = {
-    userId: userId.value,
+    email: email.value,
   };
 
-  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/email", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
   })
   .then((res) => {
+    console.log(res.data);
+    console.log(typeof res.data);
     if (res.data === 'true') { 
-      canUseUserId.value = true;
-      canUseUserIdforMent.value = 1;
-      console.log("사용 가능 아이디");
+      openModalEmail();
+      emailMent.value = 1;
+      console.log("사용 가능 이메일");
     } else {
-      canUseUserId.value = false;
-      canUseUserIdforMent.value = 2;
-      console.log("이미 사용중인 아이디");
+      emailMent.value = 2;
+      console.log("이미 사용중인 이메일");
     }
   })
   .catch((error) => {
