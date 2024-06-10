@@ -11,9 +11,16 @@
     <div class="border-box">
       <div class="link-container">
         <div>
-          <a @click="UpdateUserEmail"> ▶ 등록된 이메일을 변경한다. </a>
-          <a @click="UpdateUserPassword"> ▶ 새로운 비밀번호로 변경한다. </a>
-          <a @click="goBack"> ▶ 돌아간다. </a>
+          <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="UpdateUserEmail">
+            <span v-if="showLink1">▶</span><span v-else></span>&nbsp;등록된 이메일을 변경한다.</a>
+          <a a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="UpdateUserPassword">
+            <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 비밀번호로 변경한다.</a>
+          <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="UpdateUserName">
+            <span v-if="showLink3">▶</span><span v-else></span>&nbsp;등록된 이름을 변경한다.</a>
+        </div>
+        <div>
+          <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="goBack">
+            <span v-if="showLink4">▶</span><span v-else></span>&nbsp;돌아간다.</a>
         </div>
       </div>
     </div>
@@ -25,13 +32,15 @@ import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
 
 const useStore = useUserStore();
+const showLink1 = ref(false);
+const showLink2 = ref(false);
+const showLink3 = ref(false);
+const showLink4 = ref(false);
 
 const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
 
 const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
-console.log(`${userName.value}`);
-console.log(`${userName.value} ${useStore.id}`);
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -44,6 +53,10 @@ const UpdateUserEmail = () => {
 const UpdateUserPassword = () => {
   navigateTo(`/UpdateUserPassword/${userId.value}`);
 };
+
+const UpdateUserName = () => {
+  navigateTo(`/UpdateUserName/${userId.value}`);
+}
 
 const goBack = () => {
   navigateTo(`/main/${userId.value}`);
@@ -110,7 +123,7 @@ body {
   align-items: center; /* Center items horizontally */
 }
 
-.link-container a{
+.link-container div a{
   color : black;
   width : 370px;
   margin-left : 30px;
@@ -127,7 +140,7 @@ p {
   height: 100px;
   padding-top: 10px;
   font-size: 24px;
-  margin-left: 30px;
+  /* margin-left: 30px; */
 }
 
 .hidden-char {
@@ -141,7 +154,7 @@ p {
 .border-box {
   border: 2px solid black;
   padding: 5px;
-  margin: 20px;
+  margin: 8px;
   border-radius: 15px;
 }
 .disabled {
