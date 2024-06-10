@@ -14,15 +14,15 @@
           <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="openMaketimeModal">
         <span v-if="showLink1">▶</span><span v-else></span>&nbsp;새로운 타임캡슐을 만든다</a>
           <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="openMakegoalModal">
-        <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 골캡슐을 만든다</a>
+        <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 목표캡슐을 만든다</a>
           <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="openProgressModal">
         <span v-if="showLink3">▶</span><span v-else></span>&nbsp;도감 / 진척도를 확인한다</a>
         </div>
         <div>
-          <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="updateuserinfo">
-        <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
+          <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="openUserUpdateModal">
+            <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
           <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="logout">
-        <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
+            <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
           <a v-if="admin" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
         <span v-if="showLink6">▶</span><span v-else></span>&nbsp;개발자 도구</a>
         </div>
@@ -32,7 +32,8 @@
       <div class="modal-content">
         <h2>원하는 개발자도구를 선택하세요.</h2>
         <div class="developerToolbox">
-          <a @click="developer">1. 시분초 타임캡슐</a>
+          <a @mouseover="showLink7 = true" @mouseleave="showLink7 = false" @click="developer">
+            <span v-if="showLink7">▶</span><span v-else></span>&nbsp;시분초 확인 프로그램</a>
         </div>
         <p class="warn">개발자 도구도 DB랑 연동되어 있습니다!</p>
         <button @click="closeDeveloperModal">취소</button>
@@ -42,8 +43,10 @@
       <div class="modal-content">
         <h2>원하는 기능을 선택하세요.</h2>
         <div class="developerToolbox">
-          <a @click="maketime">1. 나에게 만들기</a>
-          <a @click="maketimeToUser">2. 다른 유저에게 전송하기</a>
+          <a @mouseover="showLink8 = true" @mouseleave="showLink8 = false" @click="maketime">
+            <span v-if="showLink8">▶</span><span v-else></span>&nbsp;나만의 타임캡슐을 만든다.</a>
+          <a @mouseover="showLink9 = true" @mouseleave="showLink9 = false" @click="maketimeToUser">
+            <span v-if="showLink9">▶</span><span v-else></span>&nbsp;타임캡슐을 전송한다.</a>
         </div>
         <p class="warn">타임캡슐을 생성합니다!</p>
         <button @click="closeMaketimeModal">취소</button>
@@ -53,8 +56,10 @@
       <div class="modal-content">
         <h2>원하는 기능을 선택하세요.</h2>
         <div class="developerToolbox">
-          <a @click="makegoal">1. 나에게 만들기</a>
-          <a @click="makegoalToUser">2. 다른 유저에게 전송하기</a>
+          <a @mouseover="showLink10 = true" @mouseleave="showLink10 = false" @click="makegoal">
+            <span v-if="showLink10">▶</span><span v-else></span>&nbsp;나만의 목표캡슐을 만든다.</a>
+          <a @mouseover="showLink11 = true" @mouseleave="showLink11 = false" @click="makegoalToUser">
+            <span v-if="showLink11">▶</span><span v-else></span>&nbsp;목표캡슐을 전송한다.</a>
         </div>
         <p class="warn">골캡슐을 생성합니다!</p>
         <button @click="closeMakegoalModal">취소</button>
@@ -65,10 +70,30 @@
       <div class="modal-content">
         <h2>원하는 작업을 선택하세요.</h2>
         <div class="developerToolbox">
-          <a @click="progress">1. 진척도 확인.</a>
-          <a @click="complete">2. 도감 확인.</a>
+          <a @mouseover="showLink12 = true" @mouseleave="showLink12 = false" @click="progress">
+            <span v-if="showLink12">▶</span><span v-else></span>&nbsp;캡슐의 진척도를 확인한다.</a>
+          <a @mouseover="showLink13 = true" @mouseleave="showLink13 = false" @click="complete">
+            <span v-if="showLink13">▶</span><span v-else></span>&nbsp;캡슐 도감을 확인한다.</a>
+        </div>
+        <div class="comment">
+          <p class="warn" v-if="showLink12">목표캡슐의 진행상황을 확인할 수 있습니다!</p>
+          <p class="warn" v-if="showLink13">만료된 타임캡슐과 목표캡슐을 확인할 수 있습니다!</p>
         </div>
         <button @click="closeProgressModal">취소</button>
+      </div>
+    </div>
+
+    <div v-if="showUserUpdateModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>계정 확인</h2>
+        <div class="pass-check">
+          <input type="password" class="password-check" v-model="passwordCheck" placeholder="*비밀번호확인*"/>
+            <div>
+              <button @click="passCheck" class="check-btn">확인</button>
+            </div>
+        </div>
+        <p class="warn">확인을 위해 비밀번호를 입력해주세요</p>
+        <button @click="closeUserUpdateModal">취소</button>
       </div>
     </div>
 
@@ -79,11 +104,14 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
+import axios from 'axios';
 
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
+const userLoginId = ref(useStore.getUser().userId);
 const userId = ref(useStore.getUser().id);
 const admin = ref(useStore.getUser().admin);
+const passwordCheck = ref('');
 const typedText = `${userName.value}는 무엇을 할까?`;
 
 const showModal = ref(false);
@@ -91,6 +119,7 @@ const showProgressModal = ref(false);
 const showDeveloperModal = ref(false);
 const showMaketimeModal = ref(false);
 const showMakegoalModal = ref(false);
+const showUserUpdateModal = ref(false);
 
 const showLink1 = ref(false);
 const showLink2 = ref(false);
@@ -98,6 +127,13 @@ const showLink3 = ref(false);
 const showLink4 = ref(false);
 const showLink5 = ref(false);
 const showLink6 = ref(false);
+const showLink7 = ref(false);
+const showLink8 = ref(false);
+const showLink9 = ref(false);
+const showLink10 = ref(false);
+const showLink11 = ref(false);
+const showLink12 = ref(false);
+const showLink13 = ref(false);
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -164,6 +200,34 @@ const openMakegoalModal = () => {
 const closeMakegoalModal = () => {
   showMakegoalModal.value = false;
 };
+const openUserUpdateModal = () => {
+  showUserUpdateModal.value = true;
+}
+const closeUserUpdateModal = () => {
+  showUserUpdateModal.value = false;
+}
+
+const passCheck = () => {
+  const saveData = {
+    userId: userLoginId.value,
+    password: passwordCheck.value,
+  };
+
+  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then((response) => {
+    if( response.status === 200){
+      navigateTo(`/updateuserinfo/${userId.value}`);
+    } else {
+      alert('비밀번호가 일치하지 않습니다.');
+    }
+  }).catch((error) => {
+    console.log('비밀번호 불일치', error);
+    alert('비밀번호가 일치하지 않습니다.'); 
+  });
+}
 
 </script>
 
@@ -172,6 +236,10 @@ const closeMakegoalModal = () => {
 @font-face {
   font-family: 'CustomFont';
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
+}
+
+.check-btn {
+  height: 40px;
 }
 
 .id-pw {
@@ -185,6 +253,31 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.pass-check {
+  display: flex;
+  align-items: center;
+  /* border: 2px solid #000; */
+}
+
+.password-check {
+  font-family: 'CustomFont';
+  font-size: 16px;
+  width: 240px;
+  height: 40px;
+}
+
+.comment {
+  /* border: 2px solid red; */
+  height: 100%;
+}
+
+.comment p {
+  /* border: 2px solid #000; */
+  /* margin-right: 16px; */
+  margin-top: 24px;
+  
 }
 
 .container {
@@ -237,7 +330,7 @@ p {
   height: 100px;
   padding-top: 10px;
   font-size: 24px;
-  margin-left: 30px;
+  /* margin-left: 30px; */
 }
 
 .hidden-char {
@@ -282,7 +375,7 @@ p {
   border-radius: 10px;
   text-align: center;
   width: 600px;
-  height: 300px;
+  height: 450px;
   color: black; /* Set text color to black */
   display: flex;
   flex-direction: column;
@@ -308,9 +401,15 @@ p {
   margin: 10px;
   color: black; /* Ensure button text color is black */
 }
+.modal-content h2 {
+  margin-bottom: 11px;
+  /* border: 2px solid black; */
+  padding: 16px;
+}
 .warn{
   color:red;
   font-size: 20px;
+  padding: 16px;
 }
 .developerToolbox{
   display: flex;
