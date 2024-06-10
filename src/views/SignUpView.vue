@@ -76,7 +76,7 @@
         <h2>유효 이메일 확인</h2>
         <p>{{ email }}로 인증문자가 포함된 메일을 발송했습니다.</p>
         <p>인증문자를 확인 후 아래에 입력해 주세요.</p>
-        <input type="text"/>
+        <input type="text" v-model="emailKey"/>
         <button @click="checkKey"></button>
         <p v-if="isCheckKey">유효한 이메일입니다.</p>
         <p v-else>잘못된 인증문자 입니다.</p> 
@@ -96,6 +96,7 @@ const age = ref('');
 const userId = ref('');
 const password = ref('');
 const email = ref('');
+const emailKey = ref('');
 let currentStep = ref(0);
 const emailMent = ref(0);
 const isChecked = ref(false);
@@ -190,21 +191,20 @@ const canUseUserIdforMent = ref(0);
 
 const checkKey = () => {
   const saveData = {
-    userId: userId.value,
+    email: email.value,
+    code : emailKey.value,
   };
 
-  axios.post("http://localhost:3000/auth/email", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/code", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
   })
   .then((res) => {
     if (res.data === 'true') { 
-      canUseUserId.value = true;
       isCheckKey.value = true;
       console.log("인증문자 성공");
     } else {
-      canUseUserId.value = false;
       isCheckKey.value = false;
       console.log("인증문자 실패");
     }
