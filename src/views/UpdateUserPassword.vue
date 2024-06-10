@@ -14,10 +14,10 @@
         <div class="newPasswordCheck">
           <input type="password" id="pw" v-model="newPasswordCheck" class="custom-input" placeholder="비밀번호 확인">
         </div>
-        <div>
+      </div>
+      <div class="comment">
           <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
         </div>
-      </div>
     </div>
 
     <div class="bottom">
@@ -85,7 +85,8 @@ const updatePassword = () => {
             }).then(() => {
                 console.log('비밀번호 변경 성공');
                 alert('비밀번호가 변경되었습니다.');
-                navigateTo(`/main/${userId.value}`);
+                useStore.logout();
+                navigateTo(`/`);
             }).catch((error) => {
               console.log('비밀번호 변경 실패', error);
             });
@@ -116,6 +117,12 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.comment{
+  /* border: 2px solid #000; */
+  margin-top: 20px;
+  height: 20px;
 }
 
 .newPasswordCheck {
@@ -178,6 +185,7 @@ body {
   margin: 16px 0 0 0;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -204,9 +212,9 @@ body {
 .input-container {
   display: flex;
   flex-direction: row;
-  margin-left: 100px;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .input-container input {
