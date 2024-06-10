@@ -1,7 +1,7 @@
 <template>
   <div id="maketime" class="container">
     <div class="border-box">
-      <p>
+      <p class = "npc">
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
           <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
@@ -66,12 +66,13 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <h2>To. 미래의 나</h2>
-        <p class = "modal-message">{{ message }}</p>
+        <textarea class = "modal-message" v-model="message" :disabled="true"></textarea>
         <p class = "modal-date">설정된 날짜: {{ formattedDate }}</p>
-        <p class = "modal-warn">타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <p class = "modal-warn">주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <p>타임캡슐을 생성하시겠습니까? YES:<input v-model="isChecked" type="checkbox" class="checkbox"/></p>
         <div class="modal-buttons">
-          <button @click="timeCapsuleSubmit">확인</button>
           <button @click="closeModal">취소</button>
+          <button @click="timeCapsuleSubmit" :disabled="!isChecked">확인</button>
         </div>
       </div>
     </div>
@@ -95,7 +96,7 @@ const year = currentDate.getFullYear().toString(); // 연도
 const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (0부터 시작하므로 +1, padStart로 2자리로 맞춤)
 const date = currentDate.getDate().toString().padStart(2, '0');
 const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
-
+const isChecked = ref(false);
 const isValidDueDate = computed(()=> {
   let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
   let month = dateUnits.value[4] + dateUnits.value[5];
@@ -312,7 +313,7 @@ const timeCapsuleSubmit = () => {
   border: 2px solid black;
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .button-container {
@@ -331,7 +332,12 @@ const timeCapsuleSubmit = () => {
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
 }
-
+button:disabled {
+  background-color: #f0f0f0;
+  color: grey; /* 비활성화 상태 버튼의 글자색 */
+  cursor: not-allowed; /* 커서 모양 */
+  opacity: 0.4; /* 불투명도 */
+}
 p {
   margin-top: 10px;
   white-space: pre-wrap;
@@ -340,9 +346,6 @@ p {
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
   color: black;
-  margin-top: 10px;
-  font-size: 24px;
-  margin-left: 30px;
 }
 
 .hidden-char {
@@ -355,7 +358,7 @@ p {
 
 .border-box {
   border: 2px solid black;
-  padding: 5px;
+  padding: 24 32 24 32px;
   margin: 20px;
   border-radius: 15px;
 }
@@ -387,20 +390,26 @@ p {
   display: flex;
   flex-direction: column;
 }
+.npc{
+  padding: 8px 24px;
+  font-size : 24px;
+}
 .custom-textarea0 {
   height: 50px;
   width : 750px;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom : 20px;
+  padding: 15px;
 }
 .custom-textarea {
   height: 250px;
   width : 100%;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
+  padding: 15px;
 }
 
 .modal-content {
@@ -430,7 +439,12 @@ p {
   
 }
 .modal-message {
-  height: 350px;
+  height: 400px;
+  width : 470px;
+  resize : none;
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
+
 }
 .modal-date {
   height: 40px
@@ -487,14 +501,18 @@ p {
   width : 300px;
   height : 300px;
 }
-.loading{
-  margin-left : 150px;
+.loading label{
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
+  color : black;
 }
 .warn{
   color: red;
+  font-size : 20px;
 }
 .notwarn{
   color:green;
+  font-size : 20px;
 }
 
 </style>

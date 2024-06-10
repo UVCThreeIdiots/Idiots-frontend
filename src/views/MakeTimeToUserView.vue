@@ -9,24 +9,23 @@
     </div>
     <div class="border-box">
       <div class="settings">
-        <div v-if="currentStep === 0" class="textarea">
+        <div v-if="currentStep === 0" class="textarea01">
           <label for="title"></label>
-          <textarea type="text" id="email" v-model="email" class="custom-textarea9"></textarea>
-          <button @click="emailCheck">이메일체크</button>
-          <button>이메일체크(test)</button>
+          <textarea type="text" id="email" v-model="email" class="custom-textarea9" placeholder="이곳에 캡슐을 전송받을 유저의 이메일을 입력하자!!!"> </textarea>
+          <div class="button-div">
+            <button class = "emailChecker" @click="emailCheck">이메일체크</button>
+          </div>
           <div class="warnings" v-if="isEmailChecked">
-            <p class = "info" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
-            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
+            <p class = "info o" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
+            <p class = "info x" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
           </div>
         </div>
         <div v-if="currentStep === 1" class="textarea">
           <label for="title"></label>
-          <textarea type="text" id="title" v-model="title" class="custom-textarea0"></textarea>
+          <textarea type="text" id="title" v-model="title" class="custom-textarea0" placeholder = "이곳에 제목을 입력하자!!"></textarea>
           <label for="message"></label>
-          <textarea type="text" id="message" v-model="message" class="custom-textarea"></textarea>
+          <textarea type="text" id="message" v-model="message" class="custom-textarea" placeholder = "이곳에 내용을 입력하자!!!"></textarea>
           <div class="warnings">
-            <p class = "info" v-if="isEmail">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
-            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
           </div>
         </div>
         <div v-if="currentStep === 2" class="buttons-and-ment">
@@ -41,6 +40,7 @@
           <div class="warnings">
           <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
           <p v-else-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
+          <p v-else class="notwarn">해당 날짜로 캡슐을 보낼 수 있습니다!</p>
           </div>
         </div>
         <div v-if="currentStep === 3">
@@ -64,13 +64,15 @@
     </div>
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
-        <h2>To. 미래의 {{ otherUserName }}</h2>
-        <p class = "modal-message">{{ message }}</p>
+        <h2 v-if="isEmailExists" >To. 미래의 {{ otherUserName }}</h2>
+        <h2 v-else>To. 미래의 {{ email }}</h2>
+        <textarea class = "modal-message" v-model="message" :disabled="true"></textarea>
         <p class = "modal-date">설정된 날짜: {{ formattedDate }}</p>
-        <p class = "modal-warn">타임캡슐을 제작하시겠습니까?<br>주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <p class = "modal-warn">주의 : 생성된 타임캡슐은 수정 삭제가 불가하며, 설정된 날짜까지 조회가 불가합니다.</p>
+        <p>타임캡슐을 생성하시겠습니까? YES:<input v-model="isChecked" type="checkbox" class="checkbox"/></p>
         <div class="modal-buttons">
-          <button @click="timeCapsuleSubmit">확인</button>
           <button @click="closeModal">취소</button>
+          <button @click="timeCapsuleSubmit" :disabled="!isChecked">확인</button>
         </div>
       </div>
     </div>
@@ -83,10 +85,10 @@ import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
 
 const useStore = useUserStore();
-const title = ref('이곳에 제목을 입력하자!')
-const email = ref('이곳에 캡슐을 전송받을 유저의 이메일을 입력하자!')
-const message = ref('이곳에 내용을 입력하자!');
-const typedText = ref('어떤 유저에게 캡슐을 전달할까?');
+const title = ref('')
+const email = ref('')
+const message = ref('');
+const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 유저에게 타임캡슐을 전송할까?');
 const currentStep = ref(0);
 const otherUserName = ref('');
 const otherUserid = ref('');
@@ -99,7 +101,7 @@ const date = currentDate.getDate().toString().padStart(2, '0');
 const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
 const isEmailChecked = ref(false);
 const isEmailExists = ref(false);
-
+const isChecked = ref(false);
 const isValidDueDate = computed(()=> {
   let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
   let month = dateUnits.value[4] + dateUnits.value[5];
@@ -168,6 +170,9 @@ const emailCheck = () => {
       }
       else{
       isEmailChecked.value = true;
+      isEmailExists.value = false;
+      otherUserName.value = null;
+      otherUserid.value = null;
       }
     }
 
@@ -183,13 +188,22 @@ const nextStep = () => {
   if (currentStep.value < stepsInfo) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?';
+      typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 유저에게 타임캡슐을 전송할까?';
     else if (currentStep.value === 1)
-      typedText.value = '그렇다면, 타임 캡슐을 언제 전달할까?';
+      if (!otherUserName.value) 
+        typedText.value = `${email.value}에게 어떤 내용을 전달할까?`
+      else
+        typedText.value = `${otherUserName.value}에게 어떤 내용을 전달할까?`;
     else if (currentStep.value === 2)
-      typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
+      typedText.value = '그렇다면, 타임 캡슐을 언제 전달할까?';
     else if (currentStep.value === 3)
-      typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+      typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
+    else if (currentStep.value === 4)
+      if (isEmailExists.value)
+        typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 ${otherUserName.value}의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+      else
+        typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+
   }
 };
 const navigateTo = (route) => {
@@ -325,6 +339,7 @@ const timeCapsuleSubmit = () => {
   position: relative;
 }
 .settings {
+  height : 350px;
   display: flex;
   justify-content: center;
 }
@@ -373,9 +388,8 @@ const timeCapsuleSubmit = () => {
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
   color: black;
-  margin-top: 10px;
   font-size: 24px;
-  margin-left: 30px;
+  padding : 8px 24px;
 }
 
 .hidden-char {
@@ -420,6 +434,16 @@ const timeCapsuleSubmit = () => {
   display: flex;
   flex-direction: column;
 }
+.textarea01{
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: center;
+    flex-direction: column;
+
+}
 .custom-textarea0 {
   height: 50px;
   width : 750px;
@@ -427,25 +451,35 @@ const timeCapsuleSubmit = () => {
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 20px;
   margin-bottom : 20px;
+  padding : 15px;
 }
 .custom-textarea9{
   height: 50px;
-  width : 500px;
+  width : 550px;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 20px;
   margin-bottom : 20px;
+  margin-top : 50px;
+  padding: 15px;
 }
 .custom-textarea {
-  height: 160px;
+  height: 250px;
   width : 100%;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 20px;
+  padding: 15px;
 }
-.warnings p{
+.warnings {
   color : red;
   font-size : 20px;
+}
+.info.o {
+  color : green;
+}
+.info.x{
+  color:red;
 }
 .modal-content {
   background: white;
@@ -474,7 +508,11 @@ const timeCapsuleSubmit = () => {
   
 }
 .modal-message {
-  height: 350px;
+  height: 400px;
+  width: 470px;
+  resize: none;
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
 }
 .modal-date {
   height: 40px
@@ -505,7 +543,7 @@ const timeCapsuleSubmit = () => {
 .date-unit {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex;
 }
 
 .date-unit div {
@@ -537,5 +575,32 @@ const timeCapsuleSubmit = () => {
 .warn{
   color: red;
 }
-
+.notwarn{
+  color:green;
+  font-size : 20px;
+}
+.emailChecker{
+  padding: 10px 20px;
+    border: 2px solid grey;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-family: 'CustomFont', Arial, sans-serif;
+    font-size: 20px;
+}
+button:disabled {
+  background-color: #f0f0f0;
+  color: grey; /* 비활성화 상태 버튼의 글자색 */
+  cursor: not-allowed; /* 커서 모양 */
+  opacity: 0.4; /* 불투명도 */
+}
+.loading-image {
+  width : 300px;
+  height : 300px;
+}
+.loading label{
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
+  color : black;
+}
 </style>

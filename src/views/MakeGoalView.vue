@@ -1,9 +1,9 @@
 <template>
   <div id="makegoal" class="container">
     <div class="border-box">
-      <p>
+      <p class = "npc">
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
@@ -17,7 +17,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="goal" placeholder="목표를 입력하세요">
+            <input v-model="goal" placeholder="목표를 입력하세요.">
             <p class="false" v-if="goal.length > 16"> 주의 : 원칙에 따라 최대 16자를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="goal.length < 1"> 주의 : 목표는 공백으로 사용할 수 없습니다!</p>
             <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
@@ -31,7 +31,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputDue" placeholder="1">
+            <input v-model="inputDue" placeholder="목표기간을 입력하세요.(숫자)">
             <p class="false" v-if="inputDue>52"> 주의 : 52주가 넘는 목표기간은 설정 할 수 없습니다. </p>
             <p class="false" v-else-if="inputDue.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputDue<1"> 주의 : 최소 1주 이상의 목표기간을 설정해야 합니다. </p>
@@ -47,7 +47,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputReps" placeholder="1"> 
+            <input v-model="inputReps" placeholder="목표횟수를 입력하세요.(숫자)"> 
             <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="inputReps.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputReps < 1"> 주의 : 최소 1회 이상의 횟수를 설정해야 합니다.</p>
@@ -56,13 +56,16 @@
           </div>
         </div>
         <div v-if="currentStep === 3">
-          <label for="age">"여기에 사진 넣어야함."</label>
+          <div class="loading">
+            <label for="loading">Loading...</label>
+            <img src="../components/images/loading.gif" class="loading-image"/>
+          </div>
         </div>
       </div>
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain">메인 메뉴</button>
+        <button @click="movemain" :disabled="currentStep===3">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
         <button v-if="currentStep === 2" @click="openModal" :disabled="!isValidReps">등록</button>
         <button v-else @click="nextStep" :disabled="currentStep >=3 || (currentStep === 0 && !isValidGoal) || (currentStep === 1 && !isValidDue )">다음</button>
@@ -91,9 +94,10 @@
         <p>목표 기간 : {{ inputDue }}</p>
         <p>목표 횟수 : {{ inputReps }}</p>
         <p class="modal-warn">골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
+        <p>골 캡슐을 생성하시겠습니까? YES:<input v-model="isChecked" type="checkbox" class="checkbox"/></p>
         <div class="modal-buttons">
           <button @click="closeModal">취소</button>
-          <button @click="goalCapsuleSubmit">확인</button>
+          <button @click="goalCapsuleSubmit" :disabled="!isChecked">확인</button>
         </div>
       </div>
     </div>
@@ -114,6 +118,8 @@ const goal = ref('');
 const inputDue = ref('');
 const inputReps = ref('');
 const maxReps = computed(() => inputDue.value * 7);
+const isChecked = ref(false);
+
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
     currentStep.value++;
@@ -251,6 +257,7 @@ body {
   height : 300px;
   justify-content: center;
   gap:20px;
+  font-size : 20px;
 
 }
 
@@ -258,7 +265,7 @@ body {
   align-items: center;
   margin: 10px;
   color: black;
-  font-size : 24px;
+  font-size : 20px;
 }
 .blur{
   display: flex;
@@ -267,19 +274,21 @@ body {
 }
 .unblur input{
 margin-right:10px;
+font-size : 20px;
 }
 .blurdiv1{
   background : lightgrey;
   width : 430px;
   height : 50px;
-  padding: 8px;
-  padding-left : 8px;
+  padding-left : 15px;
+  padding-top: 10px;
 }
 .blurdiv2{
   background : lightgrey;
   width : 70px;
   height : 50px;
-  padding-left : 16px;
+  padding-left: 15px;
+  padding-top : 10px;
   margin-left : 20px;
 
 }
@@ -299,8 +308,10 @@ margin-right:10px;
   height : 50px;
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   background : white;
+  margin : 10px;
+  padding : 15px;
 }
 
 .button-container {
@@ -327,9 +338,7 @@ p {
   width: 100%;
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
-  margin-top: 10px;
-  font-size: 24px;
-  margin-left: 30px;
+  font-size: 20px;
 }
 
 .true {
@@ -445,5 +454,26 @@ p {
 }
 .loading{
   margin-left : 150px;
+  display : flex;
+}
+.npc{
+  padding: 8px 24px;
+  font-size : 24px;
+}
+button:disabled {
+  background-color: #f0f0f0;
+  color: grey; /* 비활성화 상태 버튼의 글자색 */
+  cursor: not-allowed; /* 커서 모양 */
+  opacity: 0.4; /* 불투명도 */
+}
+
+.loading-image {
+  width : 300px;
+  height : 300px;
+}
+.loading label{
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
+  color : black;
 }
 </style>

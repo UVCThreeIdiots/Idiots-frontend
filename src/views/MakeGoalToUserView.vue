@@ -1,9 +1,9 @@
 <template>
   <div id="makegoal" class="container">
     <div class="border-box">
-      <p>
+      <p class="npc">
         <span v-for="(char, index) in typedText" :key="`${currentStep}-${index}`">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
@@ -11,12 +11,13 @@
       <div class="settings">
         <div v-if="currentStep === 0" class="textarea">
           <label for="title"></label>
-          <textarea type="text" id="email" v-model="email" class="custom-textarea9"></textarea>
-          <button @click="emailCheck">이메일체크</button>
-          <button>이메일체크(test)</button>
+          <textarea type="text" id="email" v-model="email" class="custom-textarea9" placeholder="이곳에 캡슐을 전송받을 유저의 이메일을 입력하자!!!"></textarea>
+          <div class="button-div">
+            <button class = "emailChecker" @click="emailCheck">이메일체크</button>
+          </div>
           <div class="warnings" v-if="isEmailChecked">
-            <p class = "info" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
-            <p class = "info" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>받으려는 유저가 해당 이메일로 가입시, 캡슐을 전송합니다.</p>
+            <p class = "info o" v-if="isEmailExists">해당 이메일정보로 가입된 {{ otherUserName }} 님에게 캡슐을 전송합니다.</p>
+            <p class = "info x" v-else>해당 이메일정보로 가입된 유저가 없습니다.<br>가입된 유저에게만 골 캡슐을 전송할 수 있습니다.</p>
           </div>
         </div>
         <div v-if="currentStep === 1">
@@ -27,7 +28,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="goal">
+            <input v-model="goal" placeholder="목표를 입력하세요.(16자 이내)">
             <p class="false" v-if="goal.length > 16"> 주의 : 원칙에 따라 최대 16자를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="goal.length < 1"> 주의 : 목표는 공백으로 사용할 수 없습니다!</p>
             <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
@@ -41,7 +42,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputDue">
+            <input v-model="inputDue" placeholder="목표기간을 입력하세요.(숫자)">
             <p class="false" v-if="inputDue>52"> 주의 : 52주가 넘는 목표기간은 설정 할 수 없습니다. </p>
             <p class="false" v-else-if="inputDue.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputDue<1"> 주의 : 최소 1주 이상의 목표기간을 설정해야 합니다. </p>
@@ -57,7 +58,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputReps"> 
+            <input v-model="inputReps" placeholder="목표횟수를 입력하세요.(숫자)"> 
             <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="inputReps.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputReps < 1"> 주의 : 최소 1회 이상의 횟수를 설정해야 합니다.</p>
@@ -66,16 +67,19 @@
           </div>
         </div>
         <div v-if="currentStep === 4">
-          <label for="age">"여기에 사진 넣어야함."</label>
+          <div class="loading">
+            <label for="loading">Loading...</label>
+            <img src="../components/images/loading.gif" class="loading-image"/>
+          </div>
         </div>
       </div>
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain">메인 메뉴</button>
+        <button @click="movemain" :disabled="currentStep === 4">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=4" @click="beforeStep">이전</button>
         <button v-if="currentStep === 3" @click="openModal" :disabled="!isValidReps">등록</button>
-        <button v-else @click="nextStep" :disabled="currentStep >=4 || (currentStep === 0 && !isEmailChecked)||(currentStep === 1 && !isValidGoal) || (currentStep === 2 && !isValidDue )">다음</button>
+        <button v-else @click="nextStep" :disabled="currentStep >=4 || (currentStep === 0 && !isEmailExists)||(currentStep === 1 && !isValidGoal) || (currentStep === 2 && !isValidDue )">다음</button>
 
 
       </div>
@@ -87,10 +91,12 @@
         <p>목표 : {{ goal }}</p>
         <p>목표 기간 : {{ inputDue }}</p>
         <p>목표 횟수 : {{ inputReps }}</p>
-        <p>골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
-        <button @click="closeModal">취소</button>
-        <button @click="goalCapsuleSubmit">확인</button>
-
+        <p class="modal-warn">골 캡슐을 제작하시겠습니까?<br>주의 : 생성된 골 캡슐은 수정 삭제가 불가합니다.</p>
+        <p>골 캡슐을 생성하시겠습니까? YES:<input v-model="isChecked" type="checkbox" class="checkbox"/></p>
+        <div class="modal-buttons">
+          <button @click="closeModal">취소</button>
+          <button @click="goalCapsuleSubmit" :disabled="!isChecked">확인</button>
+        </div>
       </div>
     </div>
   </div>
@@ -100,32 +106,35 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
-const email = ref('이곳에 이메일 입력!')
+const email = ref('')
 const otherUserid = ref('');
 const otherUserName = ref('');
 const isEmailChecked = ref(false);
 const isEmailExists = ref(false);
-const typedText = ref('이곳에서는 새로운 골 캡슐을 만들어 ');
+const typedText = ref('이곳에서는 새로운 골 캡슐을 만들 수 있단다!\n어떤 유저에게 골 캡슐을 전달할까?');
 const currentStep = ref(0);
 const showModal = ref(false);
-const stepsInfo = 4;
-const goal = ref('목표를 입력하세요');
-const inputDue = ref('1');
-const inputReps = ref('1');
+const stepsInfo = 5;
+const goal = ref('');
+const inputDue = ref('');
+const inputReps = ref('');
 const maxReps = computed(() => inputDue.value * 7);
+const isChecked = ref(false);
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '이곳에서는 새로운 골 캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
+      typedText.value = '이곳에서는 새로운 골 캡슐을 만들 수 있단다!\n어떤 유저에게 골 캡슐을 전달할까?';
     else if (currentStep.value === 1)
-      typedText.value = '목표는 몇 주동안 진행할까?';
+      typedText.value = '어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
     else if (currentStep.value === 2)
-      typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
+      typedText.value = '목표는 몇 주동안 진행할까?';
     else if (currentStep.value === 3)
-      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
+      typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
     else if (currentStep.value === 4)
-      typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
+      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
+    else if (currentStep.value === 5)
+      typedText.value = `${otherUserName.value}의 새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
   }
 };
 
@@ -187,6 +196,9 @@ const emailCheck = () => {
       }
       else{
       isEmailChecked.value = true;
+      isEmailExists.value = false;
+      otherUserName.value = null;
+      otherUserid.value = null;
       }
     }
 
@@ -269,16 +281,32 @@ body {
   flex-direction: column;
   align-items: center;
   height : 300px;
-  justify-content: center;
+  justify-content: flex-start;
   gap:20px;
-
 }
-
-.settings div {
+.settings div{
+  margin: 10px;
+}
+.emailChecker{
+  padding: 10px 20px;
+    border: 2px solid grey;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-family: 'CustomFont', Arial, sans-serif;
+    font-size: 20px;
+}
+.blur {
   align-items: center;
   margin: 10px;
   color: black;
-  font-size : 24px;
+  font-size : 20px;
+}
+.unblur {
+  align-items: center;
+  margin: 10px;
+  color: black;
+  font-size : 20px;
 }
 .blur{
   display: flex;
@@ -292,15 +320,15 @@ margin-right:10px;
   background : lightgrey;
   width : 430px;
   height : 50px;
-  padding: 8px;
-  padding-left : 8px;
+  padding-top : 10px;
+  padding-left : 15px;
 }
 .blurdiv2{
   background : lightgrey;
   width : 70px;
   height : 50px;
-  padding-left : 16px;
-  margin-left : 20px;
+  padding-top : 10px;
+  padding-left : 15px;
 
 }
 
@@ -313,14 +341,15 @@ margin-right:10px;
 
 .settings input {
   align-items: middle;
-  padding: 5px;
   border: 2px solid black;
   width : 600px;
   height : 50px;
   border-radius: 5px;
   font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   background : white;
+  margin : 10px;
+  padding-left : 15px;
 }
 
 .button-container {
@@ -347,9 +376,6 @@ p {
   width: 100%;
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
-  margin-top: 10px;
-  font-size: 24px;
-  margin-left: 30px;
 }
 
 .true {
@@ -392,7 +418,15 @@ p {
   justify-content: center;
   align-items: center;
 }
-
+.textarea{
+  align-items: center;
+    margin: 10px;
+    color: black;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 .custom-textarea {
   height: 330px;
   width : 750px;
@@ -408,9 +442,16 @@ p {
   text-align: center;
   width: 600px;
   height: 500px;
-  color: black; /* Set text color to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  color: black;
 }
-
+.modal-warn {
+  height: 120px;
+  color:red;
+}
 .modal-content h2 {
   margin-bottom: 20px;
   font-size: 24px;
@@ -420,9 +461,7 @@ p {
 .modal-content p {
   margin-bottom: 5px; /* Reduce gap between paragraphs */
   font-size: 20px;
-  color: black; /* Ensure paragraph color is black */
   width: 100%;
-  height: 50px;
 }
 
 .modal-content button {
@@ -454,15 +493,21 @@ p {
 }
 .custom-textarea9{
   height: 50px;
-  width : 500px;
+  width : 550px;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 20px;
   margin-bottom : 20px;
+  margin-top:30px;
+  padding : 15px;
 }
-.warnings{
-  color:red;
+.info.o{
   font-size: 20px;
+  color : green;
+}
+.info.x{
+  font-size: 20px;
+  color : red;
 }
 
 .loading-image {
@@ -471,5 +516,25 @@ p {
 }
 .loading{
   margin-left : 150px;
+  display: flex;
+}
+.npc{
+  padding: 8px 24px;
+  font-size : 24px;
+}
+button:disabled {
+  background-color: #f0f0f0;
+  color: grey; /* 비활성화 상태 버튼의 글자색 */
+  cursor: not-allowed; /* 커서 모양 */
+  opacity: 0.4; /* 불투명도 */
+}
+.loading-image {
+  width : 300px;
+  height : 300px;
+}
+.loading label{
+  font-size : 20px;
+  font-family: 'CustomFont', Arial, sans-serif;
+  color : black;
 }
 </style>
