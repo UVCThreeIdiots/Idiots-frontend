@@ -10,8 +10,10 @@
     <div class="middle">
       <div class="input-container">
         <label for="pw">PW :</label>
-        <input type="password" id="pw" v-model="newPassword" class="custom-input">
-        <input type="password" id="pw" v-model="newPassword" class="custom-input">
+        <input type="password" id="pw" v-model="newPassword" class="custom-input" placeholder="새로운 비밀번호">
+        <div class="newPasswordCheck">
+          <input type="password" id="pw" v-model="newPasswordCheck" class="custom-input" placeholder="비밀번호 확인">
+        </div>
         <div>
           <p v-if="!isValidPassword" class="warn">비밀번호는 4자리 이상 설정해야 합니다!</p>
         </div>
@@ -30,9 +32,10 @@ import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import axios from 'axios';
 
-const typedText = ref('강력한 암호를 입력해주렴 ! ! !');
+const typedText = ref('강력한 암호로 설정 해주렴 ! ! !');
 
 const newPassword = ref('');
+const newPasswordCheck = ref('');
 
 const isValidPassword = computed(()=>{
   const minLen = 4;
@@ -95,6 +98,11 @@ body {
   margin: 0;
 }
 
+.newPasswordCheck {
+  /* border: 2px solid #000; */
+  margin-left: 16px;
+}
+
 .hidden-char {
   visibility: hidden;
   animation: reveal 3s steps(40, end) forwards;
@@ -148,6 +156,9 @@ body {
   border-radius: 15px;
   height: 300px;
   margin: 16px 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bottom{
@@ -175,7 +186,6 @@ body {
   flex-direction: row;
   margin-left: 100px;
   align-items: center;
-  margin-top: 100px;
   flex-wrap: wrap;
 }
 

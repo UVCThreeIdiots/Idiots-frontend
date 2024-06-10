@@ -94,7 +94,8 @@ const router = createRouter({
       path : '/completeTCapsuleDetail/:id',
       name : 'completeTCapsuleDetail',
       component : CompleteTCapsuleDetailView,
-
+    },
+    {
       path : '/maketimetouser/:id',
       name : 'maketimetouser',
       component : MakeTimeToUserView
