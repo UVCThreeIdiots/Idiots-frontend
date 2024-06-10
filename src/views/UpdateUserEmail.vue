@@ -11,11 +11,11 @@
       <div class="input-container">
         <label for="email">변경할 이메일 :</label>
         <input type="text" id="newEmail" v-model="newEmail" class="custom-input">
-        <div>
+      </div>
+      <div class="comment">
           <p v-if="newEmail.length <1" class="warn">변경할 이메일을 작성해주세요!</p>
           <p v-else-if="!isValidEmail" class="warn">잘못된 이메일 형식입니다!</p>
         </div>
-      </div>
     </div>
 
     <div class="bottom">
@@ -111,6 +111,11 @@ body {
   margin: 0;
 }
 
+.comment {
+  margin-top: 20px;
+  height: 20px;
+}
+
 .hidden-char {
   visibility: hidden;
   animation: reveal 3s steps(40, end) forwards;
@@ -164,6 +169,10 @@ body {
   border-radius: 15px;
   height: 300px;
   margin: 16px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .bottom{

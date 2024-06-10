@@ -11,10 +11,10 @@
       <div class="input-container">
         <label for="Name">변경할 이름 :</label>
         <input type="text" id="newName" v-model="newName" class="custom-input" placeholder="새로운 이름을 작성해주세요.">
-        <div>
-          <p v-if="newName.length <1" class="warn">이름은 공백으로 사용할 수 없습니다!</p>
-          <p v-else-if="!isValidName" class="warn">이름은 한글, 영문 및 숫자를 사용해야합니다!!</p>
-        </div>
+      </div>
+      <div class="comment">
+        <p v-if="newName.length <1" class="warn">이름은 공백으로 사용할 수 없습니다!</p>
+        <p v-else-if="!isValidName" class="warn">이름은 한글, 영문 및 숫자를 사용해야합니다!!</p>
       </div>
     </div>
 
@@ -125,6 +125,11 @@ body {
   font-size: 24px;
 }
 
+.comment{
+  /* border: 2px solid #000; */
+  margin-top: 20px;
+  height: 20px;
+}
 
 .border-box {
   border: 2px solid black;
@@ -167,6 +172,10 @@ body {
   border-radius: 15px;
   height: 300px;
   margin: 16px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .bottom{
@@ -210,10 +219,11 @@ body {
   font-family: 'CustomFont', Arial, sans-serif;
   font-size: 24px;
   margin-right: 16px;
+  width: 340px;
 }
 
 label {
-  width:200px;
+  width: 170px;
   font-size: 24px;
   color: black;
 }
