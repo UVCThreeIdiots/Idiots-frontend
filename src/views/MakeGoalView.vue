@@ -404,9 +404,7 @@ p {
 .modal-content p {
   margin-bottom: 5px; /* Reduce gap between paragraphs */
   font-size: 20px;
-  color: black; /* Ensure paragraph color is black */
   width: 100%;
-  height: 50px;
 }
 .modal-warn {
   height: 120px;
