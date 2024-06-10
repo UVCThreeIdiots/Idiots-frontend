@@ -79,7 +79,7 @@
         <input type="text"/>
         <button @click="checkKey"></button>
         <p v-if="isCheckKey">유효한 이메일입니다.</p>
-        <p v-else>잘못된 인증문자 입니다.</p>        
+        <p v-else>잘못된 인증문자 입니다.</p> 
         <button @click="closeModalEmail">취소</button>
         <button @click="closeModalEmailwithSuccess" :disabled="!isCheckKey">확인</button>
       </div>
