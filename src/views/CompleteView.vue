@@ -14,7 +14,11 @@
     <div class="parent">
       <!-- Render GCapsule List -->
       <div class="child" v-for="GCapsule in GCapsuleList" :key="GCapsule.id">
-        <img class="capsule" src="../components/images/capsule.gif">
+        <div class="image-container">
+          <img class="capsule" src="../components/images/capsule.gif">
+          <img v-if="GCapsule.completeGCapsules == 100" src="../components/images/success.png" class="overlay-image">
+          <img v-else src="../components/images/fail.png" class="overlay-image">
+        </div>
         <div>
           <router-link :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }}">
             {{ GCapsule.title }}
@@ -30,7 +34,9 @@
 
       <!-- Render TCapsule List -->
       <div class="child" v-for="TCapsule in TCapsuleList" :key="TCapsule.id">
-        <img class="capsule" src="../components/images/capsule.gif">
+        <div class="image-container">
+          <img class="capsule" src="../components/images/capsule.gif">
+        </div>
         <div>
           <router-link :to="{ name: 'completeTCapsuleDetail', params: { id: TCapsule.id }}">
             {{ TCapsule.title }}
@@ -115,6 +121,23 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.capsule {
+  display: block;
+}
+
+.overlay-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 .progress {
   display: flex;

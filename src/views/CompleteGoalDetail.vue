@@ -16,7 +16,8 @@
         <div class="capsule">
           <div class="capsule-box">
             <img src="../components/images/capsule.gif" class="capsule-image">
-            <img src="../components/images/success.png" class="success-image">
+            <img v-if="progress == 100" src="../components/images/success.png" class="success-image">
+            <img v-else src="../components/images/fail.png" class="failure-image">
           </div>
         </div>
         <div class="capsule"> 
@@ -226,6 +227,15 @@ body {
 }
 
 .success-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
+  width: 50%; /* Adjust the size as needed */
+  height: 50%; /* Adjust the size as needed */
+}
+
+.failure-image {
   position: absolute;
   top: 50%;
   left: 50%;

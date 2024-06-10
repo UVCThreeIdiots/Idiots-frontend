@@ -11,9 +11,9 @@
       <div class="settings">
         <div v-if="currentStep === 0" class="textarea">
           <label for="title"></label>
-          <textarea type="text" id="title" v-model="title" class="custom-textarea0"></textarea>
+          <textarea type="text" id="title" v-model="title" class="custom-textarea0" placeholder="이곳에 제목을 입력하자 ! ! !"></textarea>
           <label for="message"></label>
-          <textarea type="text" id="message" v-model="message" class="custom-textarea"></textarea>
+          <textarea type="text" id="message" v-model="message" class="custom-textarea" placeholder="이곳에 내용을 입력하자 ! ! !"></textarea>
         </div>
         <div v-if="currentStep === 1" class="buttons-and-ment">
           <label for="dueDate"></label>
@@ -84,8 +84,8 @@ import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
 
 const useStore = useUserStore();
-const title = ref('이곳에 제목을 입력하자!')
-const message = ref('이곳에 내용을 입력하자!');
+const title = ref('')
+const message = ref('');
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 내용을 타임 캡슐에 담을까?');
 const currentStep = ref(0);
 const showModal = ref(false);

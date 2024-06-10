@@ -94,9 +94,12 @@ body {
 }
 
 .title {
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
+  font-size: 1.5em;
   font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
 }
 
 .title p {
@@ -105,10 +108,13 @@ body {
 }
 
 .content {
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-  border: 2px solid #000;
+    /* border: 2px solid #eee; */
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #666;
+    margin-top: 10px;
+    display: flex;
+    padding-left: 16px;
 }
 
 .progress {
@@ -135,7 +141,7 @@ body {
 .button-container {
   display: flex;
   /* justify-content: space-around; */
-  margin-top: 8px;
+  margin-top: 24px;
   margin-left: 12px;
 }
 
@@ -214,18 +220,16 @@ body {
 }
 
 .right-board {
-  flex: 2;
   /* border: 2px solid #000; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 10px;
-  border-radius: 15px;
-  color: black;
-  flex-direction: column; /* 세로 정렬을 위해 추가 */
+  flex: 2;
+  background-color: #fff;
+  
 }
 
 .right-board .inner-board {
+  display: flex;
+  flex-direction: column;
   border: 2px solid #000;
   border-radius: 15px;
   width: 100%;

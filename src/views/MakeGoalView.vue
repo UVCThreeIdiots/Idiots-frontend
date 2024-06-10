@@ -17,7 +17,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="goal">
+            <input v-model="goal" placeholder="목표를 입력하세요">
             <p class="false" v-if="goal.length > 16"> 주의 : 원칙에 따라 최대 16자를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="goal.length < 1"> 주의 : 목표는 공백으로 사용할 수 없습니다!</p>
             <p class="true" v-else> 주의 : 목표는 16자 이하로 설정해주십시오.</p>
@@ -31,7 +31,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputDue">
+            <input v-model="inputDue" placeholder="1">
             <p class="false" v-if="inputDue>52"> 주의 : 52주가 넘는 목표기간은 설정 할 수 없습니다. </p>
             <p class="false" v-else-if="inputDue.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputDue<1"> 주의 : 최소 1주 이상의 목표기간을 설정해야 합니다. </p>
@@ -47,7 +47,7 @@
             <div class="blurdiv2">{{ inputReps }}</div> 회
           </div>
           <div class="unblur">
-            <input v-model="inputReps"> 
+            <input v-model="inputReps" placeholder="1"> 
             <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
             <p class="false" v-else-if="inputReps.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
             <p class="false" v-else-if="inputReps < 1"> 주의 : 최소 1회 이상의 횟수를 설정해야 합니다.</p>
@@ -110,9 +110,9 @@ const currentStep = ref(0);
 const showModal = ref(false);
 const dateUnits = ref(['Y', 'Y', 'Y', 'Y', 'M', 'M', 'D', 'D']);
 const stepsInfo = 4;
-const goal = ref('목표를 입력하세요');
-const inputDue = ref('1');
-const inputReps = ref('1');
+const goal = ref('');
+const inputDue = ref('');
+const inputReps = ref('');
 const maxReps = computed(() => inputDue.value * 7);
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {

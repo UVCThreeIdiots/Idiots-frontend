@@ -137,7 +137,8 @@ const closeProgressModal = () => {
 
 const openModal = () => {
   showModal.value = true;
-=======
+};
+
 const maketimeToUser = () => {
   navigateTo(`/maketimeToUser/${userId.value}`);
 }
@@ -163,7 +164,9 @@ const openMakegoalModal = () => {
 const closeMakegoalModal = () => {
   showMakegoalModal.value = false;
 };
+
 </script>
+
 
 <style scoped>
 @font-face {
