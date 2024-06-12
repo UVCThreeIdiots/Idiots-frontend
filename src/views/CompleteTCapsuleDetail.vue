@@ -52,7 +52,11 @@
         <div v-for="image in imagePath" :key="image.id" class="image-box">
           <img :src="image" width="300px" height="200px">
         </div>
-      </div>
+      </div>    
+  </div>
+  <div class="button-container">
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
       <div>
         <button class="btn-style" @click="closeImageModal">뒤로가기</button>
       </div>
@@ -101,6 +105,7 @@ const imagePath = ref([]);
 const audioPath = ref('');
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
+const initialPosition = route.query.initialPosition; // 초기 위치
 
 const showImageModal = ref(false);
 const showVideoModal = ref(false);
@@ -150,6 +155,10 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/complete/${userId.value}`);
 };
+const gamemain = () => {
+  navigateTo(`/complete/${userId.value}?initialPosition=center`);
+}
+onMounted(GCapsuleDetails);
 
 onMounted(TCapsuleDetails);
 </script>

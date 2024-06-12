@@ -29,8 +29,9 @@
 import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
 import axios from 'axios';
-
-
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const initialPosition = route.query.initialPosition;
 const newEmail = ref('');
 
 const typedText = ref('사용하고있는 이메일로 변경해주렴 ! ! !');
@@ -49,7 +50,9 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/updateuserinfo/${userId.value}`);
+  if (initialPosition === 'home') {
+    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
+  }else navigateTo(`/updateuserinfo/${userId.value}`);
 };
 
 const updateEmail = () => {
@@ -76,7 +79,9 @@ const updateEmail = () => {
         if(response.status == 200) {
           console.log('이메일 변경 성공');
           alert('이메일이 성공적으로 변경되었습니다.');
-          navigateTo(`/main/${userId.value}`)
+          if (initialPosition === 'home'){
+            navigateTo(`/maingameview/${userId.value}?initialPosition=userinfo`);
+          }else navigateTo(`/main/${userId.value}`)
         }
       }).catch((error) => {
         alert('이미 등록된 메일이 존재합니다.');

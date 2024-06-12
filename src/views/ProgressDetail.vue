@@ -50,7 +50,8 @@
       </div>    
     </div>
     <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
+      <button v-if="initialPosition==='center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
@@ -74,6 +75,9 @@ const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
 });
+
+//메인메뉴로 갈지 게임메뉴로 갈지 선택
+const initialPosition = route.query.initialPosition; // 초기 위치
 
 const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
@@ -99,6 +103,9 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/progress/${userId.value}`);
 };
+const gamemain = () => {
+  navigateTo(`/progress/${userId.value}?initialPosition=center`)
+}
 
 const increaseProgress = () => {
   const goalId = route.params.goalId;
