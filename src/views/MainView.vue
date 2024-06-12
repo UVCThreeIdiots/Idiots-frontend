@@ -2,7 +2,7 @@
   <div id="main" class="container">
     <img class="obakuser" src="../components/images/prof_oh.png" @click="maingameview">
     <div class="border-box">
-      <p>
+      <p class="top-comment">
         <span v-for="(char, index) in typedText" :key="index">
           <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
@@ -256,6 +256,11 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.top-comment {
+  /* border: 2px solid #000; */
+  padding: 8px;
 }
 
 .pass-check {

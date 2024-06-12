@@ -18,9 +18,11 @@ import DeveloperView from '../views/DeveloperView.vue'
 import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
 import MakeGoalToUserView from '../views/MakeGoalToUserView.vue'
 import UpdateUserNameView from '../views/UpdateUserName.vue'
+import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue';
 import MainGameView from '../views/MainGameView.vue'
 import MainGameView2 from '../views/MainGameView2.vue'
 import MainGameView3 from '../views/MainGameView3.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -114,6 +116,11 @@ const router = createRouter({
       component : MakeGoalToUserView
     },
     {
+      path : '/practice',
+      name : 'practice',
+      component : PracticeTakenPhotoView
+    },
+    {
       path : '/maingameview/:id',
       name : 'maingameview',
       component : MainGameView
@@ -127,8 +134,7 @@ const router = createRouter({
       path : '/maingameview3/:id',
       name :'maingameview3',
       component : MainGameView3
-    }
-
+    },
   ]
 })
 
