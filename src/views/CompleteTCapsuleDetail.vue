@@ -20,7 +20,6 @@
           <p>{{ capsuleDetail.title }}</p>
         </div>
       </div>
-
       <div class="right-board">
         <div class="inner-board">
           <div class="title">
@@ -29,11 +28,60 @@
           <div class="content">
             <p>{{capsuleDetail.body}}</p>
           </div>
+          <div class="files">
+            <button type="button" @click="openImageModal">
+              <img src="../components/images/openimage.png"/>
+            </button>
+            <button type="button" @click="openVideoModal">
+              <img src="../components/images/video.png"/>
+            </button>
+            <button type="button" @click="openAudioModal">
+              <img src="../components/images/mic.png"/>
+            </button>
+          </div>
         </div>
       </div>
-    
-  </div>
-  <div class="button-container">
+    </div>
+
+    <div v-if="showImageModal" class="modal-overlay">
+      <div v-if="imagePath === ''" class="modal-content">
+        <p>저장하신 사진이 없습니다.</p>
+      </div>
+      <div v-else class="modal-content">
+        <h2>이미지보기</h2>
+        <div v-for="image in imagePath" :key="image.id" class="image-box">
+          <img :src="image" width="300px" height="200px">
+        </div>
+      </div>
+      <div>
+        <button class="btn-style" @click="closeImageModal">뒤로가기</button>
+      </div>
+    </div>
+
+    <div v-if="showVideoModal" class="modal-overlay">
+      <div v-if="videoPath === ''" class="modal-content">
+        <p>저장하신 비디오가 없습니다.</p>
+      </div>
+      <div v-else class="modal-content">
+        <h2>동영상보기</h2>
+        <div>
+          <video :src="videoPath" controls autoplay width="400px" height="300px"></video>
+        </div>
+      </div>
+      <button class="btn-style" @click="closeVideoModal">뒤로가기</button>
+    </div>
+
+    <div v-if="showAudioModal" class="modal-overlay">
+      <div v-if="audioPath === ''" class="modal-content">
+        <p>저장하신 음성녹음이 없습니다.</p>
+      </div>
+      <div v-else class="modal-content">
+        <h2>음성듣기</h2>
+      </div>
+      <button class="btn-style" @click="closeAudioModal">뒤로가기</button>
+    </div>
+
+    <div class="button-container">
       <button @click="goBack">뒤로가기</button>
     </div>
 </div>
@@ -48,19 +96,47 @@ import axios from 'axios';
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
 const capsuleDetail = ref([]);
+const videoPath = ref('');
+const imagePath = ref([]);
+const audioPath = ref('');
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
 
+const showImageModal = ref(false);
+const showVideoModal = ref(false);
+const showAudioModal = ref(false);
+
+const openImageModal = () => {
+  showImageModal.value = true;
+}
+const closeImageModal = () => {
+  showImageModal.value = false;
+}
+const openVideoModal = () => {
+  showVideoModal.value = true;
+}
+const closeVideoModal = () => {
+  showVideoModal.value = false;
+}
+const openAudioModal = () => {
+  showAudioModal.value = true;
+}
+const closeAudioModal = () => {
+  showAudioModal.value = false;
+}
 
 
 
-const GCapsuleDetails = () => {
+
+const TCapsuleDetails = () => {
   const capsuleId = route.params.id;
   axios.get(`http://localhost:3000/time/TCapsule/${capsuleId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    
+    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
+    videoPath.value = response.data.videoPath ? `http://localhost:3000/${response.data.videoPath}` : '';
+    response.data.audioPath ? audioPath.value : '';
   })
   .catch(error => {
     console.error(error);
@@ -75,7 +151,7 @@ const goBack = () => {
   navigateTo(`/complete/${userId.value}`);
 };
 
-onMounted(GCapsuleDetails);
+onMounted(TCapsuleDetails);
 </script>
 
 <style scoped>
@@ -93,12 +169,99 @@ body {
   margin: 0;
 }
 
+.image-box{
+  border: 1px solid #eee;
+  margin: 0px 0px 16px 0px;
+  padding: 16px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.btn-style {
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin: 10px;
+  color: black; /* Ensure button text color is black */
+}
+
+.modal-content h2 {
+  margin-bottom: 16px;
+}
+
+.modal-overlay .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 600px;
+  height: 500px;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.modal-overlay .modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-overlay .modal-content::-webkit-scrollbar-thumb { 
+    background-color: #cbcbcbbd;
+    border-radius: 15px;
+}
+
+.modal-overlay .modal-content::-webkit-scrollbar-button {
+    display: none;
+}
+
+
+.files {
+  /* border: 2px solid #000; */
+  border-top: 2px double #000;
+  display: flex;
+  padding: 0px 0px 8px 8px;
+}
+
+.files button {
+  margin: 8px 8px 0px 0px;
+  background: white;
+  border: 0px solid white;
+  width: 40px;
+}
+
+.files button:hover {
+  cursor: pointer;
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+.files button img {
+  width: 20px;
+  height: 20px;
+}
+
 .title {
   font-size: 1.5em;
   font-weight: bold;
   color: #333;
   margin-bottom: 15px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px double #000;
   padding-bottom: 10px;
 }
 
@@ -108,13 +271,14 @@ body {
 }
 
 .content {
-    /* border: 2px solid #eee; */
+    /* border: 2px solid #000; */
     font-size: 1.2em;
     line-height: 1.6;
     color: #666;
     margin-top: 10px;
     display: flex;
     padding-left: 16px;
+    height: 90%;
 }
 
 .progress {

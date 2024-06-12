@@ -18,6 +18,7 @@ import DeveloperView from '../views/DeveloperView.vue'
 import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
 import MakeGoalToUserView from '../views/MakeGoalToUserView.vue'
 import UpdateUserNameView from '../views/UpdateUserName.vue'
+import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -110,6 +111,11 @@ const router = createRouter({
       path : '/makegoaltouser/:id',
       name : 'makegoaltouser',
       component : MakeGoalToUserView
+    },
+    {
+      path : '/practice',
+      name : 'practice',
+      component : PracticeTakenPhotoView
     },
   ]
 })
