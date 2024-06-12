@@ -1,6 +1,6 @@
 <template>
   <div id="main" class="container">
-    <img class="obakuser" src="../components/images/prof_oh.png">
+    <img class="obakuser" src="../components/images/prof_oh.png" @click="maingameview">
     <div class="border-box">
       <p>
         <span v-for="(char, index) in typedText" :key="index">
@@ -160,6 +160,9 @@ const complete = () => {
 const logout = () => {
   useStore.logout();
   navigateTo(`/`);
+}
+const maingameview = () =>{
+  navigateTo(`/maingameview/${userId.value}`);
 }
 
 
