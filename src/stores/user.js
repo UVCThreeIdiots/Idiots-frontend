@@ -5,26 +5,26 @@ export const useUserStore = defineStore('user', {
     id: null,
     userId: '',
     name: '',
-    admin: '',
+    role: '',
   }),
   actions: {
-    setUser(id, userId, name, admin) {
-      console.log('setUser', id, userId, name, admin);
+    setUser(id, userId, name, role) {
+      console.log('setUser', id, userId, name, role);
       this.id = id;
       this.userId = userId;
       this.name = name;
-      this.admin = admin;
+      this.role = role;
       console.log('setUser', this.id, this.userId, this.name);
     },
     logout() {
       this.id = null;
       this.userId = '';
       this.name = '';
-      this.admin = null;
+      this.role = null;
       window.localStorage.clear();
     },
     getUser() {
-      const user = { id : this.id, userId : this.userId, name : this.name, admin : this.admin };
+      const user = { id : this.id, userId : this.userId, name : this.name, role : this.role };
       return user;
     },
   },

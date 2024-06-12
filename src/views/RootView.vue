@@ -61,8 +61,8 @@ const loginSubmit = () => {
       const loginedId = userData.id;
       const loginUserId = userData.userId
       const loginedName = userData.name;
-      const loginedAdmin = userData.admin;
-      useStore.setUser(loginedId, loginUserId, loginedName, loginedAdmin);
+      const loginedRole = userData.role;
+      useStore.setUser(loginedId, loginUserId, loginedName, loginedRole);
       navigateTo(`/main/${loginedId}`);
       console.log("로그인 성공");
     }

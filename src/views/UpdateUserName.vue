@@ -81,8 +81,8 @@ const updateName = () => {
           const loginedId = userData.id;
           const loginUserId = userData.userId
           const loginedName = userData.name;
-          const loginedAdmin = userData.admin;
-          useStore.setUser(loginedId, loginUserId, loginedName, loginedAdmin);
+          const loginedRole = userData.role;
+          useStore.setUser(loginedId, loginUserId, loginedName, loginedRole);
           alert('이름이 성공적으로 변경되었습니다.');
           if (initialPosition === 'home'){
             navigateTo(`/maingameview/${loginedId}?initialPosition=userinfo`)

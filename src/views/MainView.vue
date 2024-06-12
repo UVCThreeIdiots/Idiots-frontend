@@ -23,7 +23,7 @@
             <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
           <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="logout">
             <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
-          <a v-if="admin" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
+          <a v-if="role" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
         <span v-if="showLink6">▶</span><span v-else></span>&nbsp;개발자 도구</a>
         </div>
       </div>
@@ -110,7 +110,7 @@ const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
 const userLoginId = ref(useStore.getUser().userId);
 const userId = ref(useStore.getUser().id);
-const admin = ref(useStore.getUser().admin);
+const role = ref(useStore.getUser().role);
 const passwordCheck = ref('');
 const typedText = `${userName.value}는 무엇을 할까?`;
 
