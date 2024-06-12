@@ -31,7 +31,9 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import axios from 'axios';
-
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const initialPosition = route.query.initialPosition;
 const typedText = ref('강력한 암호로 설정 해주렴 ! ! !');
 
 const newPassword = ref('');
@@ -52,7 +54,9 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/updateuserinfo/${userId.value}`);
+  if (initialPosition === 'home'){
+    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
+  }else navigateTo(`/updateuserinfo/${userId.value}`);
 };
 
 const updatePassword = () => {

@@ -76,7 +76,8 @@
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain" :disabled="currentStep === 4">메인 메뉴</button>
+        <button v-if="initialPosition === 'center'" @click="movegame" :disabled="currentStep === 4">메인 메뉴</button>
+        <button v-else @click="movemain" :disabled="currentStep === 4">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=4" @click="beforeStep">이전</button>
         <button v-if="currentStep === 3" @click="openModal" :disabled="!isValidReps">등록</button>
         <button v-else @click="nextStep" :disabled="currentStep >=4 || (currentStep === 0 && !isEmailExists)||(currentStep === 1 && !isValidGoal) || (currentStep === 2 && !isValidDue )">다음</button>
@@ -106,6 +107,8 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
+import { useRoute } from 'vue-router';
+
 const email = ref('')
 const otherUserid = ref('');
 const otherUserName = ref('');
@@ -138,6 +141,10 @@ const nextStep = () => {
   }
 };
 
+//메인메뉴로 갈지 게임메뉴로 갈지 선택
+const route = useRoute();
+const initialPosition = route.query.initialPosition; // 초기 위치
+
 const isValidDue = computed(()=>{
   if (inputDue.value.length <1) return false;
   if (inputDue.value < 1) return false;
@@ -163,6 +170,9 @@ const navigateTo = (route) => {
 };
 const movemain = () => {
   navigateTo(`/main/${userId.value}`);
+}
+const movegame = () => {
+  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;

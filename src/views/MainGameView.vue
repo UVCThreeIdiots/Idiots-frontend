@@ -7,13 +7,15 @@
       </div>
     </div>
     <div class="border-box">
-      <p>x: {{ characterPosition.left }}, y: {{ characterPosition.top }}</p>
+      <!-- <p>x: {{ characterPosition.left }}, y: {{ characterPosition.top }}</p> -->
       <!-- <p class="npc">
         <span v-for="(char, index) in npc" :key="index">
           <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p> -->
       <p v-html="npc"></p>
+      <p v-html="npc2"></p>
+      <img v-if="ThreeIdiots === 1" src="../components/images/ThreeIdiots.png" class="threeIdiots"/>
     </div>
   </div>
   <div v-if="showUserUpdateModal" class="modal-overlay">
@@ -39,12 +41,16 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const initialPosition = route.query.initialPosition; // 초기 위치
 let initialX, initialY;
+const ThreeIdiots = ref(0);
 console.log(initialX, initialY);
 // 초기 위치에 따라 캐릭터의 초기 위치 설정
 if (initialPosition === 'fromOut') {
   initialX = 732;
   initialY = 92;
-} else {
+} else if(initialPosition === 'userinfo') {
+  initialX = 244;
+  initialY = 164;
+}else {
   initialX = 300;
   initialY = 300;
 }
@@ -74,6 +80,11 @@ const characterPosition = ref({
   left: initialX,
 });const step = 8;
 const npc = ref(`${userName.value}! 오늘은 무엇을 할까?`);
+const npc2 = ref(``);
+const today = new Date();
+const year = ref(today.getFullYear());
+const month = ref(today.getMonth() + 1); // getMonth()는 0부터 시작하므로 1을 더해줍니다.
+const day = ref(today.getDate());
 const obstacles = [
   { x1: 148, y1: 30, x2: 620, y2: 116 },
   { x1: 20, y1: 244, x2: 120, y2: 420 },
@@ -82,6 +93,8 @@ const obstacles = [
 const logoutZone = { x1: 120, y1: 300, x2: 150, y2: 410 };
 const moveZone = { x1: 700, y1: 30, x2: 750, y2: 50 };
 const userInfoZone = { x1: 210, y1: 110, x2: 270, y2: 130 };
+const calendarZone = { x1: 100, y1: 0, x2: 150, y2: 60 };
+const pictureZone = { x1: 620, y1 : 0, x2: 680, y2: 60};
 const mapBoundaries = {
   top: 36,
   bottom: 410,
@@ -141,6 +154,7 @@ const handleKeyDown = (event) => {
   ) {
     characterPosition.value = newPosition;
     checkZones(newPosition);
+    checkTagEntry(newPosition);
   }
 }
 
@@ -161,7 +175,7 @@ const checkZones = (position) => {
   } else if (isInZone(position, userInfoZone)) {
     onUserInfoZone();
   } else {
-    npc.value = `${userName.value}! 오늘은 무엇을 할까?`;
+    npc.value = ``;
   }
 }
 
@@ -172,9 +186,33 @@ const isInZone = (position, zone) => {
     position.top > zone.y1;
 }
 
+const checkTagEntry = (position) => {
+  if (
+    position.left < calendarZone.x2 &&
+    position.left  > calendarZone.x1 &&
+    position.top < calendarZone.y2 &&
+    position.top  > calendarZone.y1
+  ) {
+    npc2.value = `[달력]<br>오늘은 ${year.value}년 ${month.value}월 ${day.value}일...`
+  }
+  else if (
+    position.left < pictureZone.x2 &&
+    position.left  > pictureZone.x1 &&
+    position.top < pictureZone.y2 &&
+    position.top  > pictureZone.y1
+  ) {
+    ThreeIdiots.value = 1;
+    npc2.value = `[사진]</br>ThreeIdiots...`;
+  }
+  else {
+    ThreeIdiots.value = 0;
+    npc2.value = '';
+  }
+}
+
 const onLogoutZone = () => {
   console.log('Entered the logout zone!');
-  npc.value = '로그아웃할까?<br>예 : ENTER';
+  npc.value = `[${userName.value}]<br>조금 졸린것 같다. 잠깐 잠을 잘까? (로그아웃됩니다.)<br>예 : ENTER`;
   const handleLogoutKeydown = (event) => {
     if (event.key === 'Enter') {
       useStore.logout();
@@ -196,7 +234,7 @@ const onMoveZone = () => {
 
 const onUserInfoZone = () => {
   console.log('Entered the user info zone!');
-  npc.value = '유저 정보를 수정할까?<br>예 : ENTER';
+  npc.value = '[COMPUTER]<br>유저 정보를 수정할까?<br>예 : ENTER';
   const handleUserInfoKeydown = (event) => {
     if (event.key === 'Enter') {
       openUserUpdateModal();
@@ -246,7 +284,7 @@ const passCheck = () => {
     },
   }).then((response) => {
     if (response.status === 200) {
-      navigateTo(`/updateuserinfo/${userId.value}`);
+      navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }
@@ -255,7 +293,6 @@ const passCheck = () => {
     alert('비밀번호가 일치하지 않습니다.');
   });
 }
-
 const currentCharacterImage = computed(() => new URL(`../components/images/characterImages/${characterImages[currentCharacter.value]}`, import.meta.url).href);
 </script>
 
@@ -279,7 +316,7 @@ const currentCharacterImage = computed(() => new URL(`../components/images/chara
   overflow: hidden;
   font-family: 'CustomFont', Arial, sans-serif;
   color: black;
-  font-size: 24px;
+  font-size: 20px;
   padding : 8px 24px;
 }
 .container {
@@ -305,7 +342,6 @@ const currentCharacterImage = computed(() => new URL(`../components/images/chara
 .Character {
   width: 100px;
   height: 100px;
-  border : 2px solid black;
 }
 .border-box {
   border: 2px solid black;
@@ -314,8 +350,9 @@ const currentCharacterImage = computed(() => new URL(`../components/images/chara
   padding: 15px;
   margin: 10px;
   border-radius: 15px;
-  font-size : 24px;
+  font-size : 20px;
   color : black;
+  display : flex;
 }
 
 /* userinfo modal */
@@ -378,5 +415,11 @@ const currentCharacterImage = computed(() => new URL(`../components/images/chara
   color:red;
   font-size: 20px;
   padding: 16px;
+}
+
+.threeIdiots{
+  width : 90px;
+  height : 90px;
+  border : 2px solid black;
 }
 </style>

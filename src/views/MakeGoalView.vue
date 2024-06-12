@@ -65,7 +65,8 @@
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain" :disabled="currentStep===3">메인 메뉴</button>
+        <button v-if="initialPosition === 'center'" @click="movegame" :disabled="currentStep===3">메인 메뉴</button>
+        <button v-else @click="movemain" :disabled="currentStep===3">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=3" @click="beforeStep">이전</button>
         <button v-if="currentStep === 2" @click="openModal" :disabled="!isValidReps">등록</button>
         <button v-else @click="nextStep" :disabled="currentStep >=3 || (currentStep === 0 && !isValidGoal) || (currentStep === 1 && !isValidDue )">다음</button>
@@ -108,7 +109,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
-
+import { useRoute } from 'vue-router';
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)');
 const currentStep = ref(0);
 const showModal = ref(false);
@@ -119,6 +120,12 @@ const inputDue = ref('');
 const inputReps = ref('');
 const maxReps = computed(() => inputDue.value * 7);
 const isChecked = ref(false);
+//메인메뉴로 갈지 게임메뉴로 갈지 선택
+const route = useRoute();
+const initialPosition = route.query.initialPosition; // 초기 위치
+const useStore = useUserStore();
+const userId = ref(useStore.getUser().id);
+const otherUserName = useStore.name;
 
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
@@ -130,9 +137,9 @@ const nextStep = () => {
     else if (currentStep.value === 2)
       typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
     else if (currentStep.value === 3)
-      typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
+      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
     else if (currentStep.value === 4)
-      typedText.value = `새로운 골 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 너의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+      typedText.value = `${otherUserName.value}의 새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
   }
 };
 
@@ -153,14 +160,16 @@ const isValidReps = computed(()=>{
 const isValidGoal = computed(()=>{
   return (goal.value.length >= 1 && goal.value.length <= 16)
 });
-const useStore = useUserStore();
-const userId = ref(useStore.getUser().id);
+
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
   navigateTo(`/main/${userId.value}`);
+}
+const movegame = () => {
+  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;

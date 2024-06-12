@@ -47,7 +47,8 @@
       </div>    
     </div>
     <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
@@ -71,7 +72,7 @@ const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
 });
-
+const initialPosition = route.query.initialPosition; // 초기 위치
 const GCapsuleDetails = () => {
   const goalId = route.params.id;
   axios.get(`http://localhost:3000/goal/${goalId}`)
@@ -96,7 +97,9 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/complete/${userId.value}`);
 };
-
+const gamemain = () => {
+  navigateTo(`/complete/${userId.value}?initialPosition=center`);
+}
 onMounted(GCapsuleDetails);
 </script>
 

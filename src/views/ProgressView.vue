@@ -15,7 +15,10 @@
         <img class="capsule" src="../components/images/capsule.gif">
         <div>
           <!-- <a href="/encyclopedia" class="capsule-name">{{ capsule.title }}</a> -->
-          <router-link :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }}">
+          <router-link v-if="initialPosition === 'center'" :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }, query: { initialPosition: 'center' } }">
+            {{ capsule.title }}
+          </router-link>
+          <router-link v-else :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }}">
             {{ capsule.title }}
           </router-link>
         </div>
@@ -28,7 +31,8 @@
       </div>
     </div>
     <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
@@ -45,6 +49,8 @@ const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
 
 const typedText = ref('여긴 진척도 확인하는 곳! ');
+const initialPosition = route.query.initialPosition; // 초기 위치
+
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -53,6 +59,9 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/main/${userId.value}`);
 };
+const gamemain = () => {
+  navigateTo(`/maingameview2/${userId.value}?initialPosition=progress`);
+}
 
 const capsuleData = () => {
   const userId = route.params.id;

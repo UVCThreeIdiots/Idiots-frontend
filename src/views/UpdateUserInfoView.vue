@@ -30,6 +30,7 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const useStore = useUserStore();
 const showLink1 = ref(false);
@@ -41,25 +42,37 @@ const userName = ref(useStore.getUser().name);
 const userId = ref(useStore.getUser().id);
 
 const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
+const route = useRoute();
+const initialPosition = route.query.initialPosition; // 초기 위치
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
 const UpdateUserEmail = () => {
-  navigateTo(`/UpdateUserEmail/${userId.value}`);
+  if (initialPosition === 'home'){
+    navigateTo(`/UpdateUserEmail/${userId.value}?initialPosition=home`);
+  } else navigateTo(`/UpdateUserEmail/${userId.value}`);
 };
 
 const UpdateUserPassword = () => {
-  navigateTo(`/UpdateUserPassword/${userId.value}`);
+  if (initialPosition === 'home'){
+    navigateTo(`/UpdateUserPassword/${userId.value}?initialPosition=home`);
+  } else navigateTo(`/UpdateUserPassword/${userId.value}`);
 };
 
 const UpdateUserName = () => {
-  navigateTo(`/UpdateUserName/${userId.value}`);
+  if (initialPosition === 'home'){
+    navigateTo(`/UpdateUserName/${userId.value}?initialPosition=home`);
+  }
+  else navigateTo(`/UpdateUserName/${userId.value}`);
 }
 
 const goBack = () => {
-  navigateTo(`/main/${userId.value}`);
+  if (initialPosition === 'home'){
+    console.log('hi');
+    navigateTo(`/maingameview/${userId.value}?initialPosition=userinfo`);
+  } else navigateTo(`/main/${userId.value}`);
 };
 
 </script>

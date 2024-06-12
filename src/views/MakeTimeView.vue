@@ -25,7 +25,7 @@
             </div>
           </div>
           <div class="warnings">
-          <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다!</p>
+          <p v-if="!isValidDateType" class="warn">날짜의 형식이 잘못되었습니다! 날짜를 확인해주세요!</p>
           <p v-else-if="!isValidDueDate" class="warn">현재 혹은 과거로 캡슐을 보낼 수 없습니다! </p>
           <p v-else class="notwarn">해당 날짜로 캡슐을 보낼 수 있습니다!</p>
           </div>
@@ -43,7 +43,8 @@
     </div>
     <div class="border-box">
       <div class="button-container">
-        <button @click="movemain" :disabled="currentStep===2">메인 메뉴</button>
+        <button v-if="initialPosition === 'center'" @click="movegamemain" :disabled="currentStep===2">메인 메뉴</button>
+        <button v-else @click="movemain" :disabled="currentStep===2">메인 메뉴</button>
         <button :disabled= "currentStep < 1 || currentStep >=2" @click="beforeStep">이전</button>
         <button v-if="currentStep === 1" @click="openModal" :disabled="!isValidDateType || !isValidDueDate">등록</button>
         <button v-else @click="nextStep" :disabled="currentStep >= 2">다음</button>
@@ -83,6 +84,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
+import { useRoute } from 'vue-router';
 
 const useStore = useUserStore();
 const title = ref('')
@@ -104,6 +106,10 @@ const isValidDueDate = computed(()=> {
   let dueDate = new Date(year, month - 1, date);
   return dueDate > currentDate;
 })
+//메인메뉴로 갈지 게임메뉴로 갈지 선택
+const route = useRoute();
+const initialPosition = route.query.initialPosition; // 초기 위치
+
 const isValidDateType = computed(() => {
   const year = parseInt(dateUnits.value.slice(0, 4).join(''));
   const month = parseInt(dateUnits.value.slice(4, 6).join(''));
@@ -169,6 +175,9 @@ const navigateTo = (route) => {
 const movemain = () => {
   navigateTo(`/main/${userId.value}`);
 };
+const movegamemain = () => {
+  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+}
 const beforeStep = () => {
   currentStep.value -= 2;
   nextStep();

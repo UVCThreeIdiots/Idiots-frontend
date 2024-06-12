@@ -29,7 +29,9 @@
 import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
 import axios from 'axios';
-
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const initialPosition = route.query.initialPosition;
 
 const newName = ref('');
 
@@ -50,7 +52,9 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/updateuserinfo/${userId.value}`);
+  if (initialPosition === 'home'){
+    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
+  } else navigateTo(`/updateuserinfo/${userId.value}`);
 };
 
 const updateName = () => {
@@ -80,7 +84,9 @@ const updateName = () => {
           const loginedAdmin = userData.admin;
           useStore.setUser(loginedId, loginUserId, loginedName, loginedAdmin);
           alert('이름이 성공적으로 변경되었습니다.');
-          navigateTo(`/main/${loginedId}`);
+          if (initialPosition === 'home'){
+            navigateTo(`/maingameview/${loginedId}?initialPosition=userinfo`)
+          } else navigateTo(`/main/${loginedId}`);
       })
     }
   }).catch((error) => {

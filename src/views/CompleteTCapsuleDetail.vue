@@ -34,7 +34,8 @@
     
   </div>
   <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
 </div>
 </template>
@@ -50,8 +51,7 @@ const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
 const capsuleDetail = ref([]);
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
-
-
+const initialPosition = route.query.initialPosition; // 초기 위치
 
 
 const GCapsuleDetails = () => {
@@ -74,7 +74,9 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/complete/${userId.value}`);
 };
-
+const gamemain = () => {
+  navigateTo(`/complete/${userId.value}?initialPosition=center`);
+}
 onMounted(GCapsuleDetails);
 </script>
 

@@ -20,10 +20,14 @@
           <img v-else src="../components/images/fail.png" class="overlay-image">
         </div>
         <div>
-          <router-link :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }}">
+          <router-link v-if="initialPosition === 'center'" :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }, query : {initialPosition : 'center'}}">
+            {{ GCapsule.title }}
+          </router-link>
+          <router-link v-else :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }}">
             {{ GCapsule.title }}
           </router-link>
         </div>
+        
         <div class="progress">
           <div class="progress-bar-container">
             <div class="progress-bar" :style="{ width: GCapsule.completeGCapsules + '%' }"></div>
@@ -38,7 +42,10 @@
           <img class="capsule" src="../components/images/capsule.gif">
         </div>
         <div>
-          <router-link :to="{ name: 'completeTCapsuleDetail', params: { id: TCapsule.id }}">
+          <router-link v-if="initialPosition === 'center'" :to="{ name: 'completeTCapsuleDetail', params: { id: TCapsule.id }, query : {initialPosition : 'center'}}">
+            {{ TCapsule.title }}
+          </router-link>
+          <router-link v-else :to="{ name: 'completeTCapsuleDetail', params: { id: TCapsule.id }}">
             {{ TCapsule.title }}
           </router-link>
         </div>
@@ -46,7 +53,8 @@
     </div>
 
     <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
   </div>
 </template>
@@ -62,6 +70,7 @@ const GCapsuleList = ref([]);
 const TCapsuleList = ref([]);
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
+const initialPosition = route.query.initialPosition; // 초기 위치
 
 const typedText = ref('도감을 확인하러 왔구나 ! !');
 
@@ -71,6 +80,9 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/main/${userId.value}`);
 };
+const gamemain = () => {
+  navigateTo(`/maingameview2/${userId.value}?initialPosition=progress`);
+}
 
 const capsuleData = () => {
   const userId = route.params.id;
