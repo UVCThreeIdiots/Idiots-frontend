@@ -16,7 +16,7 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
-
+venv
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -26,5 +26,4 @@ coverage
 *.njsproj
 *.sln
 *.sw?
-
 *.tsbuildinfo
