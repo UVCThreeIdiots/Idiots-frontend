@@ -67,7 +67,7 @@ const capsuleData = () => {
   const userId = route.params.id;
   axios.get(`http://localhost:3000/goal/user/${userId}`)
   .then(response => {
-    console.log(response.data);
+    console.log(response);
     capsuleList.value = response.data.map(capsule => {
       const progress = ((capsule.nowCount / capsule.goalCount) * 100).toFixed(1);
       return {
@@ -77,7 +77,7 @@ const capsuleData = () => {
     });
   })
   .catch(error => {
-    console.error(error);
+    console.error('dpfj',error);
   })
 };
 

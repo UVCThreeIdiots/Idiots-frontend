@@ -2,7 +2,7 @@
   <div id="main" class="container">
     <img class="obakuser" src="../components/images/prof_oh.png">
     <div class="border-box">
-      <p>
+      <p class="top-comment">
         <span v-for="(char, index) in typedText" :key="index">
           <span :style="{'animation-delay': (index * 0.05) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
@@ -103,6 +103,10 @@ body {
   margin: 0;
 }
 
+.top-comment {
+  padding: 8px;
+}
+
 .container {
   font-family: 'CustomFont', Arial, sans-serif;
   width: 900px;
@@ -144,7 +148,6 @@ body {
   margin-bottom : 10px;
 }
 
-
 p {
   margin-top: 10px;
   white-space: pre-wrap;
@@ -161,8 +164,6 @@ p {
   animation: reveal 3s steps(40, end) forwards;
   color: black;
 }
-
-
 
 .border-box {
   border: 2px solid black;

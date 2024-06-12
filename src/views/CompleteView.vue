@@ -96,13 +96,7 @@ const capsuleData = () => {
         completeGCapsules: completeGCapsules,
       };
     });
-    TCapsuleList.value = response.data.tCapsules.map(TCapsule => {
-      const completeTCapsules = ((TCapsule.nowCount / TCapsule.goalCount) * 100).toFixed(1);
-      return {
-        ...TCapsule,
-        completeTCapsules: completeTCapsules,
-      };
-    });
+    TCapsuleList.value = response.data.tCapsules.map(TCapsule => { return TCapsule });
   })
   .catch(error => {
     console.error(error);

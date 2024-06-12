@@ -27,3 +27,5 @@ venv
 *.sln
 *.sw?
 *.tsbuildinfo
+
+/views/PracticeTakenPhoto.vue

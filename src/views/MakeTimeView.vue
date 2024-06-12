@@ -14,6 +14,20 @@
           <textarea type="text" id="title" v-model="title" class="custom-textarea0" placeholder="이곳에 제목을 입력하자 ! ! !"></textarea>
           <label for="message"></label>
           <textarea type="text" id="message" v-model="message" class="custom-textarea" placeholder="이곳에 내용을 입력하자 ! ! !"></textarea>
+          <div class="files">
+            <button type="button" @click="openImageModal">
+              <img src="../components/images/inputimage.png"/>
+            </button>
+            <button type="button" @click="openVideoModal">
+              <img src="../components/images/video.png"/>
+            </button>
+            <button type="button" @click="openAudioModal">
+              <img src="../components/images/mic.png"/>
+            </button>
+          </div>
+          <!-- <div class="file-upload">
+            <input type="file" @change="handleFileUpload" multiple class="choose-file" accept=".png">
+          </div> -->
         </div>
         <div v-if="currentStep === 1" class="buttons-and-ment">
           <label for="dueDate"></label>
@@ -77,11 +91,86 @@
         </div>
       </div>
     </div>
-  </div>
+
+    <div v-if="showImageModal" class="choose-overlay">
+      <div class="choose-content">
+        <h2>선택</h2>
+        <div>
+          <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="triggerFileUpload">
+            <span v-if="showLink1">▶</span><span v-else></span>&nbsp; 이미지 업로드
+          </a>
+          <input type="file" ref="fileInput" @change="handleFileUpload" multiple accept=".png" style="display: none;" />
+          <div v-if="imageUrls.length">
+            <img v-for="(url, i) in imageUrls" :key="i" :src="url" alt="Uploaded Image Preview" />
+          </div>
+        </div>
+        <div>
+          <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="openTakenPhotoModal">
+            <span v-if="showLink2">▶</span><span v-else></span>&nbsp; 사진 찍기
+          </a>
+        </div>
+        <div>
+          <button class="btn-style" @click="closeImageModal">뒤로가기</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showTakenPhotoModal" class="take-photo-overlay">
+      <div class="take-photo-content">
+        <h2>사진 찍기</h2>
+        <div v-if="!photoTaken">
+          <video class="video" ref="video" autoplay ></video>
+          <div>
+            <button @click="takePhoto">
+              <img src="../components/images/camera.png"/>
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <img class="capture-image" :src="photo" alt="Captured Photo" />
+          <button @click="uploadPhoto">사진 업로드</button>
+          <button @click="retakePhoto">다시 찍기</button>
+        </div>
+      </div>
+      <button class="btn-style" @click="closeTakenPhotoModal">뒤로가기</button>
+    </div>
+
+    <div v-if="showVideoModal" class="choose-overlay">
+      <div class="choose-content">
+        <h2>선택</h2>
+        <div>
+          <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="triggerFileUpload">
+            <span v-if="showLink3">▶</span><span v-else></span>&nbsp; 동영상 업로드
+          </a>
+          <input type="file" ref="fileInput" @change="handleFileUpload" multiple accept=".mp4" style="display: none;" />
+          <div v-if="imageUrls.length">
+            <img v-for="(url, i) in imageUrls" :key="i" :src="url" alt="Uploaded Image Preview" />
+          </div>
+        </div>
+        <div>
+          <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="openTakenVideoModal">
+            <span v-if="showLink4">▶</span><span v-else></span>&nbsp; 영상 찍기
+          </a>
+        </div>
+        <div>
+          <button class="btn-style" @click="closeVideoModal">뒤로가기</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="takeVideoModal" class="take-photo-overlay">
+      <div class="take-photo-content">
+        <h2>영상 찍기</h2>
+      </div>
+      <div>
+        <button class="btn-style" @click="closeTakenVideoModal">뒤로가기</button>
+      </div>
+    </div>
+    </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
@@ -99,6 +188,104 @@ const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (
 const date = currentDate.getDate().toString().padStart(2, '0');
 const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
 const isChecked = ref(false);
+const showImageModal = ref(false);
+const showTakenPhotoModal = ref(false);
+const showVideoModal = ref(false);
+const takeVideoModal = ref(false);
+const showLink1 = ref(false);
+const showLink2 = ref(false);
+const showLink3 = ref(false);
+const showLink4 = ref(false);
+const files = ref([]);
+const fileInput = ref(null);
+const imageUrls = ref([]);
+const video = ref(null);
+const photo = ref(null);
+const photoTaken = ref(false);
+let stream = null;
+
+const startVideo = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    if (video.value) {
+      video.value.srcObject = stream;
+    } else {
+      console.error('Video element is not available');
+    }
+  } catch (error) {
+    console.error('Error accessing the camera', error);
+  }
+};
+
+watch(showTakenPhotoModal, (newValue) => {
+  if (newValue) {
+    startVideo();
+  } else {
+    if (stream) {
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      stream = null;
+    }
+  }
+});
+
+const stopVideo = () => {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+};
+
+const takePhoto = () => {
+  console.log('takePhoto 들어옴')
+  const canvas = document.createElement('canvas');
+  canvas.width = video.value.videoWidth;
+  canvas.height = video.value.videoHeight;
+  const context = canvas.getContext('2d');
+  context.drawImage(video.value, 0, 0, canvas.width, canvas.height);
+  photo.value = canvas.toDataURL('image/png');
+  photoTaken.value = true;
+  stopVideo();
+};
+
+const retakePhoto = () => {
+  photo.value = null;
+  photoTaken.value = false;
+  startVideo();
+};
+
+const uploadPhoto = () => {
+  imageUrls.value.push(photo.value);
+  files.value = Array.from(photo.value);
+  console.log(imageUrls.value);
+  retakePhoto();
+}
+
+onMounted(() => {
+  startVideo();
+});
+
+onUnmounted(() => {
+  stopVideo();
+});
+
+const handleFileUpload = (event) => {
+  files.value = Array.from(event.target.files);
+  if(files.value.length > 10) {
+    alert("최대 10개의 이미지를 업로드할 수 있습니다.");
+    return;
+  }
+  for ( let i = 0; i < files.value.length; i++ ) {
+    const file = files.value[i];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+    imageUrls.value.push(e.target.result);
+    console.log(files.value);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+
 const isValidDueDate = computed(()=> {
   let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
   let month = dateUnits.value[4] + dateUnits.value[5];
@@ -152,9 +339,38 @@ const isValidDateType = computed(() => {
   return isYearNumeric && isMonthNumeric && isDayNumeric && isYearValid && isMonthValid && isDayValid && isMonthDayValid(year, month, day);
 });
 
+const triggerPhotoTaken = () => {
+  video.value.click();
+}
 
+const triggerFileUpload = () => {
+  fileInput.value.click();
+}
 
-
+const openImageModal = () => {
+  showImageModal.value = true;
+}
+const closeImageModal = () => {
+  showImageModal.value = false;
+}
+const openTakenPhotoModal = () => {
+  showTakenPhotoModal.value = true;
+}
+const closeTakenPhotoModal = () => {
+  showTakenPhotoModal.value = false;
+}
+const openVideoModal = () => {
+  showVideoModal.value = true;
+}
+const closeVideoModal = () => {
+  showVideoModal.value = false;
+}
+const openTakenVideoModal = () => {
+  takeVideoModal.value = true;
+}
+const closeTakenVideoModal = () => {
+  takeVideoModal.value = false;
+}
 
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
@@ -233,21 +449,29 @@ const formattedDate = computed(() => {
 const userId = ref(useStore.getUser().id);
 
 const timeCapsuleSubmit = () => {
-  const saveData = {
-    title: title.value,
-    userId : userId.value,
-    expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
-    // expired: "2024-06-05T10:27:00+09:00", // 테스트용
-    body: message.value,
-  };
+  const formData = new FormData(); // FormData 객체 생성
 
-  axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
+  // 데이터 추가
+  formData.append('title', title.value);
+  formData.append('userId', userId.value);
+  formData.append('expired', `${formattedDate.value}T00:00:00+09:00`);
+  formData.append('body', message.value);
+
+  // 파일 추가
+  for (const file of files.value) {
+    formData.append('files', file);
+  }
+
+  // axios를 사용하여 요청 보내기
+  axios.post("http://localhost:3000/time", formData, {
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   })
   .then((res) => {
     if (res.status === 200) {
+      console.log(res);
+      console.log(files.value);
       console.log("등록 성공");
       closeModal();
       nextStep();
@@ -259,7 +483,6 @@ const timeCapsuleSubmit = () => {
   .catch((error) => {
     console.error(error);
   });
-
 };
 
 // const testtimecapsulesubmit = () => {
@@ -290,6 +513,147 @@ const timeCapsuleSubmit = () => {
   }
 }
 
+.take-photo-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.take-photo-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 600px;
+  height: 450px;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.take-photo-content img {
+  background-color: white;
+}
+
+.take-photo-content button {
+  background-color: white;
+  border: 1px solid white;
+}
+
+.take-photo-content img:hover {
+  cursor: pointer;
+  background-color: #eee;
+  border-radius: 4px;
+}
+
+.video {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+}
+.capture-image {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+}
+
+.btn-style{
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin: 10px;
+  color: black;
+}
+
+.choose-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.choose-overlay .choose-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 500px;
+  height: 300px;
+  color: black; /* Set text color to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.choose-content img {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+}
+
+.files {
+  /* border: 2px solid #000; */
+  /* border-top: 2px double #000; */
+  display: flex;
+  /* padding: 0px 0px 8px 8px; */
+}
+
+.files button {
+  margin: 8px 8px 0px 0px;
+  background: white;
+  border: 0px solid white;
+  width: 40px;
+}
+
+.files button:hover {
+  cursor: pointer;
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+.files button img {
+  width: 20px;
+  height: 20px;
+}
+
+.file-upload input {
+  background-image: url('../components/images/inputimage.png');
+}
+
+.file-upload{
+  /* border: 2px solid #000; */
+  color: black;
+  font-family: 'CustomFont', Arial, sans-serif;
+  
+}
+
+.file-upload .choose-file {
+  border: 1px solid #787878;
+  border-radius: 5px;
+}
+
 .container {
   font-family: 'CustomFont', Arial, sans-serif;
   width: 900px;
@@ -308,15 +672,15 @@ const timeCapsuleSubmit = () => {
 
 .settings div {
   display: flex;
-  align-items: center;
-  margin: 20px 0;
+  margin: 8px 0;
+  align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap;
   align-content: center;
+  flex-wrap: wrap;
 }
 
 
-.settings input {
+.modal-overlay input {
   align-items: middle;
   padding: 5px;
   border: 2px solid black;
@@ -373,15 +737,8 @@ p {
 }
 
 .settings{
-  height : 350px;
-  align-items : flex-start;
-}
-
-.settings input {
-  height : 300px;
-  width : 750px;
-  border : none;
-  background : #eee;
+  height: 370px;
+  align-items: flex-start;
 }
 
 .modal-overlay {
@@ -395,14 +752,18 @@ p {
   justify-content: center;
   align-items: center;
 }
+
 .textarea{
+  /* border: 2px solid #000; */
   display: flex;
   flex-direction: column;
 }
+
 .npc{
   padding: 8px 24px;
   font-size : 24px;
 }
+
 .custom-textarea0 {
   height: 50px;
   width : 750px;
@@ -411,8 +772,17 @@ p {
   font-size: 20px;
   margin-bottom : 20px;
   padding: 15px;
+  overflow: hidden;
 }
 .custom-textarea {
+  height: 240px;
+  width: 100%;
+  resize: none;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 20px;
+  padding: 15px;
+}
+.file-input {
   height: 250px;
   width : 100%;
   resize: none; /* 사용자가 크기를 조절할 수 없도록 설정 */
