@@ -51,28 +51,28 @@ const navigateTo = (route) => {
 
 const UpdateUserEmail = () => {
   if (initialPosition === 'home'){
-    navigateTo(`/UpdateUserEmail/${userId.value}?initialPosition=home`);
-  } else navigateTo(`/UpdateUserEmail/${userId.value}`);
+    navigateTo(`/UpdateUserEmail/?initialPosition=home`);
+  } else navigateTo(`/UpdateUserEmail/`);
 };
 
 const UpdateUserPassword = () => {
   if (initialPosition === 'home'){
-    navigateTo(`/UpdateUserPassword/${userId.value}?initialPosition=home`);
-  } else navigateTo(`/UpdateUserPassword/${userId.value}`);
+    navigateTo(`/UpdateUserPassword/?initialPosition=home`);
+  } else navigateTo(`/UpdateUserPassword/`);
 };
 
 const UpdateUserName = () => {
   if (initialPosition === 'home'){
-    navigateTo(`/UpdateUserName/${userId.value}?initialPosition=home`);
+    navigateTo(`/UpdateUserName/?initialPosition=home`);
   }
-  else navigateTo(`/UpdateUserName/${userId.value}`);
+  else navigateTo(`/UpdateUserName/`);
 }
 
 const goBack = () => {
   if (initialPosition === 'home'){
     console.log('hi');
-    navigateTo(`/maingameview/${userId.value}?initialPosition=userinfo`);
-  } else navigateTo(`/main/${userId.value}`);
+    navigateTo(`/maingameview/?initialPosition=userinfo`);
+  } else navigateTo(`/main/`);
 };
 
 </script>

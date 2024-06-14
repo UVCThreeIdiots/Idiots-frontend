@@ -57,7 +57,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
@@ -75,7 +75,7 @@ const progress = computed(() => {
 const initialPosition = route.query.initialPosition; // 초기 위치
 const GCapsuleDetails = () => {
   const goalId = route.params.id;
-  axios.get(`http://localhost:3000/goal/${goalId}`)
+  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
@@ -95,10 +95,10 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/complete/${userId.value}`);
+  navigateTo(`/complete/`);
 };
 const gamemain = () => {
-  navigateTo(`/complete/${userId.value}?initialPosition=center`);
+  navigateTo(`/complete/}?initialPosition=center`);
 }
 onMounted(GCapsuleDetails);
 </script>

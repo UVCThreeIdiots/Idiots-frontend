@@ -107,7 +107,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 const typedText = ref('이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)');
@@ -166,10 +166,10 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 }
 const movegame = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+  navigateTo(`/maingameview2/?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -188,14 +188,13 @@ const closeModal = () => {
 
 const goalCapsuleSubmit = () => {
   const saveData = {
-    userId : userId.value,
     title : goal.value,
     body : null,
     goalCount : inputReps.value,
     goalTerm : inputDue.value,
   };
 
-  axios.post("http://localhost:3000/goal", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/goal", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

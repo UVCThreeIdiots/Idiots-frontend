@@ -82,7 +82,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 
@@ -159,7 +159,7 @@ const isValidDateType = computed(() => {
 
 const emailCheck = () => {
   const data = {email : email.value};
-  axios.post("http://localhost:3000/other/email", JSON.stringify(data), {
+  axiosInstance.post("http://localhost:3000/other/email", JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -216,10 +216,10 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 };
 const movegamemain = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+  navigateTo(`/maingameview2/?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -278,7 +278,6 @@ const userId = ref(useStore.getUser().id);
 const timeCapsuleSubmit = () => {
   const saveData = {
     title: title.value,
-    userId : userId.value,
     expired: `${formattedDate.value}`+"T00:00:00+09:00", // datetime 형식으로 변환된 값
     // expired: "2024-06-05T10:27:00+09:00", // 테스트용
     body: message.value,
@@ -286,7 +285,7 @@ const timeCapsuleSubmit = () => {
     otherEmail : email.value,
   };
 
-  axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/time", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

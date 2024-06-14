@@ -36,8 +36,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useUserStore } from '../stores/user.js';
-import axios from 'axios';
 import { useRoute } from 'vue-router';
+import axiosInstance from '@/config/axiosInstance.js';
 const route = useRoute();
 const initialPosition = route.query.initialPosition; // 초기 위치
 let initialX, initialY;
@@ -274,17 +274,16 @@ const closeUserUpdateModal = () => {
 
 const passCheck = () => {
   const saveData = {
-    userId: userLoginId.value,
     password: passwordCheck.value,
   };
 
-  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },
   }).then((response) => {
     if (response.status === 200) {
-      navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
+      navigateTo(`/updateuserinfo/?initialPosition=home`);
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }

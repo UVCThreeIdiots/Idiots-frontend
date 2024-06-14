@@ -105,7 +105,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 
@@ -169,10 +169,10 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 }
 const movegame = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+  navigateTo(`/maingameview2/?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -189,7 +189,7 @@ const closeModal = () => {
 
 const emailCheck = () => {
   const data = {email : email.value};
-  axios.post("http://localhost:3000/other/email", JSON.stringify(data), {
+  axiosInstance.post("http://localhost:3000/other/email", JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -221,7 +221,6 @@ const emailCheck = () => {
 
 const goalCapsuleSubmit = () => {
   const saveData = {
-    userId : userId.value,
     title : goal.value,
     body : null,
     goalCount : inputReps.value,
@@ -230,7 +229,7 @@ const goalCapsuleSubmit = () => {
     otherEmail : email.value,
   };
 
-  axios.post("http://localhost:3000/goal", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/goal", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

@@ -40,13 +40,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useUserStore } from '../stores/user.js';
 
 const route = useRoute();
 const capsuleList = ref([]);
 const useStore = useUserStore();
-const userId = ref(useStore.getUser().id);
 
 const typedText = ref('여긴 진척도 확인하는 곳! ');
 const initialPosition = route.query.initialPosition; // 초기 위치
@@ -57,15 +56,14 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 };
 const gamemain = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=progress`);
+  navigateTo(`/maingameview2/?initialPosition=progress`);
 }
 
 const capsuleData = () => {
-  const userId = route.params.id;
-  axios.get(`http://localhost:3000/goal/user/${userId}`)
+  axiosInstance.get(`http://localhost:3000/goal/user/`)
   .then(response => {
     console.log(response);
     capsuleList.value = response.data.map(capsule => {
