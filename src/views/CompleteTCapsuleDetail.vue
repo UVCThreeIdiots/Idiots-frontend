@@ -53,13 +53,13 @@
           <img :src="image" width="300px" height="200px">
         </div>
       </div>    
-  </div>
-  <div class="button-container">
-      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
-      <button v-else @click="goBack">뒤로가기</button>
       <div>
         <button class="btn-style" @click="closeImageModal">뒤로가기</button>
       </div>
+  </div>
+  <div class="button-container">
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack" style="display: none;">뒤로가기</button>
     </div>
 
     <div v-if="showVideoModal" class="modal-overlay">
@@ -81,6 +81,9 @@
       </div>
       <div v-else class="modal-content">
         <h2>음성듣기</h2>
+        <div>
+          <video :src="audioPath" controls autoplay width="400px" height="300px"></video>
+        </div>
       </div>
       <button class="btn-style" @click="closeAudioModal">뒤로가기</button>
     </div>
@@ -141,7 +144,7 @@ const TCapsuleDetails = () => {
     capsuleDetail.value = response.data;
     imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
     videoPath.value = response.data.videoPath ? `http://localhost:3000/${response.data.videoPath}` : '';
-    response.data.audioPath ? audioPath.value : '';
+    audioPath.value = response.data.audioPath ? `http://localhost:3000/${response.data.audioPath}` : '';
   })
   .catch(error => {
     console.error(error);
@@ -158,7 +161,6 @@ const goBack = () => {
 const gamemain = () => {
   navigateTo(`/complete/?initialPosition=center`);
 }
-onMounted(GCapsuleDetails);
 
 onMounted(TCapsuleDetails);
 </script>

@@ -288,7 +288,6 @@ const onComputerZone = () => {
   npc.value = '[COMPUTER]<br>여기서는 도감 및 진척도를 확인 할 수 있단다. 무엇을 열어볼까??<br>[1] : 진척도를 확인한다 , [2] : 도감을 연다';
 
   const handleComputerKeydown = (event) => {
-    console.log('hi');
     if (event.key === '1') {
       console.log(1);
       navigateTo(`/progress/?initialPosition=center`);
