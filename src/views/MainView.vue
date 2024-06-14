@@ -34,6 +34,8 @@
         <div class="developerToolbox">
           <a @mouseover="showLink7 = true" @mouseleave="showLink7 = false" @click="developer">
             <span v-if="showLink7">▶</span><span v-else></span>&nbsp;시분초 확인 프로그램</a>
+          <a @mouseover="showLink14 = true" @mouseleave="showLink14 = false" @click="adminPage">
+            <span v-if="showLink14">▶</span><span v-else></span>&nbsp;Admin Page</a>
         </div>
         <p class="warn">개발자 도구도 DB랑 연동되어 있습니다!</p>
         <button @click="closeDeveloperModal">취소</button>
@@ -134,7 +136,7 @@ const showLink10 = ref(false);
 const showLink11 = ref(false);
 const showLink12 = ref(false);
 const showLink13 = ref(false);
-
+const showLink14 = ref(false);
 const navigateTo = (route) => {
   window.location.href = route;
 };
@@ -150,6 +152,9 @@ const updateuserinfo = () => {
 }
 const developer = () => {
   navigateTo(`/developer/${userId.value}`);
+}
+const adminPage = () => {
+  navigateTo(`/admin/main`);
 }
 const progress = () => {
   navigateTo(`/progress/${userId.value}`);
@@ -305,6 +310,7 @@ body {
   height: 250px;
   display: block;
   margin: 0 auto 20px;
+  cursor : pointer;
 }
 
 .link-container {
