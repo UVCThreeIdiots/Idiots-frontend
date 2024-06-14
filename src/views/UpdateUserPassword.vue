@@ -79,7 +79,7 @@ const updatePassword = () => {
           alert('변경하려는 비밀번호와 기존의 비밀번호가 동일합니다.');
           return;
         }}).catch((error) => {
-          if (error.response && error.response.status === 400){
+          if (error.response && error.response.status === 401){
             axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
               headers: {
                 'Content-Type': 'application/json',
