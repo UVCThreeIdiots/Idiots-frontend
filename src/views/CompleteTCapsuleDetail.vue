@@ -142,7 +142,7 @@ const TCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
+    imagePath.value = response.data.imagePath ? response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` }) : [];
     videoPath.value = response.data.videoPath ? `http://localhost:3000/${response.data.videoPath}` : '';
     audioPath.value = response.data.audioPath ? `http://localhost:3000/${response.data.audioPath}` : '';
   })

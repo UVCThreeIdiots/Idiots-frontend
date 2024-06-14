@@ -7,7 +7,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { Line } from 'vue-chartjs';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance.js';
 import {
   Chart as ChartJS,
   Title,
@@ -66,7 +66,7 @@ const chartOptions = {
 
 const fetchUserData = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/user/all');
+    const response = await axiosInstance.get('http://localhost:3000/user/all');
     users.value = response.data;
     console.log(response.data);
     updateChartData();
