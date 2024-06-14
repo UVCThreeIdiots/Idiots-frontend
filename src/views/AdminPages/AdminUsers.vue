@@ -210,7 +210,7 @@ const saveEditedUser = async (user) => {
   try {
     const {password, gCapsules, ...newUser} = user;
     
-    await axios.put(`http://localhost:3000/user/${user.id}`,newUser);
+    await axios.put(`http://localhost:3000/admin/user/${user.id}`,newUser);
     editUserId.value = null;
   } catch (error) {
     console.error('Failed to save edited user:', error);
@@ -223,7 +223,7 @@ const cancelEdit = () => {
 
 const deleteUser = async (id) => {
   try {
-    await axios.delete(`http://localhost:3000/user/${id}`);
+    await axios.delete(`http://localhost:3000/admin/user/${id}`);
     usersData();
   } catch (error) {
     console.error('Failed to delete user:', error);
