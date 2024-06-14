@@ -30,16 +30,26 @@
 
 <script setup>
 import { useUserStore } from '../stores/user.js';  // User 스토어를 import
-import { ref } from 'vue';
+import { useSessionStore } from '../stores/session.js';  // Session 스토어를 import
+import { ref, onBeforeMount } from 'vue';
 import axiosInstance from '@/config/axiosInstance';
 
 const userId = ref('');
 const password = ref('');
 const typedText = ref('캡슐의 세계에 잘 왔단다! \n이 곳에서 너의 캡슐을 만들어보자! ');
 const useStore = useUserStore();
+const sessionStore = useSessionStore();
 const navigateTo = (route) => {
   window.location.href = route;
 };
+
+onBeforeMount(async () => {
+  sessionStore.checkSession();
+  if (sessionStore.isLoggedIn) {
+    navigateTo(`/main/`);
+  }
+});
+
 
 const loginSubmit = () => {
   const saveData = {

@@ -169,7 +169,7 @@ router.beforeEach((to, from, next) => {
   const sessionStore = useSessionStore();
   sessionStore.checkSession();
 
-  if (sessionStore.isSessionExpired && to.name !== 'root') {
+  if (sessionStore.isSessionExpired && to.name !== 'root' && to.name !== 'signup') {
     next({ name: 'root' });
   } else {
     next();

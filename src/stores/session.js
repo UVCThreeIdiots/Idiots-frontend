@@ -4,6 +4,7 @@ import { defineStore } from 'pinia';
 export const useSessionStore = defineStore('session', {
   state: () => ({
     isSessionExpired: false,
+    isLoggedIn: false,
   }),
   actions: {
     checkSession() {
@@ -11,7 +12,10 @@ export const useSessionStore = defineStore('session', {
       
       if (!sessionCookie) {
         this.isSessionExpired = true;
+        this.isLoggedIn = false;
+
       } else {
+        this.isLoggedIn = true;
         this.isSessionExpired = false;
       }
     },
