@@ -1,0 +1,296 @@
+<template>
+  <div>
+    <h2>게시글 작성</h2>
+    <form @submit.prevent="submitPost">
+      <!-- 이미지 업로드 -->
+      <div>
+        <h3>이미지 업로드 (최대 10장)</h3>
+        <input type="file" accept="image/*" multiple @change="handleFileUpload($event, 'image')" />
+        <div v-if="imageUrls.length">
+          <img v-for="(url, index) in imageUrls" :key="index" :src="url" alt="Uploaded Image" />
+        </div>
+        <button type="button" @click="openImageModal">사진 촬영</button>
+      </div>
+
+      <!-- 동영상 업로드 -->
+      <div>
+        <h3>동영상 업로드 (최대 1개)</h3>
+        <input type="file" accept="video/*" @change="handleFileUpload($event, 'video')" />
+        <video v-if="videoUrl" :src="videoUrl" controls></video>
+        <button type="button" @click="openVideoModal">동영상 녹화</button>
+      </div>
+
+      <!-- 음성 업로드 -->
+      <div>
+        <h3>음성 업로드 (최대 1개)</h3>
+        <input type="file" accept="audio/*" @change="handleFileUpload($event, 'audio')" />
+        <audio v-if="audioUrl" :src="audioUrl" controls></audio>
+        <button type="button" @click="openAudioModal">음성 녹음</button>
+      </div>
+
+      <!-- 게시글 작성 완료 -->
+      <button type="submit">게시글 작성 완료</button>
+    </form>
+
+    <!-- 이미지 촬영 모달 -->
+    <div v-if="showImageModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>사진 촬영</h2>
+        <video ref="imageVideo" autoplay></video>
+        <button @click="captureImage">사진 찍기</button>
+        <button @click="closeImageModal">닫기</button>
+      </div>
+    </div>
+
+    <!-- 동영상 녹화 모달 -->
+    <div v-if="showVideoModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>동영상 녹화</h2>
+        <video ref="videoRecorder" autoplay></video>
+        <button @click="startVideoRecording">녹화 시작</button>
+        <button @click="stopVideoRecording">녹화 중지</button>
+        <button @click="closeVideoModal">닫기</button>
+      </div>
+    </div>
+
+    <!-- 음성 녹음 모달 -->
+    <div v-if="showAudioModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>음성 녹음</h2>
+        <button @click="startAudioRecording">녹음 시작</button>
+        <button @click="stopAudioRecording">녹음 중지</button>
+        <button @click="closeAudioModal">닫기</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
+
+// 파일 URL 및 상태 변수 선언
+const imageUrls = ref([]);
+const videoUrl = ref(null);
+const audioUrl = ref(null);
+const photoUrl = ref(null);
+const recordedVideoUrl = ref(null);
+const recordedAudioUrl = ref(null);
+
+const showImageModal = ref(false);
+const showVideoModal = ref(false);
+const showAudioModal = ref(false);
+const imageVideo = ref(null);
+const videoRecorder = ref(null);
+
+let imageStream = null;
+let videoStream = null;
+let audioStream = null;
+let videoRecorderInstance = null;
+let audioRecorderInstance = null;
+const videoChunks = [];
+const audioChunks = [];
+
+// 파일 업로드 핸들러
+const handleFileUpload = (event, type) => {
+  const files = event.target.files;
+  if (type === 'image' && files.length + imageUrls.value.length > 10) {
+    alert('이미지는 최대 10장까지 업로드할 수 있습니다.');
+    return;
+  }
+  if (type === 'video' && files.length > 1) {
+    alert('동영상은 최대 1개까지 업로드할 수 있습니다.');
+    return;
+  }
+  if (type === 'audio' && files.length > 1) {
+    alert('음성은 최대 1개까지 업로드할 수 있습니다.');
+    return;
+  }
+
+  for (let file of files) {
+    const url = URL.createObjectURL(file);
+    if (type === 'image') {
+      imageUrls.value.push(url);
+    } else if (type === 'video') {
+      videoUrl.value = url;
+    } else if (type === 'audio') {
+      audioUrl.value = url;
+    }
+  }
+};
+
+// 이미지 모달 열기
+const openImageModal = async () => {
+  showImageModal.value = true;
+  imageStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  imageVideo.value.srcObject = imageStream;
+};
+
+// 이미지 모달 닫기
+const closeImageModal = () => {
+  showImageModal.value = false;
+  stopStream(imageStream);
+};
+
+// 이미지 캡처
+const captureImage = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = imageVideo.value.videoWidth;
+  canvas.height = imageVideo.value.videoHeight;
+  const context = canvas.getContext('2d');
+  context.drawImage(imageVideo.value, 0, 0, canvas.width, canvas.height);
+  photoUrl.value = canvas.toDataURL('image/png');
+  imageUrls.value.push(photoUrl.value);
+};
+
+// 동영상 모달 열기
+const openVideoModal = async () => {
+  showVideoModal.value = true;
+  videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  videoRecorder.value.srcObject = videoStream;
+  videoRecorderInstance = new MediaRecorder(videoStream);
+  videoRecorderInstance.ondataavailable = (event) => {
+    videoChunks.push(event.data);
+  };
+  videoRecorderInstance.onstop = () => {
+    const blob = new Blob(videoChunks, { type: 'video/mp4' });
+    recordedVideoUrl.value = URL.createObjectURL(blob);
+    videoChunks.length = 0;
+  };
+};
+
+// 동영상 모달 닫기
+const closeVideoModal = () => {
+  showVideoModal.value = false;
+  stopStream(videoStream);
+};
+
+// 동영상 녹화 시작
+const startVideoRecording = () => {
+  if (videoRecorderInstance && videoRecorderInstance.state === 'inactive') {
+    videoRecorderInstance.start();
+  }
+};
+
+// 동영상 녹화 중지
+const stopVideoRecording = () => {
+  if (videoRecorderInstance && videoRecorderInstance.state === 'recording') {
+    videoRecorderInstance.stop();
+  }
+};
+
+// 음성 모달 열기
+const openAudioModal = async () => {
+  showAudioModal.value = true;
+};
+
+// 음성 모달 닫기
+const closeAudioModal = () => {
+  showAudioModal.value = false;
+  stopStream(audioStream);
+};
+
+// 음성 녹음 시작
+const startAudioRecording = async () => {
+  audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  audioRecorderInstance = new MediaRecorder(audioStream);
+  audioRecorderInstance.ondataavailable = (event) => {
+    audioChunks.push(event.data);
+  };
+  audioRecorderInstance.onstop = () => {
+    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    recordedAudioUrl.value = URL.createObjectURL(blob);
+    audioChunks.length = 0;
+  };
+  audioRecorderInstance.start();
+};
+
+// 음성 녹음 중지
+const stopAudioRecording = () => {
+  if (audioRecorderInstance && audioRecorderInstance.state === 'recording') {
+    audioRecorderInstance.stop();
+  }
+};
+
+// 스트림 중지
+const stopStream = (stream) => {
+  if (stream) {
+    stream.getTracks().forEach((track) => track.stop());
+  }
+};
+
+// 게시글 작성 완료
+const submitPost = async () => {
+  const formData = new FormData();
+  imageUrls.value.forEach((url, index) => {
+    formData.append(`image${index}`, urlToFile(url, `image${index}.png`));
+  });
+  if (videoUrl.value) {
+    formData.append('video', urlToFile(videoUrl.value, 'video.mp4'));
+  }
+  if (audioUrl.value) {
+    formData.append('audio', urlToFile(audioUrl.value, 'audio.mp3'));
+  }
+  if (photoUrl.value) {
+    formData.append('photo', urlToFile(photoUrl.value, 'photo.png'));
+  }
+  if (recordedVideoUrl.value) {
+    formData.append('recordedVideo', urlToFile(recordedVideoUrl.value, 'recordedVideo.mp4'));
+  }
+  if (recordedAudioUrl.value) {
+    formData.append('recordedAudio', urlToFile(recordedAudioUrl.value, 'recordedAudio.webm'));
+  }
+
+  try {
+    await axios.post('http://localhost:3000/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    alert('게시글이 작성되었습니다.');
+  } catch (error) {
+    console.error('Error submitting the post', error);
+    alert('게시글 작성에 실패했습니다.');
+  }
+};
+
+// URL을 File 객체로 변환
+const urlToFile = (url, filename) => {
+  return fetch(url)
+    .then((res) => res.blob())
+    .then((blob) => {
+      return new File([blob], filename);
+    });
+};
+</script>
+
+<style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+video, img {
+  width: 80%;
+  max-width: 600px;
+  margin: 10px 0;
+}
+
+button {
+  margin: 5px;
+}
+</style>
