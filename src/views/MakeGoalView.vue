@@ -56,6 +56,22 @@
           </div>
         </div>
         <div v-if="currentStep === 3">
+          <label for="reps"></label>
+          <div class="blur">
+            <div class="blurdiv1">{{ goal }}</div> 를
+            <div class="blurdiv2">{{ inputDue }}</div> 주 동안
+            <div class="blurdiv2">{{ inputReps }}</div> 회
+          </div>
+          <div class="unblur">
+            <input v-model="inputReps" placeholder="등록할 보상이 있다면 등록해주세요." :disabled="true"> 
+            <p class="false" v-if="inputReps>maxReps"> 주의 : 원칙에 따라 최대 {{ maxReps }}회를 넘길 수 없습니다. </p>
+            <p class="false" v-else-if="inputReps.length < 1"> 주의 : 빈칸으로 둘 수 없습니다! </p>
+            <p class="false" v-else-if="inputReps < 1"> 주의 : 최소 1회 이상의 횟수를 설정해야 합니다.</p>
+            <p class="false" v-else-if="!isValidReps"> 주의 : 숫자를 입력해야 합니다! </p>
+            <p class="true" v-else> 주의 : 목표는 하루에 최대 1회를 원칙으로 합니다.</p>
+          </div>
+        </div>
+        <div v-if="currentStep === 4">
           <div class="loading">
             <label for="loading">Loading...</label>
             <img src="../components/images/loading.gif" class="loading-image"/>
@@ -137,8 +153,10 @@ const nextStep = () => {
     else if (currentStep.value === 2)
       typedText.value = '기간동안 목표는 몇번 수행할까?\n목표는 하루에 한번까지 수행할 수 있단다!';
     else if (currentStep.value === 3)
-      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
+      typedText.value = '보상이 있다면 목표 달성에 분명 큰 도움이 될꺼란다!\n어떤 보상을 추가할까?';
     else if (currentStep.value === 4)
+      typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
+    else if (currentStep.value === 5)
       typedText.value = `${otherUserName.value}의 새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
   }
 };
@@ -214,15 +232,6 @@ const goalCapsuleSubmit = () => {
     console.error(error);
   });
 };
-
-const testgoalcapsulesubmit = () => {
-  closeModal();
-  nextStep();
-
-  setTimeout(() => {
-        nextStep();
-      }, 5000);
-}
 </script>
 
 
