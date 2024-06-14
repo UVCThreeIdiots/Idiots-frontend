@@ -55,7 +55,6 @@ if (initialPosition === 'capsule') {
 }
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
-const userPk = ref(useStore.getUser().id);
 const currentCharacter = ref(10);
 const step = 8; // 이동 속도 조절
 const npc = ref(`[간호사]<br>어서와 ${userName.value}!`);
@@ -225,7 +224,7 @@ const checkTagEntry = (position) => {
 // 특정 구역에 들어갔을 때 실행되는 함수
 const onOutZone = () => {
   const handleOutKeydown = () => {
-      navigateTo(`/maingameview3/${userPk.value}?initialPosition=center`);
+      navigateTo(`/maingameview3/?initialPosition=center`);
       window.removeEventListener('keydown', handleOutKeydown);
     }
   
@@ -246,9 +245,9 @@ const onCapsuleZone = () => {
 
           const handleMakeTimeKeydown = (event) => {
             if (event.key === '1') {
-              navigateTo(`/maketime/${userPk.value}?initialPosition=center`);
+              navigateTo(`/maketime/?initialPosition=center`);
             } else if (event.key === '2') {
-              navigateTo(`/maketimetouser/${userPk.value}?initialPosition=center`);
+              navigateTo(`/maketimetouser/?initialPosition=center`);
             }
             if (!inComputerZone) {
               window.removeEventListener('keydown', handleMakeTimeKeydown);
@@ -261,9 +260,9 @@ const onCapsuleZone = () => {
 
           const handleMakeGoalKeydown = (event) => {
             if (event.key === '1') {
-              navigateTo(`/makegoal/${userPk.value}?initialPosition=center`);
+              navigateTo(`/makegoal/?initialPosition=center`);
             } else if (event.key === '2') {
-              navigateTo(`/makegoaltouser/${userPk.value}?initialPosition=center`);
+              navigateTo(`/makegoaltouser/?initialPosition=center`);
             }
             if (!inComputerZone) {
               window.removeEventListener('keydown', handleMakeGoalKeydown);
@@ -292,10 +291,10 @@ const onComputerZone = () => {
     console.log('hi');
     if (event.key === '1') {
       console.log(1);
-      navigateTo(`/progress/${userPk.value}?initialPosition=center`);
+      navigateTo(`/progress/?initialPosition=center`);
     } else if (event.key === '2') {
       console.log(2);
-      navigateTo(`/complete/${userPk.value}?initialPosition=center`);
+      navigateTo(`/complete/?initialPosition=center`);
     }
     if (!inComputerZone) {
       window.removeEventListener('keydown', handleComputerKeydown);

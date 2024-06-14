@@ -78,7 +78,8 @@ const currentCharacter = ref(1);
 const characterPosition = ref({
   top: initialY,
   left: initialX,
-});const step = 8;
+});
+const step = 8;
 const npc = ref(`${userName.value}! 오늘은 무엇을 할까?`);
 const npc2 = ref(``);
 const today = new Date();
@@ -233,7 +234,7 @@ const onLogoutZone = () => {
 const onMoveZone = () => {
   console.log('Entered the move zone!');
   const handleMoveKeydown = () => {
-    navigateTo(`/maingameview3/${userPk.value}?initialPosition=home`);
+    navigateTo(`/maingameview3/?initialPosition=home`);
   };
 
   window.addEventListener('keydown', handleMoveKeydown, { once: true });
