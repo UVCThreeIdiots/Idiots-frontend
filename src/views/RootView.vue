@@ -31,7 +31,7 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';  // User 스토어를 import
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 
 const userId = ref('');
 const password = ref('');
@@ -47,7 +47,7 @@ const loginSubmit = () => {
     password: password.value
   };
   console.log({userId, password});
-  axios.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
   headers: {
     "Content-Type": "application/json"
   }
@@ -63,7 +63,7 @@ const loginSubmit = () => {
       const loginedName = userData.name;
       const loginedRole = userData.role;
       useStore.setUser(loginedId, loginUserId, loginedName, loginedRole);
-      navigateTo(`/main/${loginedId}`);
+      navigateTo(`/main/`);
       console.log("로그인 성공");
     }
   })

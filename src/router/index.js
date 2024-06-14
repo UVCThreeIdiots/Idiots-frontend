@@ -22,6 +22,9 @@ import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue';
 import MainGameView from '../views/MainGameView.vue'
 import MainGameView2 from '../views/MainGameView2.vue'
 import MainGameView3 from '../views/MainGameView3.vue'
+
+import { useSessionStore } from '../stores/session'
+
 import AdminMainView from '../views/AdminPages/AdminView.vue'
 import AdminUsersView from '../views/AdminPages/AdminUsers.vue'
 import AdminTimeCapsulesView from '../views/AdminPages/AdminTimeCapsules.vue'
@@ -43,22 +46,22 @@ const router = createRouter({
       // component: DummyFile
     },
     {
-      path: '/main/:id',
+      path: '/main/',
       name: 'main',
       component : MainView
     },
     {
-      path: '/maketime/:id',
+      path: '/maketime/',
       name: 'maketime',
       component : MakeTimeView
     },
     {
-      path: '/makegoal/:id',
+      path: '/makegoal/',
       name: 'makegoal',
       component : MakeGoalView
     },
     {
-      path: '/progress/:id',
+      path: '/progress/',
       name: 'progress',
       component : ProgressView
     },
@@ -69,33 +72,33 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/updateuserinfo/:id',
+      path: '/updateuserinfo/',
       name: 'updateuserinfo',
       component : UpdateUserInfoView
     },
     {
-      path: '/updateUserEmail/:userId',
+      path: '/updateUserEmail/',
       name: 'updateUserEmail',
       component : UpdateUserEmailView
     },
     {
-      path: '/updateUserPassword/:userId',
+      path: '/updateUserPassword/',
       name: 'updateUserPassword',
       component : UpdateUserPasswordView
     },
     {
-      path : '/updateusername/:userId',
+      path : '/updateusername/',
       name : 'updateusername',
       component : UpdateUserNameView
     },
     {
-      path : '/developer/:id',
+      path : '/developer/',
       name : 'developer',
       component : DeveloperView
     },
     {
 
-      path : '/complete/:id',
+      path : '/complete/',
       name : 'complete',
       component : CompleteView
     },
@@ -110,12 +113,12 @@ const router = createRouter({
       component : CompleteTCapsuleDetailView,
     },
     {
-      path : '/maketimetouser/:id',
+      path : '/maketimetouser/',
       name : 'maketimetouser',
       component : MakeTimeToUserView
     },
     {
-      path : '/makegoaltouser/:id',
+      path : '/makegoaltouser/',
       name : 'makegoaltouser',
       component : MakeGoalToUserView
     },
@@ -125,17 +128,17 @@ const router = createRouter({
       component : PracticeTakenPhotoView
     },
     {
-      path : '/maingameview/:id',
+      path : '/maingameview/',
       name : 'maingameview',
       component : MainGameView
     },
     {
-      path: '/maingameview2/:id',
+      path: '/maingameview2/',
       name : 'maingameview2',
       component : MainGameView2
     },
     {
-      path : '/maingameview3/:id',
+      path : '/maingameview3/',
       name :'maingameview3',
       component : MainGameView3
     },
@@ -161,5 +164,16 @@ const router = createRouter({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const sessionStore = useSessionStore();
+  sessionStore.checkSession();
+
+  if (sessionStore.isSessionExpired && to.name !== 'root') {
+    next({ name: 'root' });
+  } else {
+    next();
+  }
+});
 
 export default router

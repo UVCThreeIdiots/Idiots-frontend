@@ -28,7 +28,7 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 const initialPosition = route.query.initialPosition;
@@ -44,7 +44,6 @@ const isValidName = computed(()=>{
 })
 
 const useStore = useUserStore();
-const userId = ref(useStore.getUser().id);
 const userName = ref(useStore.getUser().name);
 
 const navigateTo = (route) => {
@@ -53,8 +52,8 @@ const navigateTo = (route) => {
 
 const goBack = () => {
   if (initialPosition === 'home'){
-    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
-  } else navigateTo(`/updateuserinfo/${userId.value}`);
+    navigateTo(`/updateuserinfo/?initialPosition=home`);
+  } else navigateTo(`/updateuserinfo/`);
 };
 
 const updateName = () => {
@@ -66,13 +65,13 @@ const updateName = () => {
     alert('변경할 이름과 현재 이름이 같습니다.');
     return;
   }
-  axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+  axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json',
     },
   }).then((response) => {
     if(response.status == 200) {
-      axios.get(`http://localhost:3000/user/${userId.value}`, JSON.stringify(response), {
+      axiosInstance.get(`http://localhost:3000/user/`, JSON.stringify(response), {
         headers: {
           "Content-Type": "application/json"
         }

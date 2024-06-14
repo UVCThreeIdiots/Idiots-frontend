@@ -69,8 +69,8 @@ const navigateTo = (route) => {
 };
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
-const userPk = ref(useStore.getUser().id);
 const userRole = ref(useStore.getUser().role);
+
 const currentCharacter = ref(1);
 
 const characterPosition = ref({
@@ -288,14 +288,14 @@ const checkTagEntry = (position) => {
 const onHomeZone = () => {
   console.log('Entered the target zone!');
   const handleHomeKeydown = () => {
-      navigateTo(`/maingameview/${userPk.value}?initialPosition=fromOut`)
+      navigateTo(`/maingameview/?initialPosition=fromOut`)
     }
   window.addEventListener('keydown', handleHomeKeydown, { once: true });
 }
 const onCenterZone = () => {
   console.log('Entered the target zone!');
   const handleCenterKeydown = () => {
-      navigateTo(`/maingameview2/${userPk.value}`)
+      navigateTo(`/maingameview2/`)
     }
   window.addEventListener('keydown', handleCenterKeydown, { once: true });
 }

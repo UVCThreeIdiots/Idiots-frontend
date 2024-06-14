@@ -106,7 +106,7 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
@@ -142,32 +142,39 @@ const navigateTo = (route) => {
 };
 
 const maketime = () => {
-  navigateTo(`/maketime/${userId.value}`);
+  navigateTo(`/maketime/`);
 }
 const makegoal = () => {
-  navigateTo(`/makegoal/${userId.value}`);
+  navigateTo(`/makegoal/`);
 }
 const updateuserinfo = () => {
-  navigateTo(`/updateuserinfo/${userId.value}`);
+  navigateTo(`/updateuserinfo/`);
 }
 const developer = () => {
-  navigateTo(`/developer/${userId.value}`);
+  navigateTo(`/developer/`);
 }
 const adminPage = () => {
   navigateTo(`/admin/main`);
 }
 const progress = () => {
-  navigateTo(`/progress/${userId.value}`);
+  navigateTo(`/progress/`);
 }
 const complete = () => {
-  navigateTo(`/complete/${userId.value}`);
+  navigateTo(`/complete/`);
 }
 const logout = () => {
-  useStore.logout();
-  navigateTo(`/`);
+  axiosInstance.post(`http://localhost:3000/auth/logout/`)
+      .then(response => {
+        console.log(response.data);
+        useStore.logout();
+        navigateTo('/');
+      })
+      .catch(error => {
+        console.log(error);
+      })
 }
 const maingameview = () =>{
-  navigateTo(`/maingameview/${userId.value}`);
+  navigateTo(`/maingameview/`);
 }
 
 
@@ -184,10 +191,10 @@ const openModal = () => {
 };
 
 const maketimeToUser = () => {
-  navigateTo(`/maketimeToUser/${userId.value}`);
+  navigateTo(`/maketimeToUser/`);
 }
 const makegoalToUser = () => {
-  navigateTo(`/makegoalToUser/${userId.value}`);
+  navigateTo(`/makegoalToUser/`);
 }
 const openDeveloperModal = () => {
   showDeveloperModal.value = true;
@@ -217,17 +224,16 @@ const closeUserUpdateModal = () => {
 
 const passCheck = () => {
   const saveData = {
-    userId: userLoginId.value,
     password: passwordCheck.value,
   };
 
-  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },
   }).then((response) => {
     if( response.status === 200){
-      navigateTo(`/updateuserinfo/${userId.value}`);
+      navigateTo(`/updateuserinfo/`);
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }

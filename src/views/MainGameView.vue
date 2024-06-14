@@ -36,8 +36,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useUserStore } from '../stores/user.js';
-import axios from 'axios';
 import { useRoute } from 'vue-router';
+import axiosInstance from '@/config/axiosInstance.js';
 const route = useRoute();
 const initialPosition = route.query.initialPosition; // 초기 위치
 let initialX, initialY;
@@ -78,7 +78,8 @@ const currentCharacter = ref(1);
 const characterPosition = ref({
   top: initialY,
   left: initialX,
-});const step = 8;
+});
+const step = 8;
 const npc = ref(`${userName.value}! 오늘은 무엇을 할까?`);
 const npc2 = ref(``);
 const today = new Date();
@@ -215,8 +216,15 @@ const onLogoutZone = () => {
   npc.value = `[${userName.value}]<br>조금 졸린것 같다. 잠깐 잠을 잘까? (로그아웃됩니다.)<br>예 : ENTER`;
   const handleLogoutKeydown = (event) => {
     if (event.key === 'Enter') {
-      useStore.logout();
-      navigateTo('/');
+      axiosInstance.post(`http://localhost:3000/auth/logout/`)
+      .then(response => {
+        console.log(response.data);
+        useStore.logout();
+        navigateTo('/');
+      })
+      .catch(error => {
+        console.log(error);
+      })
     }
   };
 
@@ -226,7 +234,7 @@ const onLogoutZone = () => {
 const onMoveZone = () => {
   console.log('Entered the move zone!');
   const handleMoveKeydown = () => {
-    navigateTo(`/maingameview3/${userPk.value}?initialPosition=home`);
+    navigateTo(`/maingameview3/?initialPosition=home`);
   };
 
   window.addEventListener('keydown', handleMoveKeydown, { once: true });
@@ -274,17 +282,16 @@ const closeUserUpdateModal = () => {
 
 const passCheck = () => {
   const saveData = {
-    userId: userLoginId.value,
     password: passwordCheck.value,
   };
 
-  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },
   }).then((response) => {
     if (response.status === 200) {
-      navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
+      navigateTo(`/updateuserinfo/?initialPosition=home`);
     } else {
       alert('비밀번호가 일치하지 않습니다.');
     }

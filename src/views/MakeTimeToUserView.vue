@@ -266,7 +266,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 
@@ -444,7 +444,7 @@ const isValidDateType = computed(() => {
 
 const emailCheck = () => {
   const data = {email : email.value};
-  axios.post("http://localhost:3000/other/email", JSON.stringify(data), {
+  axiosInstance.post("http://localhost:3000/other/email", JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -501,10 +501,10 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 };
 const movegamemain = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+  navigateTo(`/maingameview2/?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -784,7 +784,8 @@ const formattedDate = computed(() => {
 });
 const userId = ref(useStore.getUser().id);
 
-const timeCapsuleSubmit = async () => {
+
+const timeCapsuleSubmit = () => {
   const formData = new FormData();
 
   files.value.forEach(file => {
@@ -798,7 +799,7 @@ const timeCapsuleSubmit = async () => {
   formData.append("otherEmail", email.value);
 
   try {
-    await axios.post("http://localhost:3000/time", formData, {
+    axiosInstance.post("http://localhost:3000/time", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

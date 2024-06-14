@@ -30,7 +30,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user.js';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 const initialPosition = route.query.initialPosition;
@@ -46,7 +46,6 @@ const isValidPassword = computed(()=>{
 });
 
 const useStore = useUserStore();
-const userId = ref(useStore.getUser().id);
 const userLoginId = ref(useStore.getUser().userId);
 
 const navigateTo = (route) => {
@@ -55,13 +54,12 @@ const navigateTo = (route) => {
 
 const goBack = () => {
   if (initialPosition === 'home'){
-    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
-  }else navigateTo(`/updateuserinfo/${userId.value}`);
+    navigateTo(`/updateuserinfo/?initialPosition=home`);
+  }else navigateTo(`/updateuserinfo/`);
 };
 
 const updatePassword = () => {
   const saveData = {
-    userId: userLoginId.value,
     password: newPassword.value,
   };
   if ( newPassword.value !== newPasswordCheck.value ) {
@@ -72,7 +70,7 @@ const updatePassword = () => {
   // 비밀번호 변경 시 login post 요청하여 사용자가 새로 변경할 비밀번호로 로그인이 성공적으로 진행된다면
   // 기존의 비밀번호와 동일하기 때문에 동일하다는 얼럿 메세지 출력 후 리턴
   // 만일 로그인이 되지 않는다면 catch구문에서 오히려 비밀번호를 변경해주는 로직
-  axios.post(`http://localhost:3000/auth/login`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -81,16 +79,23 @@ const updatePassword = () => {
           alert('변경하려는 비밀번호와 기존의 비밀번호가 동일합니다.');
           return;
         }}).catch((error) => {
-          if (error.response && error.response.status === 400){
-            axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+          if (error.response && error.response.status === 401){
+            axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
               headers: {
                 'Content-Type': 'application/json',
               },
             }).then(() => {
                 console.log('비밀번호 변경 성공');
                 alert('비밀번호가 변경되었습니다.');
-                useStore.logout();
-                navigateTo(`/`);
+                axiosInstance.post(`http://localhost:3000/auth/logout/`)
+                .then(response => {
+                  console.log(response.data);
+                  useStore.logout();
+                  navigateTo('/');
+                })
+                .catch(error => {
+                  console.log(error);
+                })
             }).catch((error) => {
               console.log('비밀번호 변경 실패', error);
             });

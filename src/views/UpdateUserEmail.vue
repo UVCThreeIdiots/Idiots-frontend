@@ -28,7 +28,7 @@
 <script setup>
 import { useUserStore } from '../stores/user.js';
 import { computed, ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 const initialPosition = route.query.initialPosition;
@@ -51,8 +51,8 @@ const navigateTo = (route) => {
 
 const goBack = () => {
   if (initialPosition === 'home') {
-    navigateTo(`/updateuserinfo/${userId.value}?initialPosition=home`);
-  }else navigateTo(`/updateuserinfo/${userId.value}`);
+    navigateTo(`/updateuserinfo/?initialPosition=home`);
+  }else navigateTo(`/updateuserinfo/`);
 };
 
 const updateEmail = () => {
@@ -62,7 +62,7 @@ const updateEmail = () => {
 
   console.log(saveData);
 
-  axios.get(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData),{
+  axiosInstance.get(`http://localhost:3000/user/`, JSON.stringify(saveData),{
     headers: {
       'Content-Type': 'application/json',
     },
@@ -71,7 +71,7 @@ const updateEmail = () => {
       alert('기존의 이메일과 동일합니다.');
       return;
     } else {
-      axios.put(`http://localhost:3000/user/${userId.value}`, JSON.stringify(saveData), {
+      axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -80,8 +80,8 @@ const updateEmail = () => {
           console.log('이메일 변경 성공');
           alert('이메일이 성공적으로 변경되었습니다.');
           if (initialPosition === 'home'){
-            navigateTo(`/maingameview/${userId.value}?initialPosition=userinfo`);
-          }else navigateTo(`/main/${userId.value}`)
+            navigateTo(`/maingameview/?initialPosition=userinfo`);
+          }else navigateTo(`/main/`)
         }
       }).catch((error) => {
         alert('이미 등록된 메일이 존재합니다.');

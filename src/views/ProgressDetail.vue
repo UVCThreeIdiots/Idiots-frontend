@@ -60,7 +60,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance';
 
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
@@ -81,7 +81,7 @@ const initialPosition = route.query.initialPosition; // 초기 위치
 
 const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
-  axios.get(`http://localhost:3000/goal/${goalId}`)
+  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
@@ -101,10 +101,10 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/progress/${userId.value}`);
+  navigateTo(`/progress/`);
 };
 const gamemain = () => {
-  navigateTo(`/progress/${userId.value}?initialPosition=center`)
+  navigateTo(`/progress/?initialPosition=center`)
 }
 
 const increaseProgress = () => {
@@ -118,7 +118,7 @@ const increaseProgress = () => {
       dailyCheck : dailyCheck.value,
     };
 
-    axios.put(`http://localhost:3000/goal/${goalId}`, JSON.stringify(saveData), {
+    axiosInstance.put(`http://localhost:3000/goal/${goalId}`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json'
       },

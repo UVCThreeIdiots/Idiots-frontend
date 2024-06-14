@@ -270,8 +270,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import axios from 'axios';
+
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import axiosInstance from '@/config/axiosInstance';
+
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 
@@ -679,10 +681,10 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 };
 const movegamemain = () => {
-  navigateTo(`/maingameview2/${userId.value}?initialPosition=capsule`);
+  navigateTo(`/maingameview2/?initialPosition=capsule`);
 }
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -748,7 +750,7 @@ const userId = ref(useStore.getUser().id);
 
 
 // 제출
-const timeCapsuleSubmit = async () => {
+const timeCapsuleSubmit = () => {
   const formData = new FormData(); // FormData 객체 생성
   files.value.forEach(file => {
     formData.append('files', file);
@@ -756,13 +758,12 @@ const timeCapsuleSubmit = async () => {
 
   // 데이터 추가
   formData.append('title', title.value);
-  formData.append('userId', userId.value);
   formData.append('expired', `${formattedDate.value}T00:00:00+09:00`);
   formData.append('body', message.value);
 
   // axios를 사용하여 요청 보내기
   try {
-    await axios.post('http://localhost:3000/time', formData, {
+    axiosInstance.post('http://localhost:3000/time', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

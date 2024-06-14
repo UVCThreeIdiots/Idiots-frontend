@@ -74,8 +74,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
 import { useUserStore } from '../stores/user.js';
+import axiosInstance from '@/config/axiosInstance';
 
 const useStore = useUserStore();
 const message = ref('이곳에 내용을 입력하자!');
@@ -150,7 +150,7 @@ const navigateTo = (route) => {
   window.location.href = route;
 };
 const movemain = () => {
-  navigateTo(`/main/${userId.value}`);
+  navigateTo(`/main/`);
 };
 const beforeStep = () => {
   currentStep.value -= 2;
@@ -211,12 +211,11 @@ const userId = ref(useStore.getUser().id);
 
 const timeCapsuleSubmit = () => {
   const saveData = {
-    userId: userId.value,
     expired: formattedDate.value, // 수정된 부분
     body: message.value,
   };
 
-  axios.post("http://localhost:3000/time", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/time", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
