@@ -59,7 +59,7 @@ const router = createRouter({
       component : ProgressView
     },
     {
-      path: '/ProgressDetail/progress/',
+      path: '/ProgressDetail/progress/:goalId',
       name: 'ProgressDetail',
       component : ProgressDetail,
       props: true,
@@ -96,12 +96,12 @@ const router = createRouter({
       component : CompleteView
     },
     {
-      path : '/completeGoalDetail/',
+      path : '/completeGoalDetail/:id',
       name : 'completeGoalDetail',
       component : CompleteGoalDetailView,
     },
     {
-      path : '/completeTCapsuleDetail/',
+      path : '/completeTCapsuleDetail/:id',
       name : 'completeTCapsuleDetail',
       component : CompleteTCapsuleDetailView,
     },

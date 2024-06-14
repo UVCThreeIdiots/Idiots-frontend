@@ -158,9 +158,15 @@ const complete = () => {
   navigateTo(`/complete/`);
 }
 const logout = () => {
-  axiosInstance.post(`http://localhost:3000/logout/`);
-  useStore.logout();
-  navigateTo(`/`);
+  axiosInstance.post(`http://localhost:3000/auth/logout/`)
+      .then(response => {
+        console.log(response.data);
+        useStore.logout();
+        navigateTo('/');
+      })
+      .catch(error => {
+        console.log(error);
+      })
 }
 const maingameview = () =>{
   navigateTo(`/maingameview/`);
@@ -216,7 +222,7 @@ const passCheck = () => {
     password: passwordCheck.value,
   };
 
-  axiosInstance.post(`http://localhost:3000/info`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },
