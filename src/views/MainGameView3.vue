@@ -12,6 +12,7 @@
     <div class="border-box">
       <!-- <p>x: {{ characterPosition.left }}, y: {{ characterPosition.top }}</p> -->
       <p v-html="npc"></p>
+      <p v-html="npc2"></p>
     </div>
   </div>
 </template>
@@ -21,7 +22,6 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router'; // 추가: 라우터 사용
 
-console.log('hi');
 const characterImages = [
   'character_0.png',
   'character_1.png',
@@ -58,6 +58,9 @@ if (initialPosition === 'home') {
 } else if (initialPosition === 'center') {
   initialX = 878;
   initialY = 836;
+} else if (initialPosition === 'a') {
+  initialX = 950;
+  initialY = 412;
 }
 
 
@@ -67,6 +70,7 @@ const navigateTo = (route) => {
 const useStore = useUserStore();
 const userName = ref(useStore.getUser().name);
 const userPk = ref(useStore.getUser().id);
+const userRole = ref(useStore.getUser().role);
 const currentCharacter = ref(1);
 
 const characterPosition = ref({
@@ -76,7 +80,7 @@ const characterPosition = ref({
 
 const step = 8; // 이동 속도 조절
 const npc = ref(`${userName.value}! 오늘은 무엇을 할까?`);
-
+const npc2 = ref('');
 // 장애물 영역 정의
 const obstacles = [
   { x1: 662, y1: 476, x2: 1166, y2: 796 }, // center
@@ -95,9 +99,10 @@ const obstacles = [
 const homeZone = { x1: 330, y1: 330, x2: 380, y2: 360 };
 const centerZone = { x1: 855, y1: 780, x2: 905, y2: 800 };
 const hometagZone = { x1: 126, y1: 350, x2: 278, y2: 380 };
-const emptytagZone = { x1: 726, y1: 350, x2: 878, y2: 380 };
+const admintagZone = { x1: 726, y1: 350, x2: 878, y2: 380 };
 const centertagZone = { x1: 910, y1: 940, x2: 998, y2: 964 };
 const flowertagZone = { x1: 462, y1: 654, x2: 550, y2: 680 };
+const adminZone = { x1: 926, y1: 350, x2: 982 , y2: 380 };
 const mapBoundaries = {
   top: 0,
   bottom: 1124,
@@ -157,12 +162,27 @@ const handleKeyDown = (event) => {
     !isColliding(newPosition)
   ) {
     characterPosition.value = newPosition;
+    // checkZones(newPosition);
     checkHomeEntry(newPosition);
+    checkAdminEntry(newPosition);
     checkCenterEntry(newPosition);
     updateViewport(newPosition);
     checkTagEntry(newPosition);
   }
 }
+// const isInZone = (position, zone) => {
+//   return position.left < zone.x2 &&
+//     position.left > zone.x1 &&
+//     position.top < zone.y2 &&
+//     position.top > zone.y1;
+// }
+// const checkZones = (position) => {
+//   if (isInZone(position, adminZone)) {
+//     onAdminZone();
+//   } else {
+//     npc.value = ``;
+//   }
+// }
 
 const isColliding = (position) => {
   return obstacles.some(obstacle => 
@@ -197,14 +217,29 @@ const checkCenterEntry = (position) => {
     npc.value = '';
   }
 }
+
+const checkAdminEntry = (position) => {
+  if (
+    position.left < adminZone.x2 &&
+    position.left  > adminZone.x1 &&
+    position.top < adminZone.y2 &&
+    position.top  > adminZone.y1
+  )
+  {
+    onAdminZone();
+  }
+  else {
+    npc2.value = '';
+  }
+}
 const checkTagEntry = (position) => {
   if (
-    position.left < emptytagZone.x2 &&
-    position.left  > emptytagZone.x1 &&
-    position.top < emptytagZone.y2 &&
-    position.top  > emptytagZone.y1
+    position.left < admintagZone.x2 &&
+    position.left  > admintagZone.x1 &&
+    position.top < admintagZone.y2 &&
+    position.top  > admintagZone.y1
   ) {
-    npc.value = '[관리자의 집]<br권한이 있는 사람만 접근 가능합니다.'
+    npc.value = '[관리자의 집]<br>권한이 있는 사람만 접근 가능합니다.'
   }
   else if (
     position.left < hometagZone.x2 &&
@@ -264,7 +299,18 @@ const onCenterZone = () => {
     }
   window.addEventListener('keydown', handleCenterKeydown, { once: true });
 }
+const onAdminZone = () => {
+  console.log('Entered the target zone!');
+  if (userRole.value === 'admin') npc2.value = "[관리자의 집]<br>권한이 확인되었습니다. 관리자 페이지로 이동하시겠습니까?<br>예 : Enter"
+  else npc2.value = "[관리자의 집]<br>굳게 닫혀있다. 누군가의 권한이 필요한것 같다.";
+  const handleAdminKeydown = (event) => {
+    if (event.key === 'Enter') {
+      navigateTo(`/admin/main?initialPosition=g`);
+    }
 
+  };
+  window.addEventListener('keydown', handleAdminKeydown, { once: true });
+}
 const updateViewport = (newPosition) => {
   const viewport = document.querySelector('.viewport');
   const characterPositionX = newPosition.left;
@@ -359,7 +405,7 @@ const currentCharacterImage = computed(() => new URL(`../components/images/chara
   padding: 15px;
   margin: 10px;
   border-radius: 15px;
-  font-size: 24px;
+  font-size: 20px;
   color: black;
 }
 </style>

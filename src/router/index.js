@@ -22,6 +22,10 @@ import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue';
 import MainGameView from '../views/MainGameView.vue'
 import MainGameView2 from '../views/MainGameView2.vue'
 import MainGameView3 from '../views/MainGameView3.vue'
+import AdminMainView from '../views/AdminPages/AdminView.vue'
+import AdminUsersView from '../views/AdminPages/AdminUsers.vue'
+import AdminTimeCapsulesView from '../views/AdminPages/AdminTimeCapsules.vue'
+import AdminGoalCapsulesView from '../views/AdminPages/AdminGoalCapsules.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -135,6 +139,26 @@ const router = createRouter({
       name :'maingameview3',
       component : MainGameView3
     },
+    {
+      path : '/admin/main/',
+      name : 'adminmain',
+      component : AdminMainView
+    },
+    {
+      path : '/admin/users/',
+      name : 'adminusers',
+      component : AdminUsersView
+    },
+    {
+      path : '/admin/timecapsules',
+      name : 'admaintimecapsules',
+      component: AdminTimeCapsulesView
+    },
+    {
+      path : '/admin/goalcapsules',
+      name : 'admaingoalcapsules',
+      component: AdminGoalCapsulesView
+    }
   ]
 })
 
