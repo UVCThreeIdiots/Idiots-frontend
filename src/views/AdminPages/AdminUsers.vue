@@ -212,6 +212,7 @@ const saveEditedUser = async (user) => {
     const {password, gCapsules, ...newUser} = user;
     
     await axiosInstance.put(`http://localhost:3000/user/${user.id}`,newUser);
+
     editUserId.value = null;
   } catch (error) {
     console.error('Failed to save edited user:', error);

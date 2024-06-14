@@ -24,7 +24,6 @@ const route = useRoute();
 const initialPosition = route.query.initialPosition;
 const userStore = useUserStore();
 const userName = ref(userStore.getUser().name);
-const userId = ref(userStore.getUser().id);
 const showCapsuleLinks = ref(false);
 
 const navigateTo = (route) => {
@@ -36,8 +35,8 @@ const moveMain = () => {
   else navigateTo('/admin/main');
 };
 const moveGame = () => {
-  if (initialPosition === 'g') navigateTo(`/maingameview3/${userId.value}?initialPosition=a`);
-  else navigateTo(`/main/${userId.value}`);
+  if (initialPosition === 'g') navigateTo(`/maingameview3/?initialPosition=a`);
+  else navigateTo(`/main/`);
 };
 const moveUsers = () => {
   if (initialPosition === 'g') navigateTo(`/admin/users?initialPosition=g`);
