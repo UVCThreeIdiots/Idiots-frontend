@@ -42,7 +42,7 @@
 <script setup>
 import NavigationView from './NavigationView.vue';
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance.js';
 import VisitorChartView from './VisitorChartView.vue';
 const users = ref([]);
 
