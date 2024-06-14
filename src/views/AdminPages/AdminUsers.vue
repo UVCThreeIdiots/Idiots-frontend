@@ -155,7 +155,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance.js';
 import navigationView from './NavigationView.vue';
 const searchQuery = ref('');
 const searchKey = ref('userId'); // 기본 검색 기준 설정
@@ -179,8 +179,9 @@ const editUserId = ref(null);
 // };
 
 const usersData = () => {
-  axios.get(`http://localhost:3000/user/all`)
+  axiosInstance.get(`http://localhost:3000/user/all`)
   .then(response => {
+    console.log(response.data);
     users.value = response.data;
   })
   .catch(error => {
@@ -190,7 +191,7 @@ const usersData = () => {
 
 const addUser = async () => {
   try {
-    await axios.post('http://localhost:3000/user', newUser.value);
+    await axiosInstance.post('http://localhost:3000/user', newUser.value);
     usersData();
     showAddUserModal.value = false;
   } catch (error) {
@@ -210,7 +211,8 @@ const saveEditedUser = async (user) => {
   try {
     const {password, gCapsules, ...newUser} = user;
     
-    await axios.put(`http://localhost:3000/admin/user/${user.id}`,newUser);
+    await axiosInstance.put(`http://localhost:3000/user/${user.id}`,newUser);
+
     editUserId.value = null;
   } catch (error) {
     console.error('Failed to save edited user:', error);
@@ -223,7 +225,7 @@ const cancelEdit = () => {
 
 const deleteUser = async (id) => {
   try {
-    await axios.delete(`http://localhost:3000/admin/user/${id}`);
+    await axiosInstance.delete(`http://localhost:3000/user/${id}`);
     usersData();
   } catch (error) {
     console.error('Failed to delete user:', error);

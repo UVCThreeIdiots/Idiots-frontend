@@ -92,7 +92,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/config/axiosInstance.js';
 import Navigation from './NavigationView.vue';
 
 const searchQuery = ref('');
@@ -116,7 +116,7 @@ const paginatedCapsules = computed(() => {
 const totalPages = computed(() => Math.ceil(filteredCapsules.value.length / itemsPerPage.value));
 
 const capsulesData = () => {
-  axios.get(`http://localhost:3000/time/allTCapsules`)
+  axiosInstance.get(`http://localhost:3000/time/allTCapsules`)
     .then(response => {
       console.log(response.data);
       capsules.value = response.data.map(capsule => ({
@@ -136,7 +136,7 @@ const cancelDeleteCapsule = () => {
 
 const deleteCapsule = async (id) => {
   try {
-    await axios.delete(`http://localhost:3000/time/deleteTcapsule/${id}`);
+    await axiosInstance.delete(`http://localhost:3000/time/deleteTcapsule/${id}`);
     capsulesData(); // 삭제 후 목록을 다시 불러와서 업데이트
     showDelCapsuleModal.value = false; // 모달 닫기
   } catch (error) {
