@@ -463,7 +463,7 @@ const emailCheck = () => {
       isEmailChecked.value = true;
       isEmailExists.value = false;
       otherUserName.value = null;
-      otherUserid.value = null;
+      otherUserid.value = 0;
       }
     }
 
