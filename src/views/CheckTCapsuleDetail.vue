@@ -156,10 +156,10 @@ const navigateTo = (route) => {
 };
 
 const goBack = () => {
-  navigateTo(`/complete/`);
+  navigateTo(`/checkCapsules/`);
 };
 const gamemain = () => {
-  navigateTo(`/complete/?initialPosition=center`);
+  navigateTo(`/checkCapsules/?initialPosition=center`);
 }
 
 onMounted(TCapsuleDetails);

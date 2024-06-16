@@ -101,13 +101,13 @@
           <a @mouseover="showLink1 = true" @mouseleave="showLink1 = false" @click="triggerImageFileUpload">
             <span v-if="showLink1">▶</span><span v-else></span>&nbsp; 이미지 업로드
           </a>
+          <input type="file" ref="imageFileInput" @change="handleFileUpload($event, 'image')" multiple accept=".png" style="display: none;" />
           <a @mouseover="showLink2 = true" @mouseleave="showLink2 = false" @click="openTakenPhotoModal">
             <span v-if="showLink2">▶</span><span v-else></span>&nbsp; 사진 찍기
           </a>
         </div>
         <div class="modal-image-grid-container">
           <div >
-            <input type="file" ref="imageFileInput" @change="handleFileUpload($event, 'image')" multiple accept=".png" style="display: none;" />
             <div v-if="imageUrls.length" class="image-items">
               <!-- <img class="image"  v-for="(url, i) in imageUrls" :key="i" :src="url" alt="Uploaded Image" /> -->
               <div v-for="(url, i) in imageUrls" :key="i" class="image-item">

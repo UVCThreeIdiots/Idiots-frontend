@@ -39,9 +39,21 @@
             </div> 
           </div>
           <div class="board-bottom">
-            <p>{{now}}</p>
-            <p>{{total}}</p>
-            <p>백분률: {{progress}}</p>
+            <!-- <div v-for="image in imagePath" :key="image.id" class="image-box">
+              <img :src="image" width="300px" height="200px">
+            </div> -->
+            <div class="inner-content">
+              <p>내용이 들어갈꺼임</p>
+            </div>
+            <div v-if="progress == 100" class="show-image-box">
+              <button type="button" @click="openImageModal">
+                <img src="../components/images/openimage.png"/>
+              </button>
+              <p> <== 보상을 확인하세요 ! ! ! </p>
+            </div>
+            <div v-else class="show-image-box">
+              <p>목표를 달성하지 못하여 보상을 확인할 수 없습니다...ㅜㅜ</p>
+            </div>
           </div>
         </div>
       </div>    
@@ -50,6 +62,26 @@
       <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
       <button v-else @click="goBack">뒤로가기</button>
     </div>
+
+    <div v-if="showImageModal" class="modal-overlay">
+      <div v-if="imagePath === ''" class="modal-content">
+        <p>저장하신 사진이 없습니다.</p>
+      </div>
+      <div v-else class="modal-content">
+        <h2>이미지보기</h2>
+        <div v-for="image in imagePath" :key="image.id" class="image-box">
+          <img :src="image" width="300px" height="200px">
+        </div>
+      </div>    
+      <div>
+        <button class="btn-style" @click="closeImageModal">뒤로가기</button>
+      </div>
+    </div>
+    <div class="button-container">
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack" style="display: none;">뒤로가기</button>
+    </div>
+
   </div>
 </template>
 
@@ -68,26 +100,21 @@ const now = ref(0);
 const total = ref(0);
 const dailyCheck = ref(0);
 const isChecked = ref(true);
+const imagePath = ref([]);
 const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
 });
 const initialPosition = route.query.initialPosition; // 초기 위치
-const GCapsuleDetails = () => {
-  const goalId = route.params.id;
-  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
-  .then(response => {
-    console.log(response.data);
-    capsuleDetail.value = response.data;
-    now.value = response.data.nowCount;
-    total.value = response.data.goalCount;
-    dailyCheck.value = response.data.dailyCheck;
-    isChecked.value = !dailyCheck.value;
-    console.log(dailyCheck.value);
-  })
-  .catch(error => {
-    console.error(error);
-  })
+
+const showImageModal = ref(false);
+
+
+const openImageModal = () => {
+  showImageModal.value = true;
+}
+const closeImageModal = () => {
+  showImageModal.value = false;
 }
 
 const navigateTo = (route) => {
@@ -100,6 +127,25 @@ const goBack = () => {
 const gamemain = () => {
   navigateTo(`/complete/}?initialPosition=center`);
 }
+
+const GCapsuleDetails = () => {
+  const goalId = route.params.id;
+  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
+  .then(response => {
+    console.log(response.data);
+    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
+    capsuleDetail.value = response.data;
+    now.value = response.data.nowCount;
+    total.value = response.data.goalCount;
+    dailyCheck.value = response.data.dailyCheck;
+    isChecked.value = !dailyCheck.value;
+    console.log(dailyCheck.value);
+  })
+  .catch(error => {
+    console.error(error);
+  })
+}
+
 onMounted(GCapsuleDetails);
 </script>
 
@@ -116,6 +162,105 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.image-box{
+  border: 1px solid #eee;
+  margin: 0px 0px 16px 0px;
+  padding: 16px;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.btn-style {
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin: 10px;
+  color: black; /* Ensure button text color is black */
+}
+.modal-content h2 {
+  margin-bottom: 16px;
+}
+
+.modal-overlay .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 600px;
+  height: 500px;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.modal-overlay .modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-overlay .modal-content::-webkit-scrollbar-thumb { 
+    background-color: #cbcbcbbd;
+    border-radius: 15px;
+}
+
+.modal-overlay .modal-content::-webkit-scrollbar-button {
+    display: none;
+}
+
+.show-image-box button {
+  /* margin: 8px 8px 0px 0px; */
+  background: white;
+  border: 0px solid white;
+  width: 40px;
+}
+
+.show-image-box button:hover {
+  cursor: pointer;
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+.show-image-box button img {
+  width: 20px;
+  height: 20px;
+}
+
+.show-image-box {
+  /* border: 1px solid red; */
+  display: flex;
+  padding: 8px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+}
+
+.inner-content {
+  /* border: 1px solid green; */
+  height: 88%;
+  display: flex;
+  padding: 8px;
+  border-bottom: 2px double #eee;
+}
+
+.right-board .inner-board .board-bottom {
+  flex: 2;
+  /* border: 2px solid #000; */
+  border-radius: 15px;
+  width: 100%;
+  height: 64%;
 }
 
 .progress {
@@ -276,13 +421,6 @@ body {
   justify-content: space-between;
   margin-top: 8px;
   padding: 16px;
-}
-
-.right-board .inner-board .board-bottom {
-  flex: 2;
-  /* border: 2px solid #000; */
-  border-radius: 15px;
-  width: 100%;
 }
 
 .hidden-char {

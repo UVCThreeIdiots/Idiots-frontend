@@ -14,33 +14,50 @@
     <div class="board">
       <div class="left-board">
         <div class="capsule">
-          <img src="../components/images/capsule.gif">
+          <div class="capsule-box">
+            <img src="../components/images/capsule.gif" class="capsule-image">
+            <img v-if="progress == 100" src="../components/images/success.png" class="success-image">
+            <img v-else src="../components/images/fail.png" class="failure-image">
+          </div>
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
         </div>
       </div>
+
       <div class="right-board">
         <div class="inner-board">
-          <div class="title">
-            <p>제목 : {{capsuleDetail.title}}</p>
+          <div class="board-top">
+              <div class="capsule-name">
+                <p>진행도: </p>
+              <div class="progress">
+                <div class="progress-bar-container">
+                  <div class="progress-bar" :style="{ width: progress + '%' }" />
+                </div>
+              </div>
+              <p> {{ progress }}%</p>
+            </div> 
           </div>
-          <div class="content">
-            <p>{{capsuleDetail.body}}</p>
-          </div>
-          <div class="files">
-            <button type="button" @click="openImageModal">
-              <img src="../components/images/openimage.png"/>
-            </button>
-            <button type="button" @click="openVideoModal">
-              <img src="../components/images/video.png"/>
-            </button>
-            <button type="button" @click="openAudioModal">
-              <img src="../components/images/mic.png"/>
-            </button>
+          <div class="board-bottom">
+            <!-- <div v-for="image in imagePath" :key="image.id" class="image-box">
+              <img :src="image" width="300px" height="200px">
+            </div> -->
+            <div class="inner-content">
+              <p>내용이 들어갈꺼임</p>
+            </div>
+            <div v-if="progress == 100" class="show-image-box">
+              <p>상대방이 목표를 달성하여 보상을 확인할 수 있습니다 ! ! !</p>
+            </div>
+            <div v-else class="show-image-box">
+              <p>상대방이 목표를 달성하지 못하여 보상을 확인할 수 없습니다..</p>
+            </div>
           </div>
         </div>
-      </div>
+      </div>    
+    </div>
+    <div class="button-container">
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
     </div>
 
     <div v-if="showImageModal" class="modal-overlay">
@@ -62,40 +79,11 @@
       <button v-else @click="goBack" style="display: none;">뒤로가기</button>
     </div>
 
-    <div v-if="showVideoModal" class="modal-overlay">
-      <div v-if="videoPath === ''" class="modal-content">
-        <p>저장하신 비디오가 없습니다.</p>
-      </div>
-      <div v-else class="modal-content">
-        <h2>동영상보기</h2>
-        <div>
-          <video :src="videoPath" controls autoplay width="400px" height="300px"></video>
-        </div>
-      </div>
-      <button class="btn-style" @click="closeVideoModal">뒤로가기</button>
-    </div>
-
-    <div v-if="showAudioModal" class="modal-overlay">
-      <div v-if="audioPath === ''" class="modal-content">
-        <p>저장하신 음성녹음이 없습니다.</p>
-      </div>
-      <div v-else class="modal-content">
-        <h2>음성듣기</h2>
-        <div>
-          <video :src="audioPath" controls autoplay width="400px" height="300px"></video>
-        </div>
-      </div>
-      <button class="btn-style" @click="closeAudioModal">뒤로가기</button>
-    </div>
-
-    <div class="button-container">
-      <button @click="goBack">뒤로가기</button>
-    </div>
-</div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 import axiosInstance from '@/config/axiosInstance';
@@ -103,16 +91,21 @@ import axiosInstance from '@/config/axiosInstance';
 const route = useRoute();
 const typedText = ref('캡슐에 대해서 궁금하구나 ! ! !');
 const capsuleDetail = ref([]);
-const videoPath = ref('');
-const imagePath = ref([]);
-const audioPath = ref('');
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
+const now = ref(0);
+const total = ref(0);
+const dailyCheck = ref(0);
+const isChecked = ref(true);
+const imagePath = ref([]);
+const progress = computed(() => {
+  let average = (now.value / total.value) * 100;
+  return average.toFixed(1);
+});
 const initialPosition = route.query.initialPosition; // 초기 위치
 
 const showImageModal = ref(false);
-const showVideoModal = ref(false);
-const showAudioModal = ref(false);
+
 
 const openImageModal = () => {
   showImageModal.value = true;
@@ -120,49 +113,37 @@ const openImageModal = () => {
 const closeImageModal = () => {
   showImageModal.value = false;
 }
-const openVideoModal = () => {
-  showVideoModal.value = true;
-}
-const closeVideoModal = () => {
-  showVideoModal.value = false;
-}
-const openAudioModal = () => {
-  showAudioModal.value = true;
-}
-const closeAudioModal = () => {
-  showAudioModal.value = false;
-}
-
-
-
-
-const TCapsuleDetails = () => {
-  const capsuleId = route.params.id;
-  axiosInstance.get(`http://localhost:3000/time/TCapsule/${capsuleId}`)
-  .then(response => {
-    console.log(response.data);
-    capsuleDetail.value = response.data;
-    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
-    videoPath.value = response.data.videoPath ? `http://localhost:3000/${response.data.videoPath}` : '';
-    audioPath.value = response.data.audioPath ? `http://localhost:3000/${response.data.audioPath}` : '';
-  })
-  .catch(error => {
-    console.error(error);
-  })
-}
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
 
 const goBack = () => {
-  navigateTo(`/complete/`);
+  navigateTo(`/checkCapsules/`);
 };
 const gamemain = () => {
-  navigateTo(`/complete/?initialPosition=center`);
+  navigateTo(`/checkCapsules/}?initialPosition=center`);
 }
 
-onMounted(TCapsuleDetails);
+const GCapsuleDetails = () => {
+  const goalId = route.params.id;
+  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
+  .then(response => {
+    console.log(response.data);
+    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
+    capsuleDetail.value = response.data;
+    now.value = response.data.nowCount;
+    total.value = response.data.goalCount;
+    dailyCheck.value = response.data.dailyCheck;
+    isChecked.value = !dailyCheck.value;
+    console.log(dailyCheck.value);
+  })
+  .catch(error => {
+    console.error(error);
+  })
+}
+
+onMounted(GCapsuleDetails);
 </script>
 
 <style scoped>
@@ -185,7 +166,6 @@ body {
   margin: 0px 0px 16px 0px;
   padding: 16px;
 }
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -198,7 +178,6 @@ body {
   align-items: center;
   flex-direction: column;
 }
-
 .btn-style {
   padding: 10px 20px;
   border: 2px solid black;
@@ -210,7 +189,6 @@ body {
   margin: 10px;
   color: black; /* Ensure button text color is black */
 }
-
 .modal-content h2 {
   margin-bottom: 16px;
 }
@@ -227,7 +205,6 @@ body {
   flex-direction: column;
   overflow: auto;
 }
-
 .modal-overlay .modal-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -241,55 +218,46 @@ body {
     display: none;
 }
 
-
-.files {
-  /* border: 2px solid #000; */
-  border-top: 2px double #000;
-  display: flex;
-  padding: 0px 0px 8px 8px;
-}
-
-.files button {
-  margin: 8px 8px 0px 0px;
+.show-image-box button {
+  /* margin: 8px 8px 0px 0px; */
   background: white;
   border: 0px solid white;
   width: 40px;
 }
 
-.files button:hover {
+.show-image-box button:hover {
   cursor: pointer;
   background-color: #eee;
   border-radius: 8px;
 }
 
-.files button img {
+.show-image-box button img {
   width: 20px;
   height: 20px;
 }
 
-.title {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15px;
-  border-bottom: 2px double #000;
-  padding-bottom: 10px;
-}
-
-.title p {
+.show-image-box {
+  /* border: 1px solid red; */
   display: flex;
-  margin: 8px 8px 0px 16px;
+  padding: 8px;
+  margin-left: 8px;
+  margin-bottom: 8px;
 }
 
-.content {
-    /* border: 2px solid #000; */
-    font-size: 1.2em;
-    line-height: 1.6;
-    color: #666;
-    margin-top: 10px;
-    display: flex;
-    padding-left: 16px;
-    height: 90%;
+.inner-content {
+  /* border: 1px solid green; */
+  height: 88%;
+  display: flex;
+  padding: 8px;
+  border-bottom: 2px double #eee;
+}
+
+.right-board .inner-board .board-bottom {
+  flex: 2;
+  /* border: 2px solid #000; */
+  border-radius: 15px;
+  width: 100%;
+  height: 64%;
 }
 
 .progress {
@@ -316,7 +284,7 @@ body {
 .button-container {
   display: flex;
   /* justify-content: space-around; */
-  margin-top: 24px;
+  margin-top: 8px;
   margin-left: 12px;
 }
 
@@ -394,17 +362,46 @@ body {
   align-content: center;
 }
 
+.capsule-box {
+  position: relative;
+  display: inline-block;
+}
+
+.capsule-image {
+  display: block;
+}
+
+.success-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
+  width: 50%; /* Adjust the size as needed */
+  height: 50%; /* Adjust the size as needed */
+}
+
+.failure-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
+  width: 50%; /* Adjust the size as needed */
+  height: 50%; /* Adjust the size as needed */
+}
+
 .right-board {
-  /* border: 2px solid #000; */
-  padding: 10px;
   flex: 2;
-  background-color: #fff;
-  
+  /* border: 2px solid #000; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 15px;
+  color: black;
+  flex-direction: column; /* 세로 정렬을 위해 추가 */
 }
 
 .right-board .inner-board {
-  display: flex;
-  flex-direction: column;
   border: 2px solid #000;
   border-radius: 15px;
   width: 100%;
@@ -421,13 +418,6 @@ body {
   justify-content: space-between;
   margin-top: 8px;
   padding: 16px;
-}
-
-.right-board .inner-board .board-bottom {
-  flex: 2;
-  /* border: 2px solid #000; */
-  border-radius: 15px;
-  width: 100%;
 }
 
 .hidden-char {
