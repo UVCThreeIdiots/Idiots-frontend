@@ -70,13 +70,13 @@
           <span class="close" @click="showCapsuleDetailsModal = false">&times;</span>
           <h3>Capsule Details</h3>
           <div class="details-content">
-            <p><strong>Capsule ID:</strong> {{ selectedCapsule.id }}</p>
-            <p><strong>User ID:</strong> {{ selectedCapsule.userLoginId }}</p>
+            <p><strong>Capsule ID :</strong> {{ selectedCapsule.id }}</p>
+            <p><strong>User ID :</strong> {{ selectedCapsule.userLoginId }}</p>
+            <p v-if="selectedCapsule.otherId>0"><strong>To Whom :</strong> {{ selectedCapsule.otherId }}</p>
+            <p v-else-if="selectedCapsule.otherEmail"><strong>To Whom :</strong> {{ selectedCapsule.otherEmail }}</p>
+            <p v-else><strong>To Whom :</strong> Me</p>
             <p><strong>Title :</strong> {{ selectedCapsule.title }}</p>
-            <p><strong>Body :</strong> {{ selectedCapsule.body }}</p>
-            <p><strong>Image Path:</strong> {{ selectedCapsule.imagePath }}</p>
-            <p><strong>Video Path:</strong> {{ selectedCapsule.videoPath }}</p>
-            <p><strong>Audio Path:</strong> {{ selectedCapsule.audioPath }}</p>
+            <textarea v-model="selectedCapsule.body"><strong>Body : </strong></textarea>
             <p><strong>Created At :</strong> {{ selectedCapsule.createdAt }}</p>
             <p><strong>Expired At :</strong> {{ selectedCapsule.expired }}</p>
             <p><strong>Status:</strong> {{ selectedCapsule.status }}</p>
@@ -207,11 +207,12 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px;
-  height: 90px;
-  background-color: #6B8A7A;
-  width: 1080px;
-}
+  margin : 10px;
+  height : 90px;
+  background-color : #6B8A7A;
+  width : 1080px;
+  border-radius :10px;
+  }
 
 .select {
   height: 30px;
@@ -321,16 +322,17 @@ th.action {
 
 .modal-content {
   background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 500px;
-  display: flex;
-  height: 550px;
-  position: relative;
-  color: black;
-  font-size: 18px;
-  justify-content: center;
-  flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    display: flex;
+    height: 550px;
+    position: relative;
+    color: black;
+    font-size: 14px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -376,11 +378,21 @@ th.action {
 
 .pagination button {
   padding: 5px 10px;
-  margin: 0 5px;
-  font-size: 16px;
+    margin: 0 5px;
+    background-color: #6B8A7A;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    width: 70px;
+    height: 35px;
 }
 
 .pagination span {
   font-size: 16px;
+}
+textarea{
+  width : 450px;
+  height : 160px;
 }
 </style>

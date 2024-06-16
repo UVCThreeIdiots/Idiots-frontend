@@ -276,10 +276,11 @@ onMounted(() => {
 /* 복사 해갈 부분*/
 .container {
   display: flex;
-  height: 100vh;
   background-color: black;
-}
-
+  width : 100vw;
+  min-width: 1500px;
+  justify-content: center;
+} 
 .main-content {
   width: 1200px;
   background-color: #DAD3BE;
@@ -288,6 +289,11 @@ onMounted(() => {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  min-height: 500px;
+  overflow: auto;
+  overflow-x : hidden;
+  overflow-y : hidden;
 }
 
 h2{font-size:40px;color:white;margin-left:40px;}
@@ -299,6 +305,7 @@ h2{font-size:40px;color:white;margin-left:40px;}
   height : 90px;
   background-color : #6B8A7A;
   width : 1080px;
+  border-radius :10px;
   }
   
   .select {
@@ -317,8 +324,12 @@ h2{font-size:40px;color:white;margin-left:40px;}
       
       .header-button {
         padding: 8px 8px;
-        margin-right : 30px;
-        font-size : 16px;
+    margin-right: 30px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    background-color: #254336;
+    color: white;
         }
         /* 여기 까지*/
         
@@ -326,7 +337,6 @@ h2{font-size:40px;color:white;margin-left:40px;}
         table {
           width: 1080px;
           border-collapse: collapse;
-          border: 2px solid black;
           color: black;
           font-size: 14px;
           margin : 20px;
@@ -467,8 +477,14 @@ th.action {
 
 .pagination button {
   padding: 5px 10px;
-  margin: 0 5px;
-  font-size: 16px;
+    margin: 0 5px;
+    background-color: #6B8A7A;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    width: 70px;
+    height: 35px;
 }
 
 .pagination span {

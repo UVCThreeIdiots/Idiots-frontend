@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <NavigationView/>
+    <NavigationView />
     <div class="main-content">
       <div class="header-div">
         <div class="header">
@@ -8,32 +8,22 @@
         </div>
       </div>
       <div class="chartBox">
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <div class="prev-button prev-button-1">〈</div>
+        <div class="carousel-container carousel-container-1">
+          <div class="carousel carousel-1">
+              <VisitorChartView />
           </div>
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <VisitorChartView/>
-            </div>
-            <div class="carousel-item">
-              <VisitorChartView/>
-            </div>
-            <div class="carousel-item">
-              <VisitorChartView/>
-            </div>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
         </div>
+        <div class="next-button next-button-1">〉</div>
+      </div>
+      <div class="chartBox">
+        <div class="prev-button prev-button-2">〈</div>
+        <div class="carousel-container carousel-container-2">
+          <div class="carousel carousel-2">
+              <CapsuleChartView/>
+          </div>
+        </div>
+        <div class="next-button next-button-2">〉</div>
       </div>
     </div>
   </div>
@@ -41,19 +31,57 @@
 
 <script setup>
 import NavigationView from './NavigationView.vue';
-import { ref, computed, onMounted } from 'vue';
-import axiosInstance from '@/config/axiosInstance.js';
+import { ref, onMounted } from 'vue';
 import VisitorChartView from './VisitorChartView.vue';
+import CapsuleChartView from './CapsuleChartView.vue';
 const users = ref([]);
 
+onMounted(() => {
+  setupCarousel(1);
+  setupCarousel(2);
+});
+
+function setupCarousel(carouselNumber) {
+  const CAROUSEL_LENGTH = 2;
+  let current = 0;
+
+  const $carousel = document.querySelector(`.carousel-${carouselNumber}`);
+  const $prevButton = document.querySelector(`.prev-button-${carouselNumber}`);
+  const $nextButton = document.querySelector(`.next-button-${carouselNumber}`);
+
+  const nextEvent = () => {
+    if (current !== CAROUSEL_LENGTH) {
+      $carousel.style.transform = `translateX(${(current + 1) * -860}px)`;
+      current++;
+    } else {
+      current = 0;
+      $carousel.style.transform = `translateX(0px)`;
+    }
+  };
+
+  const prevEvent = () => {
+    if (current !== 0) {
+      current--;
+      $carousel.style.transform = `translateX(${current * -860}px)`;
+    } else {
+      current = CAROUSEL_LENGTH;
+      $carousel.style.transform = `translateX(${CAROUSEL_LENGTH * -860}px)`;
+    }
+  };
+
+  $nextButton.addEventListener('click', nextEvent);
+  $prevButton.addEventListener('click', prevEvent);
+}
 </script>
 
 <style scoped>
 .container {
   display: flex;
-  height: 100vh;
   background-color: black;
-}
+  width : 100vw;
+  min-width: 1500px;
+  justify-content: center;
+} 
 .main-content {
   width: 1200px;
   background-color: #DAD3BE;
@@ -63,45 +91,61 @@ const users = ref([]);
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 1000px;
+  overflow: auto;
+  overflow-x : hidden;
+  overflow-y : hidden;
 }
-h2{font-size:40px;color:white;margin-left:40px;}
+h2 {
+  font-size: 40px;
+  color: white;
+  margin-left: 40px;
+}
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin : 10px;
-  height : 90px;
-  background-color : #6B8A7A;
-  width : 1080px;
-}
-.header-div{
-  display:flex;
-  justify-content: center;
-}
-.chartBox{
+  margin: 10px;
+  height: 90px;
+  background-color: #6B8A7A;
   width: 1080px;
-  height : 720px;
-  display:flex;
-  background-color:#6B8A7A;
+  border-radius:10px;
+}
+.header-div {
+  display: flex;
   justify-content: center;
-  flex-direction: column;
-
-
 }
-.t{
-  display:flex;
-  margin:20px;
+.chartBox {
+  width: 1080px;
+  height: 560px;
+  display: flex;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 20px 60px 20px;
+  border-radius: 10px;
 }
-.chartSidebar{
-  width : 200px;
-  background-color : grey;
+.carousel-container {
+  width: 900px;
+  height: 500px;
+  overflow: hidden;
 }
-.chart{
-  width:700px;
-  background-color : white;
+.carousel {
+  display: flex;
+  transition: all 0.5s;
 }
-.carousel-inner{
-  display:flex;
-
+.prev-button,
+.next-button {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  display: flex;
+  width: 113px;
+  height: 100px;
+  color: rgb(181, 181, 181);
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
 }
 </style>
