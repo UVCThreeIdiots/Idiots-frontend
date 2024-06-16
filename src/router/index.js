@@ -169,7 +169,7 @@ router.beforeEach((to, from, next) => {
   const sessionStore = useSessionStore();
   sessionStore.checkSession();
 
-  if (sessionStore.isSessionExpired && to.name !== 'root' && to.name !== 'signup') {
+  if (sessionStore.isSessionExpired && to.name !== 'root' && to.name !== 'signup' ) { //&& to.name !== '아디비번찾기'
     next({ name: 'root' });
   } else {
     next();

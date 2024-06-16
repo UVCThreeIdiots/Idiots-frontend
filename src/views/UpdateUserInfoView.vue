@@ -17,11 +17,21 @@
             <span v-if="showLink2">▶</span><span v-else></span>&nbsp;새로운 비밀번호로 변경한다.</a>
           <a @mouseover="showLink3 = true" @mouseleave="showLink3 = false" @click="UpdateUserName">
             <span v-if="showLink3">▶</span><span v-else></span>&nbsp;등록된 이름을 변경한다.</a>
+          <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="openDeleteAccountModal">
+            <span v-if="showLink5">▶</span><span v-else></span>&nbsp;탈퇴한다.</a>
         </div>
         <div>
           <a @mouseover="showLink4 = true" @mouseleave="showLink4 = false" @click="goBack">
             <span v-if="showLink4">▶</span><span v-else></span>&nbsp;돌아간다.</a>
         </div>
+      </div>
+    </div>
+    <div v-if="showDeleteCheck" class="modal-overlay">
+      <div class="modal-content">
+        <h2>탈퇴 확인</h2>
+        <p class="warn">탈퇴하시겠습니까?</p>
+        <button @click="closeDeleteAccountModal">취소</button>
+        <button @click="DeleteAccount">확인</button>
       </div>
     </div>
   </div>
@@ -31,15 +41,18 @@
 import { useUserStore } from '../stores/user.js';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import axiosInstance from '@/config/axiosInstance';
 
 const useStore = useUserStore();
 const showLink1 = ref(false);
 const showLink2 = ref(false);
 const showLink3 = ref(false);
 const showLink4 = ref(false);
+const showLink5 = ref(false);
+
+const showDeleteCheck = ref(false);
 
 const userName = ref(useStore.getUser().name);
-const userId = ref(useStore.getUser().id);
 
 const typedText = `${userName.value}은(는) 어떤 정보를 바꿀까?`;
 const route = useRoute();
@@ -68,12 +81,32 @@ const UpdateUserName = () => {
   else navigateTo(`/UpdateUserName/`);
 }
 
+const DeleteAccount = () => {
+  axiosInstance.delete('http://localhost:3000/user/', {
+    'Content-Type': 'application/json',
+  }).then((response) => {
+    console.log(response);
+    useStore.logout();
+    navigateTo('/');
+  }).catch((error) => {
+    console.log('탈퇴 실패', error);
+  });
+}
+
 const goBack = () => {
   if (initialPosition === 'home'){
     console.log('hi');
     navigateTo(`/maingameview/?initialPosition=userinfo`);
   } else navigateTo(`/main/`);
 };
+
+const openDeleteAccountModal = () => {
+  showDeleteCheck.value = true;
+}
+const closeDeleteAccountModal = () => {
+  showDeleteCheck.value = false;
+}
+
 
 </script>
 
@@ -174,5 +207,58 @@ p {
 .disabled {
   pointer-events: none; /* Disable click */
   color: grey; /* Optional: Change color to indicate disabled state */
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 600px;
+  height: 450px;
+  color: black; /* Set text color to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content a {
+  margin-bottom: 5px; /* Reduce gap between paragraphs */
+  font-size: 20px;
+  color: black; /* Ensure paragraph color is black */
+  width: 100%;
+  height: 50px;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
+  margin: 10px;
+  color: black; /* Ensure button text color is black */
+}
+.modal-content h2 {
+  margin-bottom: 11px;
+  /* border: 2px solid black; */
+  padding: 16px;
+}
+.warn{
+  color:red;
+  font-size: 20px;
+  padding: 16px;
 }
 </style>
