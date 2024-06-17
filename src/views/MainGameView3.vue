@@ -79,7 +79,7 @@ const characterPosition = ref({
 });
 
 const step = 8; // 이동 속도 조절
-const npc = ref(`${userName.value}! 오늘은 무엇을 할까?`);
+const npc = ref('');
 const npc2 = ref('');
 // 장애물 영역 정의
 const obstacles = [
@@ -103,6 +103,7 @@ const admintagZone = { x1: 726, y1: 350, x2: 878, y2: 380 };
 const centertagZone = { x1: 910, y1: 940, x2: 998, y2: 964 };
 const flowertagZone = { x1: 462, y1: 654, x2: 550, y2: 680 };
 const adminZone = { x1: 926, y1: 350, x2: 982 , y2: 380 };
+const logoutZone = { x1: 558, y1: 0, x2: 654 , y2: 30 };
 const mapBoundaries = {
   top: 0,
   bottom: 1124,
@@ -168,6 +169,7 @@ const handleKeyDown = (event) => {
     checkCenterEntry(newPosition);
     updateViewport(newPosition);
     checkTagEntry(newPosition);
+    checkLogoutEntry(newPosition);
   }
 }
 // const isInZone = (position, zone) => {
@@ -192,7 +194,16 @@ const isColliding = (position) => {
     position.top> obstacle.y1 
   );
 }
-
+const checkLogoutEntry = (position) => {
+  if (
+    position.left < logoutZone.x2 &&
+    position.left  > logoutZone.x1 &&
+    position.top < logoutZone.y2 &&
+    position.top  > logoutZone.y1
+  ) {
+    onLogoutZone();
+  }
+}
 const checkHomeEntry = (position) => {
   if (
     position.left < homeZone.x2 &&
@@ -201,8 +212,6 @@ const checkHomeEntry = (position) => {
     position.top  > homeZone.y1
   ) {
     onHomeZone();
-  } else {
-    npc.value = '';
   }
 }
 const checkCenterEntry = (position) => {
@@ -213,9 +222,7 @@ const checkCenterEntry = (position) => {
     position.top  > centerZone.y1
   ) {
     onCenterZone();
-  } else {
-    npc.value = '';
-  }
+  } 
 }
 
 const checkAdminEntry = (position) => {
@@ -226,10 +233,12 @@ const checkAdminEntry = (position) => {
     position.top  > adminZone.y1
   )
   {
+    if (userRole.value === 'admin') npc2.value = "[관리자의 집]<br>권한이 확인되었습니다. 관리자 페이지로 이동하시겠습니까?<br>예 : Enter"
+    else npc2.value = "[관리자의 집]<br>굳게 닫혀있다. 누군가의 권한이 필요한것 같다.";
     onAdminZone();
   }
   else {
-    npc2.value = '';
+    npc2.value = ``;
   }
 }
 const checkTagEntry = (position) => {
@@ -263,7 +272,7 @@ const checkTagEntry = (position) => {
     position.top < flowertagZone.y2 &&
     position.top  > flowertagZone.y1
   ){
-    console.log(dayOfWeek.value);
+    // console.log(dayOfWeek.value);
     if(dayOfWeek.value === '월요일')
       npc.value = `[오늘의 팁] - 월요일<br>새로운 한 주가 시작되는 날입니다. 에너지를 충전하고, 이번 주 목표를 설정해보세요!!`;
     else if(dayOfWeek.value === '화요일')
@@ -278,13 +287,23 @@ const checkTagEntry = (position) => {
       npc.value = `[오늘의 팁] - 토요일<br>휴식과 즐거움을 만끽하는 날입니다. 친구들과 만나거나, 좋아하는 취미를 즐겨보세요!!`;
     else if(dayOfWeek.value === '일요일')
       npc.value = `[오늘의 팁] - 일요일<br>새로운 한 주가 시작되는 날입니다. 에너지를 충전하고, 이번 주 목표를 설정해보세요!!`;
+    // console.log(npc.value);
   }
   else {
     npc.value = '';
   }
 }
 
-
+const onLogoutZone = () => {
+  console.log('Entered the target zone!');
+  npc2.value = "[???]<br>이곳으로 나가면 게임을 나갈 수 있다. 정말 게임화면을 나갈까?<br>예 : Enter"
+  const handleAdminKeydown = (event) => {
+    if (event.key === 'Enter') {
+      navigateTo(`/main`);
+    }
+  };
+  window.addEventListener('keydown', handleAdminKeydown, { once: true });
+}
 const onHomeZone = () => {
   console.log('Entered the target zone!');
   const handleHomeKeydown = () => {
@@ -301,8 +320,7 @@ const onCenterZone = () => {
 }
 const onAdminZone = () => {
   console.log('Entered the target zone!');
-  if (userRole.value === 'admin') npc2.value = "[관리자의 집]<br>권한이 확인되었습니다. 관리자 페이지로 이동하시겠습니까?<br>예 : Enter"
-  else npc2.value = "[관리자의 집]<br>굳게 닫혀있다. 누군가의 권한이 필요한것 같다.";
+
   const handleAdminKeydown = (event) => {
     if (event.key === 'Enter') {
       navigateTo(`/admin/main?initialPosition=g`);
