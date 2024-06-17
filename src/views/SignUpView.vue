@@ -44,12 +44,13 @@
           <input type="text" id="email" v-model="email" class="custom-input">
           <p v-if="email.length <1" class="warn">이메일은 공백으로 사용할 수 없습니다!</p>
           <p v-else-if="!isValidEmail" class="warn">잘못된 이메일 형식입니다!</p>
+          <p v-else-if="emailMent = 2" class="warn">{{ showMent }}</p>
         </div>
       </div>
       <div class="button-container">
         <button @click="navigateTo('/')">초기 화면</button>
         <button v-if="currentStep < 4" :disabled="currentStep != 0" @click="isUsedUserId">중복검사</button>
-        <button v-else @click="isRealEmail">e중복검사</button>
+        <button v-else @click="isRealEmail" :disabled="!isValidEmail">e중복검사</button>
         <button :disabled="currentStep < 1" @click="beforeStep">이전</button>
         <button v-if="currentStep === 4" @click="openModal" :disabled="!isValidEmail || !emailChecked">등록</button>
         <button v-else @click="nextStep" :disabled="(currentStep <=0 && (!isValidUserId || canUseUserIdforMent != 1))|| (currentStep === 1 && !isValidPassword) ||(currentStep === 2 && !isValidName) ||(currentStep === 3 && !isValidAge)">다음</button>
@@ -77,18 +78,18 @@
         <p>{{ email }}로 인증문자가 포함된 메일을 발송했습니다.</p>
         <p>인증문자를 확인 후 아래에 입력해 주세요.</p>
         <input type="text" v-model="emailKey"/>
-        <button @click="checkKey"></button>
+        <button @click="checkKey" style="width: 80px; height: 30px; font-size: 16px;">확인</button>
         <p v-if="isCheckKey">유효한 이메일입니다.</p>
-        <p v-else>잘못된 인증문자 입니다.</p> 
+        <p v-else class="warn">잘못된 인증문자 입니다.</p> 
         <button @click="closeModalEmail">취소</button>
-        <button @click="closeModalEmailwithSuccess" :disabled="!isCheckKey">확인</button>
+        <button @click="closeModalEmailwithSuccess" :disabled="!isCheckKey">{{ timerText }}</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
 
 const name = ref('');
@@ -111,7 +112,16 @@ const stepsInfo = [
   { label: '나이 :', model: age },
   { label: '이메일 :', model: email }
 ];
+
+const timer = ref(60);
+const timerText = ref(`확인 (1:00)`);
+const isTimerRunning = ref(false);
+let interval = null;
+
+
+
 const typedText = ref('시작에 앞서, 너에 대해 알려다오! 아이디는 무엇으로 할까?\n아이디는 영어/숫자의 조합으로 작성하렴!');
+const showMent = ref('');
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -180,14 +190,51 @@ const openModalEmail = () => {
 
 const closeModalEmail = () => {
   showModalEmail.value = false;
+  isTimerRunning.value = false;
+  clearInterval(interval)
 };
+
 const closeModalEmailwithSuccess = () => {
   showModalEmail.value = false;
   emailChecked.value = true;
+  isTimerRunning.value = false;
 };
 
 const canUseUserId = ref(false);
 const canUseUserIdforMent = ref(0);
+
+const startTimer = () => {
+  if (!isTimerRunning.value) {
+    timer.value = 60; // Reset the timer
+    isTimerRunning.value = true;
+    timerText.value = `확인 (1:00)`;
+    interval = setInterval(updateTimer, 1000);
+  }
+};
+
+const updateTimer = () => {
+  console.log(timer.value)
+  if (timer.value > 0) {
+    timer.value -= 1;
+    const minutes = Math.floor(timer.value / 60);
+    const seconds = timer.value % 60;
+    timerText.value = `확인 (${minutes}:${seconds < 10 ? '0' : ''}${seconds})`;
+  } else {
+    // Disable the confirmation button if time runs out
+    isCheckKey.value = false;
+    timerText.value = '시간 초과';
+  }
+};
+
+
+
+onMounted(() => {
+  // interval = (updateTimer, 1000);
+});
+
+onBeforeUnmount(() => {
+  clearInterval(interval);
+});
 
 const checkKey = () => {
   const saveData = {
@@ -217,6 +264,7 @@ const checkKey = () => {
 };
 
 const isRealEmail = () => {
+
   const saveData = {
     email: email.value,
   };
@@ -231,10 +279,12 @@ const isRealEmail = () => {
     console.log(typeof res.data);
     if (res.data === 'true') { 
       openModalEmail();
+      startTimer();
       emailMent.value = 1;
       console.log("사용 가능 이메일");
     } else {
       emailMent.value = 2;
+      alert("이미 사용중인 이메일 입니다.");
       console.log("이미 사용중인 이메일");
     }
   })
@@ -408,6 +458,7 @@ label {
 {
   color : red;
   font-size : 18px;
+  margin-left: 8px;
 }
 
 .border-box {
