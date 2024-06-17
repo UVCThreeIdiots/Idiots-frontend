@@ -76,10 +76,13 @@
             <span v-if="showLink12">▶</span><span v-else></span>&nbsp;캡슐의 진척도를 확인한다.</a>
           <a @mouseover="showLink13 = true" @mouseleave="showLink13 = false" @click="complete">
             <span v-if="showLink13">▶</span><span v-else></span>&nbsp;캡슐 도감을 확인한다.</a>
+          <a @mouseover="showLink15 = true" @mouseleave="showLink15 = false" @click="checkCapsules">
+            <span v-if="showLink15">▶</span><span v-else></span>&nbsp;전송한 캡슐의 상태를 확인한다.</a>
         </div>
         <div class="comment">
           <p class="warn" v-if="showLink12">목표캡슐의 진행상황을 확인할 수 있습니다!</p>
           <p class="warn" v-if="showLink13">만료된 타임캡슐과 목표캡슐을 확인할 수 있습니다!</p>
+          <p class="warn" v-if="showLink15">전송한 타임캡슐과 목표캡슐을 확인할 수 있습니다!</p>
         </div>
         <button @click="closeProgressModal">취소</button>
       </div>
@@ -137,6 +140,7 @@ const showLink11 = ref(false);
 const showLink12 = ref(false);
 const showLink13 = ref(false);
 const showLink14 = ref(false);
+const showLink15 = ref(false);
 const navigateTo = (route) => {
   window.location.href = route;
 };
@@ -161,6 +165,9 @@ const progress = () => {
 }
 const complete = () => {
   navigateTo(`/complete/`);
+}
+const checkCapsules = () => {
+  navigateTo(`/checkCapsules/`);
 }
 const logout = () => {
   axiosInstance.post(`http://localhost:3000/auth/logout/`)
@@ -290,13 +297,7 @@ body {
 .comment {
   /* border: 2px solid red; */
   height: 100%;
-}
-
-.comment p {
-  /* border: 2px solid #000; */
-  /* margin-right: 16px; */
-  margin-top: 24px;
-  
+  width: 100%;
 }
 
 .container {
@@ -343,12 +344,12 @@ body {
 
 
 p {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   white-space: pre-wrap;
   overflow: hidden;
   width: 100%;
   height: 100px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   font-size: 24px;
   /* margin-left: 30px; */
 }
@@ -429,9 +430,12 @@ p {
 .warn{
   color:red;
   font-size: 20px;
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .developerToolbox{
+  /* border: 2px solid black; */
   display: flex;
   justify-content: center;
   width : 80%;

@@ -86,7 +86,7 @@ const gamemain = () => {
 const capsuleData = () => {
   axiosInstance.get(`http://localhost:3000/capsule/`)
   .then(response => {
-    console.log(response.data);
+    console.log('res',response.data);
     GCapsuleList.value = response.data.gCapsules.map(GCapsule => {
       const completeGCapsules = ((GCapsule.nowCount / GCapsule.goalCount) * 100).toFixed(1);
       return {
