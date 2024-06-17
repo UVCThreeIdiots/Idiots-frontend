@@ -72,8 +72,10 @@ const loginSubmit = () => {
       const loginUserId = userData.userId
       const loginedName = userData.name;
       const loginedRole = userData.role;
-      useStore.setUser(loginedId, loginUserId, loginedName, loginedRole);
-      navigateTo(`/main/`);
+      const loginedMode = userData.mode;
+      useStore.setUser(loginedId, loginUserId, loginedName, loginedRole, loginedMode);
+      if (loginedMode === 'normal') navigateTo(`/main/`);
+      else navigateTo('/maingameview/');
       console.log("로그인 성공");
     }
   })

@@ -864,7 +864,9 @@ const timeCapsuleSubmit = () => {
   align-items: center;
   /* margin-bottom: 8px; */
 }
-
+.buttons-and-ment{
+  margin-top : 100px;
+}
 .recording-display {
   width: 72%;
   height: 96%;

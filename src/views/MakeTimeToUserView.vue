@@ -1176,6 +1176,9 @@ const timeCapsuleSubmit = () => {
   align-content: center;
 }
 
+.buttons-and-ment{
+  margin-top : 100px;
+}
 .buttons-and-ment div {
   /* border: 2px solid #000; */
   display: flex;

@@ -105,7 +105,7 @@
 
 <script setup>
 import { useUserStore } from '../stores/user.js';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axiosInstance from '@/config/axiosInstance';
 
 const useStore = useUserStore();
@@ -115,7 +115,7 @@ const userId = ref(useStore.getUser().id);
 const role = ref(useStore.getUser().role);
 const passwordCheck = ref('');
 const typedText = `${userName.value}는 무엇을 할까?`;
-
+const userMode = ref(useStore.getUser());
 const showModal = ref(false);
 const showProgressModal = ref(false);
 const showDeveloperModal = ref(false);
