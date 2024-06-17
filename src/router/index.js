@@ -18,7 +18,9 @@ import DeveloperView from '../views/DeveloperView.vue'
 import MakeTimeToUserView from '../views/MakeTimeToUserView.vue'
 import MakeGoalToUserView from '../views/MakeGoalToUserView.vue'
 import UpdateUserNameView from '../views/UpdateUserName.vue'
-import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue';
+import PracticeTakenPhotoView from '../views/PracticeTakenPhoto.vue'
+import FindInfoView from '../views/FindInfoView.vue'
+import ResetPwView from '../views/ResetPwView.vue'
 import MainGameView from '../views/MainGameView.vue'
 import MainGameView2 from '../views/MainGameView2.vue'
 import MainGameView3 from '../views/MainGameView3.vue'
@@ -143,6 +145,16 @@ const router = createRouter({
       component : MainGameView3
     },
     {
+      path : '/findinfo/',
+      name :'findinfo',
+      component : FindInfoView
+    },
+    {
+      path : '/reset-password/:token',
+      name :'reset-password',
+      component : ResetPwView
+    },
+    {
       path : '/admin/main/',
       name : 'adminmain',
       component : AdminMainView
@@ -169,7 +181,7 @@ router.beforeEach((to, from, next) => {
   const sessionStore = useSessionStore();
   sessionStore.checkSession();
 
-  if (sessionStore.isSessionExpired && to.name !== 'root' && to.name !== 'signup') {
+  if (sessionStore.isSessionExpired && to.name !== 'root' && to.name !== 'signup' && to.name !== 'findinfo' && to.name !== 'reset-password') {
     next({ name: 'root' });
   } else {
     next();
