@@ -24,6 +24,9 @@ import ResetPwView from '../views/ResetPwView.vue'
 import MainGameView from '../views/MainGameView.vue'
 import MainGameView2 from '../views/MainGameView2.vue'
 import MainGameView3 from '../views/MainGameView3.vue'
+import CheckCapsuleView from '../views/CheckCapsuleView.vue'
+import CheckGoalDetailView from '../views/CheckGCapulesDetail.vue'
+import CheckTimeDetailView from '../views/CheckTCapsuleDetail.vue'
 
 import { useSessionStore } from '../stores/session'
 
@@ -115,6 +118,16 @@ const router = createRouter({
       component : CompleteTCapsuleDetailView,
     },
     {
+      path : '/checkGDetail/:id',
+      name : 'checkGDetail',
+      component : CheckGoalDetailView,
+    },
+    {
+      path : '/checkTDetail/:id',
+      name : 'checkTDetail',
+      component : CheckTimeDetailView,
+    },
+    {
       path : '/maketimetouser/',
       name : 'maketimetouser',
       component : MakeTimeToUserView
@@ -173,6 +186,11 @@ const router = createRouter({
       path : '/admin/goalcapsules',
       name : 'admaingoalcapsules',
       component: AdminGoalCapsulesView
+    },
+    {
+      path : '/checkCapsules/',
+      name : 'checkCapsules',
+      component: CheckCapsuleView
     }
   ]
 })

@@ -10,26 +10,47 @@
       </p>
       </div>
     </div>
+
     <div class="parent">
-      <div class="child" v-for="capsule in capsuleList" :key=capsule.id>
-        <img class="capsule" src="../components/images/capsule.gif">
-        <div>
-          <!-- <a href="/encyclopedia" class="capsule-name">{{ capsule.title }}</a> -->
-          <router-link v-if="initialPosition === 'center'" :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }, query: { initialPosition: 'center' } }">
-            {{ capsule.title }}
-          </router-link>
-          <router-link v-else :to="{ name: 'ProgressDetail', params: { goalId: capsule.id }}">
-            {{ capsule.title }}
-          </router-link>
+      <!-- Render GCapsule List -->
+      <div class="child" v-for="GCapsule in sendGCapsuleLists" :key="GCapsule.id">
+        <div class="image-container">
+          <img class="capsule" src="../components/images/capsule.gif">
+          <img v-if="GCapsule.sendGCapsules == 100" src="../components/images/success.png" class="overlay-image">
+          <img v-else src="../components/images/fail.png" class="overlay-image">
         </div>
+        <div>
+          <router-link v-if="initialPosition === 'center'" :to="{ name: 'checkGDetail', params: { id: GCapsule.id }, query : {initialPosition : 'center'}}">
+            {{ GCapsule.title }}
+          </router-link>
+          <router-link v-else :to="{ name: 'checkGDetail', params: { id: GCapsule.id }}">
+            {{ GCapsule.title }}
+          </router-link>
+        </div>   
         <div class="progress">
           <div class="progress-bar-container">
-            <div class="progress-bar" :style="{ width: capsule.progress + '%' }" />
+            <div class="progress-bar" :style="{ width: GCapsule.sendGCapsules + '%' }"></div>
           </div>
-          <p>{{ capsule.progress }}%</p>
+          <p>{{ GCapsule.sendGCapsules }}%</p>
+        </div>
+      </div>
+
+      <!-- Render TCapsule List -->
+      <div class="child" v-for="TCapsule in sendTCapsuleLists" :key="TCapsule.id">
+        <div class="image-container">
+          <img class="capsule" src="../components/images/capsule.gif">
+        </div>
+        <div>
+          <router-link v-if="initialPosition === 'center'" :to="{ name: 'checkTDetail', params: { id: TCapsule.id }, query : {initialPosition : 'center'}}">
+            {{ TCapsule.title }}
+          </router-link>
+          <router-link v-else :to="{ name: 'checkTDetail', params: { id: TCapsule.id }}">
+            {{ TCapsule.title }}
+          </router-link>
         </div>
       </div>
     </div>
+
     <div class="button-container">
       <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
       <button v-else @click="goBack">뒤로가기</button>
@@ -38,51 +59,58 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router';
 import axiosInstance from '@/config/axiosInstance';
-import { useUserStore } from '../stores/user.js';
+
 
 const route = useRoute();
-const capsuleList = ref([]);
-const useStore = useUserStore();
 
-const typedText = ref('여긴 진척도 확인하는 곳! ! ');
+
+const typedText = ref('전송한 캡슐의 상태를 확인할 수 있는 곳 ! ! ! ');
 const initialPosition = route.query.initialPosition; // 초기 위치
 
+const sendGCapsuleLists = ref([]);
+const sendTCapsuleLists = ref([]);
 
 const navigateTo = (route) => {
   window.location.href = route;
 };
-
 const goBack = () => {
   navigateTo(`/main/`);
 };
-const gamemain = () => {
-  navigateTo(`/maingameview2/?initialPosition=progress`);
-}
 
-const capsuleData = () => {
-  axiosInstance.get(`http://localhost:3000/goal/user/`)
+const SendCapsuleData = () => {
+  axiosInstance.get(`http://localhost:3000/other/capsules/`)
   .then(response => {
     console.log(response);
-    capsuleList.value = response.data.map(capsule => {
-      const progress = ((capsule.nowCount / capsule.goalCount) * 100).toFixed(1);
+    sendGCapsuleLists.value = response.data.gCapsules.map(capsule => {
+      const sendGCapsules = ((capsule.nowCount / capsule.goalCount) * 100).toFixed(1);
         return {
         ...capsule,
-        progress: progress,
+        sendGCapsules: sendGCapsules,
       };
     });
+    sendTCapsuleLists.value = response.data.tCapsules.map(sendTCapsule => { return sendTCapsule});
   })
   .catch(error => {
-    console.error('dpfj',error);
+    console.error('error',error);
   })
 };
 
-onMounted(capsuleData);
+onMounted(SendCapsuleData);
 </script>
 
 <style scoped>
+  @keyframes reveal {
+    0% {
+      visibility: hidden;
+    }
+    100% {
+      visibility: visible;
+    }
+  }
+
 @font-face {
   font-family: 'CustomFont';
   src: url('../components/fonts/DOSSaemmul.ttf') format('truetype');
@@ -97,6 +125,22 @@ body {
   margin: 0;
 }
 
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+.capsule {
+  display: block;
+  width: 100px;
+}
+.overlay-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .progress {
   display: flex;
   width: 85%;
@@ -104,7 +148,6 @@ body {
   justify-content: flex-end;
   align-items: center;
 }
-
 .progress-bar-container {
   width: 50%;
   background-color: #e0e0e0;
@@ -112,7 +155,6 @@ body {
   height: 16px;
   margin: 16px 8px;
 }
-
 .progress-bar {
   height: 100%;
   background-color: #000;
@@ -120,42 +162,8 @@ body {
   transition: width 1.5s ease-in-out;
 }
 
-.button-container {
-  display: flex;
-  /* justify-content: space-around; */
-  margin-top: 8px;
-  margin-left: 12px;
-}
-
-.button-container button {
-  padding: 10px 20px;
-  border: 2px solid black;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
-}
-
-.capsule-name {
-  font-family: 'CustomFont';
-  font-size: 20px;
-  font-weight: bold;
-  color: #000;
-}
-.capsule-list {
-  height: 200px;
-  width: 200px;
-  border: 2px solid #000;
-  border-radius: 15px;
-  position: absolute;
-  text-align: center;
-} .capsule {
-  width: 100px;
-  height: 100px;
-}
-
 .parent {
+  /* border: 1px solid #000; */
   margin: 8px;
   padding: 8px;
   text-align: justify;
@@ -178,14 +186,20 @@ body {
   color: black;
   text-align: center;
 }
-
-.list-box {
-  width: 95%;
-  height: 75%;
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.button-container button {
+  padding: 10px 20px;
   border: 2px solid black;
-  padding: 5px;
-  margin: 20px;
-  border-radius: 15px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-family: 'CustomFont', Arial, sans-serif;
+  font-size: 24px;
 }
 
 .container {
@@ -199,55 +213,8 @@ body {
   border-radius: 15px;
   position: relative;
 }
-
 .obakuser {
   width: 100px;
-}
-
-.input-container {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-  margin-left: 100px;
-  margin-right: 100px;
-}
-
-.input-container div {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.input-container label {
-  margin-right: 10px;
-  font-size: 24px;
-  color: black;
-}
-
-.input-container input {
-  align-items: middle;
-  padding: 5px;
-  border: 2px solid black;
-  border-radius: 5px;
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.button-container button {
-  padding: 10px 20px;
-  border: 2px solid black;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  font-family: 'CustomFont', Arial, sans-serif;
-  font-size: 24px;
 }
 
 .text-box {
@@ -258,20 +225,10 @@ body {
   margin-bottom: 20px;
 }
 
-
 .hidden-char {
   visibility: hidden;
   animation: reveal 3s steps(40, end) forwards;
   color: black;
-}
-
-@keyframes reveal {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
 }
 
 .border-box {
@@ -279,7 +236,9 @@ body {
   border: 2px solid black;
   padding: 5px;
   border-radius: 15px;
+  margin: 0px 16px 0px 8px;
 }
+
 .obakuser-text {
   display: ruby;
   white-space: pre-wrap;
