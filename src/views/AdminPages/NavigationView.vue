@@ -44,7 +44,7 @@ const moveUsers = () => {
   else navigateTo('/admin/users');
 }
 const logout = () => {
-  axiosInstance.post(`http://13.125.169.9:80/auth/logout/`)
+  axiosInstance.post(`http://13.125.169.9:3000/auth/logout/`)
       .then(response => {
         console.log(response.data);
         userStore.logout();

@@ -84,7 +84,7 @@ const gamemain = () => {
 }
 
 const capsuleData = () => {
-  axiosInstance.get(`http://13.125.169.9:80/capsule/`)
+  axiosInstance.get(`http://13.125.169.9:3000/capsule/`)
   .then(response => {
     console.log('res',response.data);
     GCapsuleList.value = response.data.gCapsules.map(GCapsule => {
