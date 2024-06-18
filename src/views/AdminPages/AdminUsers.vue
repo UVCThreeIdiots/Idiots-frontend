@@ -211,7 +211,7 @@ const saveEditedUser = async (user) => {
   try {
     const {password, gCapsules, ...newUser} = user;
     
-    await axiosInstance.put(`http://13.125.169.9:3000/user/${user.id}`,newUser);
+    await axiosInstance.put(`http://13.125.169.9:3000/admin/user/${user.id}`,newUser);
 
     editUserId.value = null;
   } catch (error) {
@@ -225,7 +225,7 @@ const cancelEdit = () => {
 
 const deleteUser = async (id) => {
   try {
-    await axiosInstance.delete(`http://13.125.169.9:3000/user/${id}`);
+    await axiosInstance.delete(`http://13.125.169.9:3000/admin/user/${id}`);
     usersData();
   } catch (error) {
     console.error('Failed to delete user:', error);
