@@ -814,7 +814,7 @@ const timeCapsuleSubmit = () => {
 
   // 데이터 추가
   formData.append('title', title.value);
-  formData.append('expired', `${formattedDate.value}T00:00:00+09:00`);
+  formData.append('expired', `${formattedDate.value}`);
   formData.append('body', message.value);
 
   // axios를 사용하여 요청 보내기
