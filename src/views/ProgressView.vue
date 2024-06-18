@@ -63,7 +63,7 @@ const gamemain = () => {
 }
 
 const capsuleData = () => {
-  axiosInstance.get(`http://localhost:3000/goal/user/`)
+  axiosInstance.get(`http://13.125.169.9:5173/goal/user/`)
   .then(response => {
     console.log(response);
     capsuleList.value = response.data.map(capsule => {

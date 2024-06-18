@@ -118,7 +118,7 @@ const signupSubmit = () => {
     email: email.value,
   };
 
-  axios.post("http://localhost:3000/user", JSON.stringify(saveData), {
+  axios.post("http://13.125.169.9:5173/user", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

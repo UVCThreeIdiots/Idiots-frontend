@@ -378,7 +378,7 @@ const urlToFile = async (url, filename, mimeType) => {
 
 const emailCheck = () => {
   const data = {email : email.value};
-  axiosInstance.post("http://localhost:3000/other/email", JSON.stringify(data), {
+  axiosInstance.post("http://13.125.169.9:5173/other/email", JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -418,7 +418,7 @@ const emailCheck = () => {
 //     otherEmail : email.value,
 //   };
 
-//   axiosInstance.post("http://localhost:3000/goal", JSON.stringify(saveData), {
+//   axiosInstance.post("http://13.125.169.9:5173/goal", JSON.stringify(saveData), {
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
@@ -453,7 +453,7 @@ const goalCapsuleSubmit = () => {
   formData.append("otherId", otherUserid.value);
   formData.append("otherEmail", email.value);
 
-  axiosInstance.post("http://localhost:3000/goal", formData, {
+  axiosInstance.post("http://13.125.169.9:5173/goal", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

@@ -70,7 +70,7 @@ const updatePassword = () => {
   // 비밀번호 변경 시 login post 요청하여 사용자가 새로 변경할 비밀번호로 로그인이 성공적으로 진행된다면
   // 기존의 비밀번호와 동일하기 때문에 동일하다는 얼럿 메세지 출력 후 리턴
   // 만일 로그인이 되지 않는다면 catch구문에서 오히려 비밀번호를 변경해주는 로직
-  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://13.125.169.9:5173/auth/info`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -80,14 +80,14 @@ const updatePassword = () => {
           return;
         }}).catch((error) => {
           if (error.response && error.response.status === 401){
-            axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
+            axiosInstance.put(`http://13.125.169.9:5173/user/`, JSON.stringify(saveData), {
               headers: {
                 'Content-Type': 'application/json',
               },
             }).then(() => {
                 console.log('비밀번호 변경 성공');
                 alert('비밀번호가 변경되었습니다.');
-                axiosInstance.post(`http://localhost:3000/auth/logout/`)
+                axiosInstance.post(`http://13.125.169.9:5173/auth/logout/`)
                 .then(response => {
                   console.log(response.data);
                   useStore.logout();

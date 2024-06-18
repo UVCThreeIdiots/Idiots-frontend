@@ -100,7 +100,7 @@ const UpdateUserName = () => {
 }
 
 const DeleteAccount = () => {
-  axiosInstance.delete('http://localhost:3000/user/', {
+  axiosInstance.delete('http://13.125.169.9:5173/user/', {
     'Content-Type': 'application/json',
   }).then((response) => {
     console.log(response);
@@ -141,12 +141,12 @@ const changeMode = () => {
 
   console.log(saveData);
 
-  axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData),{
+  axiosInstance.put(`http://13.125.169.9:5173/user/`, JSON.stringify(saveData),{
     headers: {
       'Content-Type': 'application/json',
     },
   }).then(() => {
-    axiosInstance.post(`http://localhost:3000/auth/logout/`)
+    axiosInstance.post(`http://13.125.169.9:5173/auth/logout/`)
       .then(response => {
         console.log(response.data);
         useStore.logout();

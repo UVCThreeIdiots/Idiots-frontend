@@ -179,7 +179,7 @@ const editUserId = ref(null);
 // };
 
 const usersData = () => {
-  axiosInstance.get(`http://localhost:3000/user/all`)
+  axiosInstance.get(`http://13.125.169.9:5173/user/all`)
   .then(response => {
     console.log(response.data);
     users.value = response.data;
@@ -191,7 +191,7 @@ const usersData = () => {
 
 const addUser = async () => {
   try {
-    await axiosInstance.post('http://localhost:3000/user', newUser.value);
+    await axiosInstance.post('http://13.125.169.9:5173/user', newUser.value);
     usersData();
     showAddUserModal.value = false;
   } catch (error) {
@@ -211,7 +211,7 @@ const saveEditedUser = async (user) => {
   try {
     const {password, gCapsules, ...newUser} = user;
     
-    await axiosInstance.put(`http://localhost:3000/user/${user.id}`,newUser);
+    await axiosInstance.put(`http://13.125.169.9:5173/user/${user.id}`,newUser);
 
     editUserId.value = null;
   } catch (error) {
@@ -225,7 +225,7 @@ const cancelEdit = () => {
 
 const deleteUser = async (id) => {
   try {
-    await axiosInstance.delete(`http://localhost:3000/user/${id}`);
+    await axiosInstance.delete(`http://13.125.169.9:5173/user/${id}`);
     usersData();
   } catch (error) {
     console.error('Failed to delete user:', error);

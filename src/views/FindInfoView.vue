@@ -52,7 +52,7 @@ const findUserId = () => {
 
   const saveData = { email: email.value };
 
-  axiosInstance.post("http://localhost:3000/auth/find/id", saveData, {
+  axiosInstance.post("http://13.125.169.9:5173/auth/find/id", saveData, {
     headers: { "Content-Type": "application/json" },
   })
   .then((res) => {
@@ -72,7 +72,7 @@ const resetPassword = () => {
 
   const saveData = { email: email.value };
 
-  axiosInstance.post("http://localhost:3000/auth/forgot-password", saveData, {
+  axiosInstance.post("http://13.125.169.9:5173/auth/forgot-password", saveData, {
     headers: { "Content-Type": "application/json" },
   })
   .then((res) => {

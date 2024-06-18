@@ -127,10 +127,10 @@ const gamemain = () => {
 
 const GCapsuleDetails = () => {
   const goalId = route.params.id;
-  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
+  axiosInstance.get(`http://13.125.169.9:5173/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
-    imagePath.value = response.data.imagePath.map(imagePath => { return `http://localhost:3000/${imagePath}` });
+    imagePath.value = response.data.imagePath.map(imagePath => { return `http://13.125.169.9:5173/${imagePath}` });
     capsuleDetail.value = response.data;
     now.value = response.data.nowCount;
     total.value = response.data.goalCount;

@@ -37,7 +37,7 @@ const resetPassword = async () => {
   }
   try {
     const token = route.params.token;
-    await axiosInstance.post(`http://localhost:3000/auth/reset-password/${token}`, { password: password.value });
+    await axiosInstance.post(`http://13.125.169.9:5173/auth/reset-password/${token}`, { password: password.value });
     alert('Password has been reset');
     navigateTo('/'); // 비밀번호 재설정 후 로그인 페이지로 리디렉션
   } catch (error) {

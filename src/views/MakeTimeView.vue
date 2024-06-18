@@ -31,11 +31,20 @@
         </div>
         <div v-if="currentStep === 1" class="buttons-and-ment">
           <label for="dueDate"></label>
-          <div class="date-picker">
-            <div v-for="(unit, index) in dateUnits" :key="index" class="date-unit">
-              <button class="date-button" @click="incrementDateUnit(index)">▲</button>
-              <div class="date-value">{{ unit }}</div>
-              <button class="date-button" @click="decrementDateUnit(index)">▼</button>
+          <div class="uuu">
+            <div class="date-picker">
+              <div v-for="(unit, index) in dateUnits.slice(0, 8)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementDateUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementDateUnit(index)">▼</button>
+              </div>
+            </div>
+            <div class="date-picker">
+              <div v-for="(unit, index) in dateUnits.slice(8, 14)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementDayUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementDayUnit(index)">▼</button>
+              </div>
             </div>
           </div>
           <div class="warnings">
@@ -288,7 +297,10 @@ const currentDate = new Date();
 const year = currentDate.getFullYear().toString(); // 연도
 const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월 (0부터 시작하므로 +1, padStart로 2자리로 맞춤)
 const date = currentDate.getDate().toString().padStart(2, '0');
-const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1]]);
+const hour = currentDate.getHours().toString().padStart(2, '0');
+const minute = currentDate.getMinutes().toString().padStart(2, '0');
+const second = currentDate.getSeconds().toString().padStart(2, '0');
+const dateUnits = ref([year[0], year[1], year[2], year[3], month[0], month[1], date[0], date[1], hour[0], hour[1], minute[0], minute[1], second[0], second[1]]);
 const isChecked = ref(false);
 
 const showImageModal = ref(false);
@@ -394,7 +406,10 @@ const isValidDueDate = computed(()=> {
   let year = dateUnits.value[0] + dateUnits.value[1] + dateUnits.value[2] + dateUnits.value[3];
   let month = dateUnits.value[4] + dateUnits.value[5];
   let date = dateUnits.value[6] + dateUnits.value[7];
-  let dueDate = new Date(year, month - 1, date);
+  let hour = dateUnits.value[8] + dateUnits.value[9];
+  let minute = dateUnits.value[10] + dateUnits.value[11];
+  let second = dateUnits.value[12] + dateUnits.value[13];
+  let dueDate = new Date(year, month - 1, date, hour, minute, second);
   return dueDate > currentDate;
 })
 //메인메뉴로 갈지 게임메뉴로 갈지 선택
@@ -405,16 +420,25 @@ const isValidDateType = computed(() => {
   const year = parseInt(dateUnits.value.slice(0, 4).join(''));
   const month = parseInt(dateUnits.value.slice(4, 6).join(''));
   const day = parseInt(dateUnits.value.slice(6, 8).join(''));
+  const hour = parseInt(dateUnits.value.slice(8, 10).join(''));
+  const minute = parseInt(dateUnits.value.slice(10, 12).join(''));
+  const second = parseInt(dateUnits.value.slice(12, 14).join(''));
 
   // 각 부분이 숫자인지 확인
   const isYearNumeric = !isNaN(year);
   const isMonthNumeric = !isNaN(month);
   const isDayNumeric = !isNaN(day);
+  const isHourNumeric = !isNaN(hour);
+  const isMinuteNumeric = !isNaN(minute);
+  const isSecondNumeric = !isNaN(second);
 
   // 각 부분의 범위를 확인
   const isYearValid = year >= 1000 && year <= 9999;
   const isMonthValid = month >= 1 && month <= 12;
   const isDayValid = day >= 1 && day <= 31;
+  const isHourValid = hour >= 0 && hour <= 23;
+  const isMinuteValid = minute >= 0 && minute <= 59;
+  const isSecondValid = second >= 0 && second <= 59;
 
   // 각 월의 일 확인 함수
   const isMonthDayValid = (year, month, day) => {
@@ -440,7 +464,7 @@ const isValidDateType = computed(() => {
   };
 
   // 모든 조건이 충족되면 true 반환
-  return isYearNumeric && isMonthNumeric && isDayNumeric && isYearValid && isMonthValid && isDayValid && isMonthDayValid(year, month, day);
+  return isYearNumeric && isMonthNumeric && isDayNumeric && isYearValid && isMonthValid && isDayValid && isHourNumeric && isMinuteNumeric && isSecondNumeric && isHourValid && isMinuteValid && isSecondValid && isMonthDayValid(year, month, day);
 });
 
 const triggerVideoFileUpload = () => {
@@ -738,13 +762,45 @@ const decrementDateUnit = (index) => {
     dateUnits.value.splice(index, 1, String(maxValues[index]));
   }
 };
+const incrementDayUnit = (index) => {
+  let unit = dateUnits.value[index+8];
 
+  // 각 자릿수에 따른 최대 값 설정
+  const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+
+  // 현재 값과 최대 값 비교하여 조정
+  if (parseInt(unit) < maxValues[index+8]) {
+    dateUnits.value.splice(index+8, 1, String(parseInt(unit) + 1));
+  } else {
+    // 최대 값이면 0으로 조정
+    dateUnits.value.splice(index+8, 1, '0');
+  }
+};
+
+const decrementDayUnit = (index) => {
+  let unit = dateUnits.value[index+8];
+
+  // 각 자릿수에 따른 최소 값 설정
+  const minValues = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+  // 현재 값과 최소 값 비교하여 조정
+  if (parseInt(unit) > minValues[index+8]) {
+    dateUnits.value.splice(index+8, 1, String(parseInt(unit) - 1));
+  } else {
+    // 최소 값이면 최대 값으로 조정
+    const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+    dateUnits.value.splice(index+8, 1, String(maxValues[index]));
+  }
+};
 
 const formattedDate = computed(() => {
   const year = dateUnits.value.slice(0, 4).join('');
   const month = dateUnits.value.slice(4, 6).join('');
   const day = dateUnits.value.slice(6, 8).join('');
-  return `${year}-${month}-${day}`;
+  const hour = dateUnits.value.slice(8, 10).join('');
+  const minute = dateUnits.value.slice(10, 12).join('');
+  const second = dateUnits.value.slice(12, 14).join('');
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}+09:00`;
 });
 const userId = ref(useStore.getUser().id);
 
@@ -763,7 +819,7 @@ const timeCapsuleSubmit = () => {
 
   // axios를 사용하여 요청 보내기
   try {
-    axiosInstance.post('http://localhost:3000/time', formData, {
+    axiosInstance.post('http://13.125.169.9:5173/time', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -785,15 +841,6 @@ const timeCapsuleSubmit = () => {
     console.error('Error submitting the post', error);
   }
 };
-// const testtimecapsulesubmit = () => {
-//   closeModal();
-//   nextStep();
-//   let postDate = `${formattedDate.value}`+"T00:00:00+09:00"
-//   console.log(`${postDate}`)
-//   setTimeout(() => {
-//         nextStep();
-//       }, 5000);
-// }
 </script>
 
 
@@ -1133,7 +1180,7 @@ const timeCapsuleSubmit = () => {
 .settings div {
   display: flex;
   margin: 8px 0;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   align-content: center;
   flex-wrap: wrap;
@@ -1218,7 +1265,10 @@ p {
   display: flex;
   flex-direction: column;
 }
-
+.uuu {
+  display: flex;
+  flex-direction : column;
+}
 .npc{
   padding: 8px 24px;
   font-size : 24px;
