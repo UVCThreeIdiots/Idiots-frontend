@@ -242,7 +242,7 @@ const checkKey = () => {
     code : emailKey.value,
   };
 
-  axios.post("http://13.125.169.9:5173/auth/code", JSON.stringify(saveData), {
+  axios.post("http://13.125.169.9:80/auth/code", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -269,7 +269,7 @@ const isRealEmail = () => {
     email: email.value,
   };
 
-  axios.post("http://13.125.169.9:5173/auth/email", JSON.stringify(saveData), {
+  axios.post("http://13.125.169.9:80/auth/email", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -298,7 +298,7 @@ const isUsedUserId = () => {
     userId: userId.value,
   };
 
-  axios.post("http://13.125.169.9:5173/auth/duplicate", JSON.stringify(saveData), {
+  axios.post("http://13.125.169.9:80/auth/duplicate", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -329,7 +329,7 @@ const signupSubmit = () => {
     email: email.value,
   };
 
-  axios.post("http://13.125.169.9:5173/user", JSON.stringify(saveData), {
+  axios.post("http://13.125.169.9:80/user", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

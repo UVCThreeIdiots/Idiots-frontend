@@ -142,9 +142,9 @@ const chartOptionsMonthly = {
 
 const fetchCapsuleData = async () => {
   try {
-    const response = await axiosInstance.get('http://13.125.169.9:5173/time/allTCapsules');
+    const response = await axiosInstance.get('http://13.125.169.9:80/time/allTCapsules');
     timeCapsules.value = response.data;
-    const response2 = await axiosInstance.get('http://13.125.169.9:5173/goal/all');
+    const response2 = await axiosInstance.get('http://13.125.169.9:80/goal/all');
     goalCapsules.value = response2.data;
     updateData();
     updateDataWeekly();

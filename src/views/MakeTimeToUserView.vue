@@ -444,7 +444,7 @@ const isValidDateType = computed(() => {
 
 const emailCheck = () => {
   const data = {email : email.value};
-  axiosInstance.post("http://13.125.169.9:5173/other/email", JSON.stringify(data), {
+  axiosInstance.post("http://13.125.169.9:80/other/email", JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -799,7 +799,7 @@ const timeCapsuleSubmit = () => {
   formData.append("otherEmail", email.value);
 
   try {
-    axiosInstance.post("http://13.125.169.9:5173/time", formData, {
+    axiosInstance.post("http://13.125.169.9:80/time", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

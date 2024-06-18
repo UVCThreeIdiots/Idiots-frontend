@@ -216,7 +216,7 @@ const onLogoutZone = () => {
   npc.value = `[${userName.value}]<br>조금 졸린것 같다. 잠깐 잠을 잘까? (로그아웃됩니다.)<br>예 : ENTER`;
   const handleLogoutKeydown = (event) => {
     if (event.key === 'Enter') {
-      axiosInstance.post(`http://13.125.169.9:5173/auth/logout/`)
+      axiosInstance.post(`http://13.125.169.9:80/auth/logout/`)
       .then(response => {
         console.log(response.data);
         useStore.logout();
@@ -285,7 +285,7 @@ const passCheck = () => {
     password: passwordCheck.value,
   };
 
-  axiosInstance.post(`http://13.125.169.9:5173/auth/info`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://13.125.169.9:80/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },

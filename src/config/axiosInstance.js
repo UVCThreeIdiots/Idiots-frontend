@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useSessionStore } from '../stores/session';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://13.125.169.9:5173/', // 서버의 도메인
+  baseURL: 'http://13.125.169.9:80/', // 서버의 도메인
   withCredentials: true // 자격 증명 허용
 });
 

@@ -81,7 +81,7 @@ const initialPosition = route.query.initialPosition; // 초기 위치
 
 const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
-  axiosInstance.get(`http://13.125.169.9:5173/goal/${goalId}`)
+  axiosInstance.get(`http://13.125.169.9:80/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
@@ -118,7 +118,7 @@ const increaseProgress = () => {
       dailyCheck : dailyCheck.value,
     };
 
-    axiosInstance.put(`http://13.125.169.9:5173/goal/${goalId}`, JSON.stringify(saveData), {
+    axiosInstance.put(`http://13.125.169.9:80/goal/${goalId}`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json'
       },

@@ -819,7 +819,7 @@ const timeCapsuleSubmit = () => {
 
   // axios를 사용하여 요청 보내기
   try {
-    axiosInstance.post('http://13.125.169.9:5173/time', formData, {
+    axiosInstance.post('http://13.125.169.9:80/time', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
