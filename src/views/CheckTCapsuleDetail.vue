@@ -142,9 +142,9 @@ const TCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    imagePath.value = response.data.imagePath.map(imagePath => { return `https://www.3idiots.xyz:3000/${imagePath}` });
-    videoPath.value = response.data.videoPath ? `https://www.3idiots.xyz:3000/${response.data.videoPath}` : '';
-    audioPath.value = response.data.audioPath ? `https://www.3idiots.xyz:3000/${response.data.audioPath}` : '';
+    imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });
+    videoPath.value = response.data.videoPath ? response.data.videoPath : '';
+    audioPath.value = response.data.audioPath ? response.data.audioPath : '';
   })
   .catch(error => {
     console.error(error);

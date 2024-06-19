@@ -133,7 +133,7 @@ const GCapsuleDetails = () => {
   axiosInstance.get(`https://www.3idiots.xyz:3000/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
-    imagePath.value = response.data.imagePath.map(imagePath => { return `https://www.3idiots.xyz:3000/${imagePath}` });
+    imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });
     capsuleDetail.value = response.data;
     now.value = response.data.nowCount;
     total.value = response.data.goalCount;
