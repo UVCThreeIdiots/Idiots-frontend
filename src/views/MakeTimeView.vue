@@ -395,8 +395,14 @@ const handleFileUpload = (event, type) => {
 };
 
 const removeImage = (index) => {
+const targetImage = imageUrls.value[index];
+console.log(targetImage);
+for(let i = 0; i < files.value.length; i++) {
+    if (files.value[i] === targetImage) {
+        files.value.splice(i, 1);
+    }
+}
   imageUrls.value.splice(index, 1);
-  files.value.splice(index, 1);
   console.log(files.value);
 };
 
@@ -404,7 +410,7 @@ const clearVideoFile = () => {
   const extensionsToRemove = [ '.mp4' , '.mpeg']
     if( videoUrl.value != null ) {
       videoUrl.value = null;
-      files.value = files.value.filter( file => !extensionsToRemove.some(ext => !file.name.endsWith(ext)));
+      files.value = files.value.filter( file => !extensionsToRemove.some(ext => file.name.endsWith(ext)));
       console.log(files.value);
       return;
     } else {
