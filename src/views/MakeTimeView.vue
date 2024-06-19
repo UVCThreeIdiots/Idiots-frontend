@@ -395,15 +395,15 @@ const handleFileUpload = (event, type) => {
 };
 
 const removeImage = (index) => {
-const targetImage = imageUrls.value[index];
-console.log(targetImage);
-for(let i = 0; i < files.value.length; i++) {
-    if (files.value[i] === targetImage) {
+	const extensionsToRemove = [ '.png' , '.jpeg', '.gif']
+	const tmp = files.value.filter( file => extensionsToRemove.some(ext => file.name.endsWith(ext)));
+  	imageUrls.value.splice(index, 1);
+  	const target = tmp[index]
+  for(let i = 0; i < files.value.length; i++) {
+    if (files.value[i] === target) {
         files.value.splice(i, 1);
     }
 }
-  imageUrls.value.splice(index, 1);
-  console.log(files.value);
 };
 
 const clearVideoFile = () => {
