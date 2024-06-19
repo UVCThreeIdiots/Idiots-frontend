@@ -217,7 +217,9 @@ const files = ref([]);
 
 const nextStep = () => {
   if (currentStep.value < stepsInfo) {
-    currentStep.value++;
+   console.log(otherUserName);
+   console.log(otherUserName.value);
+   currentStep.value++;
     if (currentStep.value <= 0)
       typedText.value = '이곳에서는 새로운 타임캡슐을 만들 수 있단다!\n어떤 목표를 세울까? (예 : 운동, 독서, 프로그래밍 공부)';
     else if (currentStep.value === 1)
@@ -229,7 +231,7 @@ const nextStep = () => {
     else if (currentStep.value === 4)
       typedText.value = '포켓몬들이 골 캡슐을 땅속 깊숙히 묻고 있단다!';
     else if (currentStep.value === 5)
-      typedText.value = `${otherUserName.value}의 새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
+      typedText.value = `${otherUserName}의 새로운 골 캡슐이 성공적으로 저장되었단다.\n목표를 위해 모험을 시작하자!`;
   }
 };
 
