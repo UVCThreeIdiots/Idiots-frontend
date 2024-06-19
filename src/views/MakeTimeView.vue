@@ -395,6 +395,8 @@ const handleFileUpload = (event, type) => {
 };
 
 const removeImage = (index) => {
+	console.log(index);
+	console.log(files.value);
   imageUrls.value.splice(index, 1);
   files.value.splice(index, 1);
   console.log(files.value);
