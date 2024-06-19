@@ -1047,7 +1047,14 @@ const timeCapsuleSubmit = () => {
   /* margin-bottom: 8px; */
 }
 .buttons-and-ment{
-  margin-top : 100px;
+  margin-top : 50px;
+}
+.buttons-and-ment div {
+  display : flex;
+  align-items : center;
+  justify-content: center;
+  align-content : flex-start;
+  margin-bottom: 10px;
 }
 .recording-display {
   width: 72%;
@@ -1312,16 +1319,6 @@ const timeCapsuleSubmit = () => {
 }
 
 
-.settings div {
-  display: flex;
-  margin: 8px 0;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-  flex-wrap: wrap;
-}
-
-
 .modal-overlay input {
   align-items: middle;
   padding: 5px;
@@ -1355,9 +1352,7 @@ button:disabled {
 }
 p {
   margin-top: 10px;
-  white-space: pre-wrap;
   overflow: hidden;
-  width: 100%;
   height: 100px;
   font-family: 'CustomFont', Arial, sans-serif;
   color: black;
@@ -1380,7 +1375,7 @@ p {
   height: 370px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .modal-overlay {
@@ -1399,6 +1394,7 @@ p {
   /* border: 2px solid #000; */
   display: flex;
   flex-direction: column;
+  align-items : center;
 }
 .uuu {
   display: flex;
@@ -1499,7 +1495,7 @@ p {
 .date-unit {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex;
 }
 
 .date-unit div {
@@ -1538,5 +1534,8 @@ p {
   color:green;
   font-size : 20px;
 }
-
+  .divider{
+	  font-size : 40px;
+	  color : black;
+  }
 </style>
