@@ -23,7 +23,7 @@
             <span v-if="showLink4">▶</span><span v-else></span>&nbsp;내 정보를 변경한다</a>
           <a @mouseover="showLink5 = true" @mouseleave="showLink5 = false" @click="logout">
             <span v-if="showLink5">▶</span><span v-else></span>&nbsp;로그아웃</a>
-          <a v-if="role" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
+          <a v-if="role==='admin'" @mouseover="showLink6 = true" @mouseleave="showLink6 = false" @click="openDeveloperModal">
         <span v-if="showLink6">▶</span><span v-else></span>&nbsp;개발자 도구</a>
         </div>
       </div>

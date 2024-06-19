@@ -41,18 +41,43 @@
           <label for="dueDate"></label>
           <div class="uuu">
             <div class="date-picker">
-              <div v-for="(unit, index) in dateUnits.slice(0, 8)" :key="index" class="date-unit">
+              <div v-for="(unit, index) in dateUnits.slice(0, 4)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementYearUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementYearUnit(index)">▼</button>
+              </div>
+	      <p class="divider"> - </p>
+               <div v-for="(unit, index) in dateUnits.slice(4, 6)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementMonthUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementMonthUnit(index)">▼</button>
+              </div>
+	      <p class="divider"> - </p>
+               <div v-for="(unit, index) in dateUnits.slice(6, 8)" :key="index" class="date-unit">
                 <button class="date-button" @click="incrementDateUnit(index)">▲</button>
                 <div class="date-value">{{ unit }}</div>
                 <button class="date-button" @click="decrementDateUnit(index)">▼</button>
               </div>
             </div>
             <div class="date-picker">
-              <div v-for="(unit, index) in dateUnits.slice(8, 14)" :key="index" class="date-unit">
-                <button class="date-button" @click="incrementDayUnit(index)">▲</button>
+              <div v-for="(unit, index) in dateUnits.slice(8, 10)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementHourUnit(index)">▲</button>
                 <div class="date-value">{{ unit }}</div>
-                <button class="date-button" @click="decrementDayUnit(index)">▼</button>
+                <button class="date-button" @click="decrementHourUnit(index)">▼</button>
               </div>
+	      <p class="divider"> : </p>
+	      <div v-for="(unit, index) in dateUnits.slice(10, 12)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementMinuteUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementMinuteUnit(index)">▼</button>
+              </div>
+	      <p class="divider"> : </p>
+              <div v-for="(unit, index) in dateUnits.slice(12, 14)" :key="index" class="date-unit">
+                <button class="date-button" @click="incrementSecondUnit(index)">▲</button>
+                <div class="date-value">{{ unit }}</div>
+                <button class="date-button" @click="decrementSecondUnit(index)">▼</button>
+              </div>
+
             </div>
           </div>
           <div class="warnings">
@@ -769,7 +794,7 @@ const urlToFile = async (url, filename, mimeType) => {
 };
 
 
-const incrementDateUnit = (index) => {
+const incrementYearUnit = (index) => {
   let unit = dateUnits.value[index];
 
   // 각 자릿수에 따른 최대 값 설정
@@ -784,7 +809,7 @@ const incrementDateUnit = (index) => {
   }
 };
 
-const decrementDateUnit = (index) => {
+const decrementYearUnit = (index) => {
   let unit = dateUnits.value[index];
 
   // 각 자릿수에 따른 최소 값 설정
@@ -799,7 +824,73 @@ const decrementDateUnit = (index) => {
     dateUnits.value.splice(index, 1, String(maxValues[index]));
   }
 };
-const incrementDayUnit = (index) => {
+const incrementMonthUnit = (index) => {
+  let unit = dateUnits.value[index+4];
+
+  // 각 자릿수에 따른 최대 값 설정
+  const maxValues = [9, 9, 9, 9, 1, 9, 3, 9];
+
+  // 현재 값과 최대 값 비교하여 조정
+  if (parseInt(unit) < maxValues[index+4]) {
+    dateUnits.value.splice(index+4, 1, String(parseInt(unit) + 1));
+  } else {
+    // 최대 값이면 0으로 조정
+    dateUnits.value.splice(index+4, 1, '0');
+  }
+};
+
+const decrementMonthUnit = (index) => {
+  let unit = dateUnits.value[index+4];
+
+  // 각 자릿수에 따른 최소 값 설정
+  const minValues = [2, 0, 0, 0, 0, 0, 0, 0];
+
+  // 현재 값과 최소 값 비교하여 조정
+  if (parseInt(unit) > minValues[index+4]) {
+    dateUnits.value.splice(index+4, 1, String(parseInt(unit) - 1));
+  } else {
+    // 최소 값이면 최대 값으로 조정
+    const maxValues = [3, 9, 9, 9, 1, 2, 3, 9];
+    dateUnits.value.splice(index+4, 1, String(maxValues[index+4]));
+  }
+};
+const incrementDateUnit = (index) => {
+  let unit = dateUnits.value[index+6];
+
+  // 각 자릿수에 따른 최대 값 설정
+  const maxValues = [9, 9, 9, 9, 1, 9, 3, 9];
+
+  // 현재 값과 최대 값 비교하여 조정
+  if (parseInt(unit) < maxValues[index+6]) {
+    dateUnits.value.splice(index+6, 1, String(parseInt(unit) + 1));
+  } else {
+    // 최대 값이면 0으로 조정
+    dateUnits.value.splice(index+6, 1, '0');
+  }
+};
+
+const decrementDateUnit = (index) => {
+  let unit = dateUnits.value[index+6];
+
+  // 각 자릿수에 따른 최소 값 설정
+  const minValues = [2, 0, 0, 0, 0, 0, 0, 0];
+
+  // 현재 값과 최소 값 비교하여 조정
+  if (parseInt(unit) > minValues[index+6]) {
+    dateUnits.value.splice(index+6, 1, String(parseInt(unit) - 1));
+  } else {
+    // 최소 값이면 최대 값으로 조정
+    const maxValues = [3, 9, 9, 9, 1, 2, 3, 9];
+    dateUnits.value.splice(index+6, 1, String(maxValues[index+6]));
+  }
+};
+
+
+
+
+
+
+const incrementHourUnit = (index) => {
   let unit = dateUnits.value[index+8];
 
   // 각 자릿수에 따른 최대 값 설정
@@ -814,7 +905,7 @@ const incrementDayUnit = (index) => {
   }
 };
 
-const decrementDayUnit = (index) => {
+const decrementHourUnit = (index) => {
   let unit = dateUnits.value[index+8];
 
   // 각 자릿수에 따른 최소 값 설정
@@ -826,10 +917,54 @@ const decrementDayUnit = (index) => {
   } else {
     // 최소 값이면 최대 값으로 조정
     const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
-    dateUnits.value.splice(index+8, 1, String(maxValues[index]));
+    dateUnits.value.splice(index+8, 1, String(maxValues[index+8]));
   }
 };
 
+const incrementMinuteUnit = (index) => {
+  let unit = dateUnits.value[index+10];
+  const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+  if (parseInt(unit) < maxValues[index+10]) {
+  dateUnits.value.splice(index+10,1,String(parseInt(unit)+1));
+  } else {
+  dateUnits.value.splice(index+10,1,'0');
+  }
+};
+
+const decrementMinuteUnit = (index) => {
+  let unit = dateUnits.value[index+10];
+  const minValues = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  if (parseInt(unit) > minValues[index+10]) {
+    dateUnits.value.splice(index+10,1,String(parseInt(unit) - 1));
+  } else {
+    const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+    dateUnits.value.splice(index+10,1,String(maxValues[index+10]));
+  }
+};
+ const incrementSecondUnit = (index) => {
+  let unit = dateUnits.value[index+12];
+  const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+  if (parseInt(unit) < maxValues[index+12]) {
+  dateUnits.value.splice(index+12,1,String(parseInt(unit)+1));
+  } else {
+  dateUnits.value.splice(index+12,1,'0');
+  }
+};
+
+const decrementSecondUnit = (index) => {
+  let unit = dateUnits.value[index+12];
+  const minValues = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  if (parseInt(unit) > minValues[index+12]) {
+    dateUnits.value.splice(index+12,1,String(parseInt(unit) - 1));
+  } else {
+    const maxValues = [0,0,0,0,0,0,0,0,2,9,5,9,5,9];
+    dateUnits.value.splice(index+12,1,String(maxValues[index+12]));
+  }
+};
+  
+
+
+  
 const formattedDate = computed(() => {
   const year = dateUnits.value.slice(0, 4).join('');
   const month = dateUnits.value.slice(4, 6).join('');
@@ -1226,7 +1361,7 @@ const timeCapsuleSubmit = () => {
 }
 
 .buttons-and-ment{
-  margin-top : 100px;
+  margin-top : 50px;
 }
 .buttons-and-ment div {
   /* border: 2px solid #000; */
@@ -1234,7 +1369,8 @@ const timeCapsuleSubmit = () => {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  align-content: center;
+  align-content: flex-start;
+  margin-bottom : 10px;
 }
 
 
@@ -1483,4 +1619,8 @@ button:disabled {
   font-family: 'CustomFont', Arial, sans-serif;
   color : black;
 }
+  .divider{
+	  font-size : 40px;
+	  color : black;
+  }
 </style>
