@@ -540,9 +540,9 @@ const nextStep = () => {
       typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
     else if (currentStep.value === 4)
       if (isEmailExists.value)
-        typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 ${otherUserName.value}의 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+        typedText.value = `타임 캡슐이 성공적으로 저장되었단다. 포켓몬들이 ${otherUserName.value}의 타임 캡슐을\n${formattedDateNpc.value}에 가져다 준단다! `;
       else
-        typedText.value = `새로운 타임 캡슐이 성공적으로 저장되었단다.\n포켓몬들이 타임 캡슐을 ${formattedDate.value}에 가져다 준단다! `;
+        typedText.value = `타임 캡슐이 성공적으로 저장되었단다. 포켓몬들이 타임 캡슐을\n${formattedDateNpc.value}에 가져다 준단다! `;
 
   }
 };
@@ -976,7 +976,15 @@ const formattedDate = computed(() => {
 });
 const userId = ref(useStore.getUser().id);
 
-
+const formattedDateNpc = computed(() => {
+  const year = dateUnits.value.slice(0, 4).join('');
+  const month = dateUnits.value.slice(4, 6).join('');
+  const day = dateUnits.value.slice(6, 8).join('');
+  const hour = dateUnits.value.slice(8, 10).join('');
+  const minute = dateUnits.value.slice(10, 12).join('');
+  const second = dateUnits.value.slice(12, 14).join('');
+  return `${year}-${month}-${day}, ${hour}:${minute}:${second}`;
+});
 const timeCapsuleSubmit = () => {
   const formData = new FormData();
 
