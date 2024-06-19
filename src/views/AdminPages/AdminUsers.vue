@@ -179,7 +179,7 @@ const editUserId = ref(null);
 // };
 
 const usersData = () => {
-  axiosInstance.get(`http://13.125.169.9:3000/user/all`)
+  axiosInstance.get(`http://13.125.169.9:3000/admin/user/list`)
   .then(response => {
     console.log(response.data);
     users.value = response.data;
