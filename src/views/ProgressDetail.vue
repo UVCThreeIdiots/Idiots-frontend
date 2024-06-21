@@ -46,13 +46,13 @@
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
           </div>
+        </div>
       </div>    
     </div>
     <div class="button-container">
       <button v-if="initialPosition==='center'" @click="gamemain">뒤로가기</button>
       <button v-else @click="goBack">뒤로가기</button>
     </div>
-  </div>
   </div>
 </template>
 
