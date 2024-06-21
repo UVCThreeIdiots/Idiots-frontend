@@ -26,7 +26,7 @@
             <p>제목 : {{capsuleDetail.title}}</p>
           </div>
           <div class="content">
-            <p>{{capsuleDetail.body}}</p>
+            <textarea class="cap-body" readonly></textarea>
           </div>
           <div class="files">
             <button type="button" @click="openImageModal">
@@ -180,6 +180,12 @@ body {
   margin: 0;
 }
 
+.cap-body {
+  /* border: 1px solid #000; */
+  resize: none; /* 크기 조절 금지 */
+  width: 100%;
+}
+
 .image-box{
   border: 1px solid #eee;
   margin: 0px 0px 16px 0px;
@@ -286,9 +292,9 @@ body {
     font-size: 1.2em;
     line-height: 1.6;
     color: #666;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
-    padding-left: 16px;
+    padding: 16px;
     height: 90%;
 }
 

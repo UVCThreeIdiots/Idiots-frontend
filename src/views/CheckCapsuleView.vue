@@ -22,7 +22,8 @@
       <div class="child" v-for="GCapsule in filteredGCapsules" :key="GCapsule.id">
         <div class="image-container">
           <img class="capsule" src="../components/images/capsule.gif">
-          <img v-if="GCapsule.sendGCapsules == 100" src="../components/images/success.png" class="overlay-image">
+          <img v-if="GCapsule.isSuccess == true" src="../components/images/success.png" class="overlay-image">
+          <img v-else-if="GCapsule.isSuccess == false && GCapsule.isFailed == false" src="../components/images/inprogress.png" class="overlay-image">
           <img v-else src="../components/images/fail.png" class="overlay-image">
         </div>
         <div>

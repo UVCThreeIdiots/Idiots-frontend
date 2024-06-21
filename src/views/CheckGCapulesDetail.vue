@@ -16,8 +16,9 @@
         <div class="capsule">
           <div class="capsule-box">
             <img src="../components/images/capsule.gif" class="capsule-image">
-            <img v-if="progress == 100" src="../components/images/success.png" class="success-image">
-            <img v-else src="../components/images/fail.png" class="failure-image">
+            <img v-if="capsuleDetail.isSuccess == true" src="../components/images/success.png" class="image-overlay">
+            <img v-else-if="capsuleDetail.isSuccess == false && capsuleDetail.isFailed == false" src="../components/images/inprogress.png" class="image-overlay">
+            <img v-else src="../components/images/fail.png" class="image-overlay">
           </div>
         </div>
         <div class="capsule"> 
@@ -375,22 +376,13 @@ body {
   display: block;
 }
 
-.success-image {
+.image-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
-  width: 50%; /* Adjust the size as needed */
-  height: 50%; /* Adjust the size as needed */
-}
-
-.failure-image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Centers the success image over the capsule image */
-  width: 50%; /* Adjust the size as needed */
-  height: 50%; /* Adjust the size as needed */
+  transform: translate(-50%, -50%); 
+  width: 50%;
+  height: 50%;
 }
 
 .right-board {
