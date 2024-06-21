@@ -153,6 +153,9 @@ body {
   margin: 8px 16px 0px 0px;
   width: 103px;
   border-radius: 16px;
+  text-align: center;
+  font-size: 16px;
+  padding: 4px;
 }
 
 .capsule-filter {
