@@ -50,7 +50,7 @@
             </div>
             <div v-if="progress == 100" class="show-image-box">
               <button type="button" @click="openImageModal">
-                <img src="../components/images/openimage.png"/>
+                <img src="../components/images/giftbox.png"/>
               </button>
               <p> <== 보상을 확인하세요 ! ! ! </p>
             </div>

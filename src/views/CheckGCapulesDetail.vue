@@ -48,11 +48,14 @@
                 {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
               </p>
             </div>
-            <div v-if="progress == 100" class="show-image-box">
+            <div v-if="capsuleDetail.isSuccess == true" class="show-image-box">
               <p>상대방이 목표를 달성하여 보상을 확인할 수 있습니다 ! ! !</p>
             </div>
+            <div v-else-if="capsuleDetail.isSuccess == false && capsuleDetail.isFailed == false" class="show-image-box">
+              <p>과연 성공적으로 목표를 달성할 수 있을까요?! 끝까지 응원해주세요 ! !</p>
+            </div>
             <div v-else class="show-image-box">
-              <p>상대방이 목표를 달성하지 못하여 보상을 확인할 수 없습니다..</p>
+              <p>아쉽게도 상대방이 목표를 달성하지 못하여 보상을 확인할 수 없습니다..</p>
             </div>
           </div>
         </div>
