@@ -10,10 +10,16 @@
       </p>
       </div>
     </div>
-
+    <div class="capsule-filter">
+      <select id="capsuleSelect" v-model="selected" @change="selectCapsule">
+        <option value="">모두보기</option>
+        <option value="option1">목표캡슐</option>
+        <option value="option2">타임캡슐</option>
+      </select>
+    </div>
     <div class="parent">
       <!-- Render GCapsule List -->
-      <div class="child" v-for="GCapsule in sendGCapsuleLists" :key="GCapsule.id">
+      <div class="child" v-for="GCapsule in filteredGCapsules" :key="GCapsule.id">
         <div class="image-container">
           <img class="capsule" src="../components/images/capsule.gif">
           <img v-if="GCapsule.sendGCapsules == 100" src="../components/images/success.png" class="overlay-image">
@@ -36,7 +42,7 @@
       </div>
 
       <!-- Render TCapsule List -->
-      <div class="child" v-for="TCapsule in sendTCapsuleLists" :key="TCapsule.id">
+      <div class="child" v-for="TCapsule in filteredTCapsules" :key="TCapsule.id">
         <div class="image-container">
           <img class="capsule" src="../components/images/capsule.gif">
         </div>
@@ -59,13 +65,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from 'vue-router';
 import axiosInstance from '@/config/axiosInstance';
 
-
 const route = useRoute();
 
+const selected = ref('');
 
 const typedText = ref('전송한 캡슐의 상태를 확인할 수 있는 곳 ! ! ! ');
 const initialPosition = route.query.initialPosition; // 초기 위치
@@ -79,6 +85,20 @@ const navigateTo = (route) => {
 const goBack = () => {
   navigateTo(`/main/`);
 };
+
+//필터링
+const filteredGCapsules = computed(() => {
+  if (selected.value === 'option1' || selected.value === '') {
+    return sendGCapsuleLists.value;
+  }
+  return [];
+});
+const filteredTCapsules = computed(() => {
+  if (selected.value === 'option2' || selected.value === '') {
+    return sendTCapsuleLists.value;
+  }
+  return [];
+});
 
 const SendCapsuleData = () => {
   axiosInstance.get(`https://www.3idiots.xyz:3000/other/capsules/`)
@@ -125,6 +145,17 @@ body {
   margin: 0;
 }
 
+.select-box {
+  border: 2px solid #000;
+  margin: 8px 16px 0px 0px;
+}
+
+.capsule-filter {
+  border: 2px solid #000;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .image-container {
   position: relative;
   display: inline-block;
@@ -163,16 +194,28 @@ body {
 }
 
 .parent {
-  /* border: 1px solid #000; */
-  margin: 8px;
-  padding: 8px;
-  text-align: justify;
-  height: 70%;
+  margin: 0px 8px 0px 8px;
+  /* padding: 8px; */
+  /* text-align: justify; */
   width: 97%;
+  height: 68%;
   overflow: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 8px;
+  /* row-gap: 8px;*/
+}
+
+.parent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.parent::-webkit-scrollbar-thumb { 
+    background-color: #cbcbcbbd;
+    border-radius: 15px;
+}
+
+.parent::-webkit-scrollbar-button {
+    display: none;
 }
 
 .child {
