@@ -46,7 +46,7 @@
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
             <p v-for="(date, index) in achievedDates" :key="index">
-	    {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
+              {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
             </p>
           </div>
         </div>
