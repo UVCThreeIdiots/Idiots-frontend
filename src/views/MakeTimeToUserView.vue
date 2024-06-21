@@ -540,7 +540,7 @@ const nextStep = () => {
       typedText.value = '포켓몬들이 타임 캡슐을 땅속 깊숙히 묻고 있단다!';
     else if (currentStep.value === 4)
       if (isEmailExists.value)
-        typedText.value = `타임 캡슐이 성공적으로 저장되었단다. 포켓몬들이 ${otherUserName.value}의 타임 캡슐을\n${formattedDateNpc.value}에 가져다 준단다! `;
+        typedText.value = `타임 캡슐이 성공적으로 저장되었단다. 포켓몬들이 ${otherUserName.value}의\n 타임 캡슐을${formattedDateNpc.value}에 가져다 준단다! `;
       else
         typedText.value = `타임 캡슐이 성공적으로 저장되었단다. 포켓몬들이 타임 캡슐을\n${formattedDateNpc.value}에 가져다 준단다! `;
 
@@ -974,7 +974,7 @@ const formattedDate = computed(() => {
   const second = dateUnits.value.slice(12, 14).join('');
   return `${year}-${month}-${day}T${hour}:${minute}:${second}+09:00`;
 });
-const userId = ref(useStore.getUser().id);
+const userName = ref(useStore.getUser().name);
 
 const formattedDateNpc = computed(() => {
   const year = dateUnits.value.slice(0, 4).join('');
@@ -985,16 +985,21 @@ const formattedDateNpc = computed(() => {
   const second = dateUnits.value.slice(12, 14).join('');
   return `${year}-${month}-${day}, ${hour}:${minute}:${second}`;
 });
+const stampMessage = ref('');
+const stamp = () => {
+  stampMessage.value = message.value+`
+
+  from. ${userName.value}`
+}
 const timeCapsuleSubmit = () => {
   const formData = new FormData();
-
+  stamp();
   files.value.forEach(file => {
     formData.append('files', file);
   });
   formData.append("title", title.value);
-  formData.append("userId", userId.value);
   formData.append("expired", `${formattedDate.value}`); // datetime 형식으로 변환된 값
-  formData.append("body", message.value);
+  formData.append("body", stampMessage.value);
   formData.append("otherId", otherUserid.value);
   formData.append("otherEmail", email.value);
 
