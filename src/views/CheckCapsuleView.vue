@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="capsule-filter">
-      <select id="capsuleSelect" v-model="selected" @change="selectCapsule">
+      <select id="capsuleSelect" class="select-box" v-model="selected" @change="selectCapsule">
         <option value="">모두보기</option>
         <option value="option1">목표캡슐</option>
         <option value="option2">타임캡슐</option>
@@ -148,10 +148,12 @@ body {
 .select-box {
   border: 2px solid #000;
   margin: 8px 16px 0px 0px;
+  width: 103px;
+  border-radius: 16px;
 }
 
 .capsule-filter {
-  border: 2px solid #000;
+  /* border: 2px solid #000; */
   display: flex;
   justify-content: flex-end;
 }
