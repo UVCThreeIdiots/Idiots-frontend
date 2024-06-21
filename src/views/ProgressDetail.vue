@@ -45,8 +45,8 @@
             <p>{{now}}</p>
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
-            <p v-for="(date, index) in achievedReadingDates" :key="index">
-              {{ date }}
+            <p v-for="(date, index) in achievedDates" :key="index">
+	    {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
             </p>
           </div>
         </div>
@@ -129,6 +129,7 @@ const increaseProgress = () => {
       },
     }).then((response) => {
       if (response.status === 200){
+        achievedDates.value = response.data.achievedDates;
         console.log("nowCount 전달 성공");
       }
     }).catch((error) => {
