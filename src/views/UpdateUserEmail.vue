@@ -11,7 +11,7 @@
       <div class="input-container">
         <label for="email">변경할 이메일 :</label>
         <input type="text" id="newEmail" v-model="newEmail" class="custom-input">
-        <button @click="isRealEmail" :disabled="!isValidEmail">중복검사</button>
+        <button class="btn-style" @click="isRealEmail" :disabled="!isValidEmail">중복검사</button>
       </div>
       <div class="comment">
           <p v-if="newEmail.length <1" class="warn">변경할 이메일을 작성해주세요!</p>
