@@ -147,7 +147,7 @@ const GCapsuleDetails = () => {
     isChecked.value = !dailyCheck.value;
     achievedDates.value = response.data.achievedDates;
     isFailed.value = response.data.isFailed;
-    failedDate.value = response.data.updatedAt;
+    failedDate.value = response.data.updatedAt.split('T')[0];
     console.log(dailyCheck.value);
   })
   .catch(error => {
