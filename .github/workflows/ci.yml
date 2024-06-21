@@ -35,7 +35,7 @@ jobs:
           script_stop: true
           script: |
             cd ~/Idiots/Idiots-frontend
-            ./deploy.sh
+            ..\deploy.sh
 
       - name: Remove Github Actions IP From Security Group # GitHub Actions의 IP 주소를 보안 그룹에서 제거하는 단계
         run: |
