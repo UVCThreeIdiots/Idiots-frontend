@@ -34,7 +34,7 @@
     <div v-if="showDeleteCheck" class="modal-overlay">
       <div class="modal-content delete">
         <h2>탈퇴 확인</h2>
-        <p class="warn">탈퇴하시겠습니까?</p>
+        <p class="warn">탈퇴하시겠습니까?<br>탈퇴 후 복구 할 수 없습니다.</p>
         <div class="delete-button-box">
         <button @click="closeDeleteAccountModal">취소</button>
         <button @click="DeleteAccount">확인</button>
