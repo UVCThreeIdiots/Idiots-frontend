@@ -45,6 +45,9 @@
             <p>{{now}}</p>
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
+            <p v-for="(date, index) in achievedReadingDates" :key="index">
+              {{ date }}
+            </p>
           </div>
         </div>
       </div>    
