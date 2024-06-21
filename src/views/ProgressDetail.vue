@@ -22,7 +22,7 @@
       </div>
 
       <div class="right-board">
-        < class="inner-board">
+        <div class="inner-board">
           <div class="board-top">
             <div class="capsule-name">
               <div>
@@ -50,7 +50,6 @@
             <p v-for="(date, index) in achievedDates" :key="index">
               {{ date }}
             </p>
-          </div>
         </div>
       </div>    
     </div>
@@ -58,6 +57,7 @@
       <button v-if="initialPosition==='center'" @click="gamemain">뒤로가기</button>
       <button v-else @click="goBack">뒤로가기</button>
     </div>
+  </div>
   </div>
 </template>
 
