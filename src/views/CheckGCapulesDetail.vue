@@ -44,7 +44,7 @@
             </div> -->
             <div class="inner-content">
               <p v-for="(date, index) in achievedDates" :key="index">
-                {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
+                {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
               </p>
             </div>
             <div v-if="progress == 100" class="show-image-box">
@@ -251,7 +251,7 @@ body {
 .inner-content {
   /* border: 1px solid green; */
   height: 88%;
-  display: flex;
+  /* display: flex; */
   padding: 8px;
   border-bottom: 2px double #eee;
 }

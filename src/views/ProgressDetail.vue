@@ -46,7 +46,7 @@
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
             <p v-for="(date, index) in achievedDates" :key="index">
-              {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
+              {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>✔
             </p>
           </div>
         </div>
@@ -292,13 +292,16 @@ body {
   padding: 16px;
 }
 
-.right-board .inner-board .board-bottom {
+.right-board .inner-board  {
   flex: 2;
   /* border: 2px solid #000; */
   border-radius: 15px;
   width: 100%;
 }
-
+.board-bottom {
+  border-radius: 15px;
+  width: 100%;
+}
 .hidden-char {
   visibility: hidden;
   animation: reveal 3s steps(40, end) forwards;
