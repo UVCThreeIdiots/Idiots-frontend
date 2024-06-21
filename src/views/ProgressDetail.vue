@@ -46,11 +46,6 @@
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
           </div>
-          <div>
-            <p v-for="(date, index) in achievedDates" :key="index">
-              {{ date }}
-            </p>
-        </div>
       </div>    
     </div>
     <div class="button-container">
