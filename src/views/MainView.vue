@@ -4,7 +4,7 @@
     <div class="border-box">
       <p class="top-comment">
         <span v-for="(char, index) in typedText" :key="index">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </p>
     </div>
@@ -117,7 +117,7 @@ const userLoginId = ref(useStore.getUser().userId);
 const userId = ref(useStore.getUser().id);
 const role = ref(useStore.getUser().role);
 const passwordCheck = ref('');
-const typedText = `${userName.value}는 무엇을 할까?`;
+const typedText = `${userName.value}는 무엇을 할까??`;
 const userMode = ref(useStore.getUser());
 const showModal = ref(false);
 const showProgressModal = ref(false);
@@ -242,9 +242,12 @@ const passCheck = () => {
     if( response.status === 200){
       navigateTo(`/updateuserinfo/`);
     } else {
+      console.log(passwordCheck.value);
+      console.log(response);
       alert('비밀번호가 일치하지 않습니다.');
     }
   }).catch((error) => {
+    console.log('catch', passwordCheck.value);
     console.log('비밀번호 불일치', error);
     alert('비밀번호가 일치하지 않습니다.'); 
   });

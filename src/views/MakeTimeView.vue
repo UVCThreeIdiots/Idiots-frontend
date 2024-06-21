@@ -395,18 +395,22 @@ const handleFileUpload = (event, type) => {
 };
 
 const removeImage = (index) => {
-	console.log(index);
-	console.log(files.value);
-  imageUrls.value.splice(index, 1);
-  files.value.splice(index, 1);
-  console.log(files.value);
+	const extensionsToRemove = [ '.png' , '.jpeg', '.gif']
+	const tmp = files.value.filter( file => extensionsToRemove.some(ext => file.name.endsWith(ext)));
+  	imageUrls.value.splice(index, 1);
+  	const target = tmp[index]
+  for(let i = 0; i < files.value.length; i++) {
+    if (files.value[i] === target) {
+        files.value.splice(i, 1);
+    }
+}
 };
 
 const clearVideoFile = () => {
   const extensionsToRemove = [ '.mp4' , '.mpeg']
     if( videoUrl.value != null ) {
       videoUrl.value = null;
-      files.value = files.value.filter( file => !extensionsToRemove.some(ext => !file.name.endsWith(ext)));
+      files.value = files.value.filter( file => !extensionsToRemove.some(ext => file.name.endsWith(ext)));
       console.log(files.value);
       return;
     } else {
@@ -1271,6 +1275,7 @@ const timeCapsuleSubmit = () => {
   /* border-top: 2px double #000; */
   display: flex;
   padding: 0px 0px 8px 8px;
+  width:100%
 }
 
 .files button {

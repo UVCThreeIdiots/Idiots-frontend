@@ -4,7 +4,7 @@
     <div class="border-box">
       <div class="npc">
         <span v-for="(char, index) in typedText" :key="index">
-          <span :style="{'animation-delay': (index * 0.1) + 's'}" class="hidden-char">{{ char }}</span>
+          <span :style="{'animation-delay': (index * 0.07) + 's'}" class="hidden-char">{{ char }}</span>
         </span>
       </div>
     </div>
@@ -36,7 +36,7 @@ import axiosInstance from '@/config/axiosInstance';
 
 const userId = ref('');
 const password = ref('');
-const typedText = ref('캡슐의 세계에 잘 왔단다! \n이 곳에서 너의 캡슐을 만들어보자! ');
+const typedText = ref('캡슐의 세계에 잘 왔단다!!\n이 곳에서 너의 캡슐을 만들어보자!!');
 const useStore = useUserStore();
 const sessionStore = useSessionStore();
 const navigateTo = (route) => {
