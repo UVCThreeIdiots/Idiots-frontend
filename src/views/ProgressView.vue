@@ -63,7 +63,7 @@ const gamemain = () => {
 }
 
 const capsuleData = () => {
-  axiosInstance.get(`https://www.3idiots.xyz:3000/goal/user/`)
+  axiosInstance.get(`http://localhost:3000/goal/user/`)
   .then(response => {
     console.log(response);
     capsuleList.value = response.data.map(capsule => {
@@ -95,6 +95,12 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.capsule-filter {
+  /* border: 2px solid #000; */
+  display: flex;
+  justify-content: flex-end;
 }
 
 .progress {

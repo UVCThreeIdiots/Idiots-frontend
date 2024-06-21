@@ -243,7 +243,7 @@ const checkKey = () => {
     code : emailKey.value,
   };
 
-  axios.post("https://www.3idiots.xyz:3000/auth/code", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/code", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -270,7 +270,7 @@ const isRealEmail = () => {
     email: email.value,
   };
 
-  axios.post("https://www.3idiots.xyz:3000/auth/email", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/email", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -299,7 +299,7 @@ const isUsedUserId = () => {
     userId: userId.value,
   };
 
-  axios.post("https://www.3idiots.xyz:3000/auth/duplicate", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/duplicate", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -330,7 +330,7 @@ const signupSubmit = () => {
     email: email.value,
   };
 
-  axios.post("https://www.3idiots.xyz:3000/user", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/user", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

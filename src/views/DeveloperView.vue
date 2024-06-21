@@ -215,7 +215,7 @@ const timeCapsuleSubmit = () => {
     body: message.value,
   };
 
-  axiosInstance.post("https://www.3idiots.xyz:3000/time", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/time", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },

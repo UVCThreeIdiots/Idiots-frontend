@@ -127,7 +127,7 @@ const gamemain = () => {
 
 const GCapsuleDetails = () => {
   const goalId = route.params.id;
-  axiosInstance.get(`https://www.3idiots.xyz:3000/goal/${goalId}`)
+  axiosInstance.get(`http://localhost:3000/goal/${goalId}`)
   .then(response => {
     console.log(response.data);
     imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });

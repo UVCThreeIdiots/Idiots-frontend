@@ -10,10 +10,16 @@
         </p>
       </div>
     </div>
-
+    <div class="capsule-filter">
+      <select id="capsuleSelect" v-model="selected" @change="selectCapsule">
+        <option value="">모두보기</option>
+        <option value="option1">목표캡슐</option>
+        <option value="option2">타임캡슐</option>
+      </select>
+    </div>
     <div class="parent">
       <!-- Render GCapsule List -->
-      <div class="child" v-for="GCapsule in GCapsuleList" :key="GCapsule.id">
+      <div class="child" v-for="GCapsule in filteredGCapsules" :key="GCapsule.id">
         <div class="image-container">
           <img class="capsule" src="../components/images/capsule.gif">
           <img v-if="GCapsule.completeGCapsules == 100" src="../components/images/success.png" class="overlay-image">
@@ -37,7 +43,7 @@
       </div>
 
       <!-- Render TCapsule List -->
-      <div class="child" v-for="TCapsule in TCapsuleList" :key="TCapsule.id">
+      <div class="child" v-for="TCapsule in filteredTCapsules" :key="TCapsule.id">
         <div class="image-container">
           <img class="capsule" src="../components/images/capsule.gif">
         </div>
@@ -60,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '../stores/user.js';
 import axiosInstance from '@/config/axiosInstance';
@@ -70,6 +76,8 @@ const GCapsuleList = ref([]);
 const TCapsuleList = ref([]);
 const useStore = useUserStore();
 const initialPosition = route.query.initialPosition; // 초기 위치
+
+const selected = ref('');
 
 const typedText = ref('도감을 확인하러 왔구나 ! !');
 
@@ -83,8 +91,22 @@ const gamemain = () => {
   navigateTo(`/maingameview2/?initialPosition=progress`);
 }
 
+const filteredGCapsules = computed(() => {
+  if (selected.value === 'option1' || selected.value === '') {
+    return GCapsuleList.value;
+  }
+  return [];
+});
+
+const filteredTCapsules = computed(() => {
+  if (selected.value === 'option2' || selected.value === '') {
+    return TCapsuleList.value;
+  }
+  return [];
+});
+
 const capsuleData = () => {
-  axiosInstance.get(`https://www.3idiots.xyz:3000/capsule/`)
+  axiosInstance.get(`http://localhost:3000/capsule/`)
   .then(response => {
     console.log('res',response.data);
     GCapsuleList.value = response.data.gCapsules.map(GCapsule => {

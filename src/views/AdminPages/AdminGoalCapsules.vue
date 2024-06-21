@@ -116,7 +116,7 @@ const paginatedCapsules = computed(() => {
 const totalPages = computed(() => Math.ceil(filteredCapsules.value.length / itemsPerPage.value));
 
 const capsulesData = () => {
-  axiosInstance.get(`https://www.3idiots.xyz:3000/goal/all`)
+  axiosInstance.get(`http://localhost:3000/goal/all`)
     .then(response => {
       console.log(response.data);
       capsules.value = response.data.map(capsule => ({
@@ -136,7 +136,7 @@ const cancelDeleteCapsule = () => {
 
 const deleteCapsule = async (id) => {
   try {
-    await axiosInstance.delete(`https://www.3idiots.xyz:3000/time/deleteTcapsule/${id}`);
+    await axiosInstance.delete(`http://localhost:3000/time/deleteTcapsule/${id}`);
     capsulesData(); // 삭제 후 목록을 다시 불러와서 업데이트
     showDelCapsuleModal.value = false; // 모달 닫기
   } catch (error) {

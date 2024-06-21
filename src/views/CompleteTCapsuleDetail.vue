@@ -138,7 +138,7 @@ const closeAudioModal = () => {
 
 const TCapsuleDetails = () => {
   const capsuleId = route.params.id;
-  axiosInstance.get(`https://www.3idiots.xyz:3000/time/TCapsule/${capsuleId}`)
+  axiosInstance.get(`http://localhost:3000/time/TCapsule/${capsuleId}`)
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;

@@ -57,7 +57,7 @@ const loginSubmit = () => {
     password: password.value
   };
   console.log({userId, password});
-  axiosInstance.post("https://www.3idiots.xyz:3000/auth/login", JSON.stringify(saveData), {
+  axiosInstance.post("http://localhost:3000/auth/login", JSON.stringify(saveData), {
   headers: {
     "Content-Type": "application/json"
   }

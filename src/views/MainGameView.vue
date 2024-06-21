@@ -216,7 +216,7 @@ const onLogoutZone = () => {
   npc.value = `[${userName.value}]<br>조금 졸린것 같다. 잠깐 잠을 잘까? (로그아웃됩니다.)<br>예 : ENTER`;
   const handleLogoutKeydown = (event) => {
     if (event.key === 'Enter') {
-      axiosInstance.post(`https://www.3idiots.xyz:3000/auth/logout/`)
+      axiosInstance.post(`http://localhost:3000/auth/logout/`)
       .then(response => {
         console.log(response.data);
         useStore.logout();
@@ -285,7 +285,7 @@ const passCheck = () => {
     password: passwordCheck.value,
   };
 
-  axiosInstance.post(`https://www.3idiots.xyz:3000/auth/info`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },

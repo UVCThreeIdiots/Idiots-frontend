@@ -141,7 +141,7 @@ const chartOptionsMonthly = {
 
 const fetchUserData = async () => {
   try {
-    const response = await axiosInstance.get('https://www.3idiots.xyz:3000/admin/user/chart');
+    const response = await axiosInstance.get('http://localhost:3000/admin/user/chart');
     users.value = response.data;
     updateChartData();
     updateChartDataWeekly();

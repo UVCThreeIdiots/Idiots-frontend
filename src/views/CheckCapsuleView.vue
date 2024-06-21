@@ -81,7 +81,7 @@ const goBack = () => {
 };
 
 const SendCapsuleData = () => {
-  axiosInstance.get(`https://www.3idiots.xyz:3000/other/capsules/`)
+  axiosInstance.get(`http://localhost:3000/other/capsules/`)
   .then(response => {
     console.log(response);
     sendGCapsuleLists.value = response.data.gCapsules.map(capsule => {

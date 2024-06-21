@@ -65,13 +65,13 @@ const updateName = () => {
     alert('변경할 이름과 현재 이름이 같습니다.');
     return;
   }
-  axiosInstance.put(`https://www.3idiots.xyz:3000/user/`, JSON.stringify(saveData), {
+  axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json',
     },
   }).then((response) => {
     if(response.status == 200) {
-      axiosInstance.get(`https://www.3idiots.xyz:3000/user/`, JSON.stringify(response), {
+      axiosInstance.get(`http://localhost:3000/user/`, JSON.stringify(response), {
         headers: {
           "Content-Type": "application/json"
         }

@@ -170,7 +170,7 @@ const checkCapsules = () => {
   navigateTo(`/checkCapsules/`);
 }
 const logout = () => {
-  axiosInstance.post(`https://www.3idiots.xyz:3000/auth/logout/`)
+  axiosInstance.post(`http://localhost:3000/auth/logout/`)
       .then(response => {
         console.log(response.data);
         useStore.logout();
@@ -234,7 +234,7 @@ const passCheck = () => {
     password: passwordCheck.value,
   };
 
-  axiosInstance.post(`https://www.3idiots.xyz:3000/auth/info`, JSON.stringify(saveData), {
+  axiosInstance.post(`http://localhost:3000/auth/info`, JSON.stringify(saveData), {
     headers: {
       'Content-Type': 'application/json'
     },

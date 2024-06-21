@@ -381,7 +381,7 @@ const urlToFile = async (url, filename, mimeType) => {
 //     goalTerm : inputDue.value,
 //   };
 
-//   axiosInstance.post("https://www.3idiots.xyz:3000/goal", JSON.stringify(saveData), {
+//   axiosInstance.post("http://localhost:3000/goal", JSON.stringify(saveData), {
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
@@ -414,7 +414,7 @@ const goalCapsuleSubmit = () => {
   formData.append("goalCount", inputReps.value);
   formData.append("goalTerm", inputDue.value);
 
-  axiosInstance.post("https://www.3idiots.xyz:3000/goal", formData, {
+  axiosInstance.post("http://localhost:3000/goal", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

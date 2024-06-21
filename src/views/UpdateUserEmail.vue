@@ -131,7 +131,7 @@ const saveData = {
   email: newEmail.value,
 };
 
-axios.post("https://www.3idiots.xyz:3000/auth/email", JSON.stringify(saveData), {
+axios.post("http://localhost:3000/auth/email", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -163,7 +163,7 @@ const checkKey = () => {
     code : emailKey.value,
   };
 
-  axios.post("https://www.3idiots.xyz:3000/auth/code", JSON.stringify(saveData), {
+  axios.post("http://localhost:3000/auth/code", JSON.stringify(saveData), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -189,7 +189,7 @@ const updateEmail = () => {
   const saveData = {
     email: newEmail.value,
   };
-    axiosInstance.put(`https://www.3idiots.xyz:3000/user/`, JSON.stringify(saveData), {
+    axiosInstance.put(`http://localhost:3000/user/`, JSON.stringify(saveData), {
       headers: {
         'Content-Type': 'application/json',
       },
