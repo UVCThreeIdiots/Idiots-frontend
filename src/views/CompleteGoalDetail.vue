@@ -43,7 +43,10 @@
               <img :src="image" width="300px" height="200px">
             </div> -->
             <div class="inner-content">
-              <p>내용이 들어갈꺼임</p>
+              <p v-for="(date, index) in achievedDates" :key="index">
+                {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
+              </p>
+              <p v-if="isFailed">{{ now }} / {{ total }} 목표 실패 날짜 : {{ failedDate }} ✔</p>
             </div>
             <div v-if="progress == 100" class="show-image-box">
               <button type="button" @click="openImageModal">
@@ -101,6 +104,9 @@ const total = ref(0);
 const dailyCheck = ref(0);
 const isChecked = ref(true);
 const imagePath = ref([]);
+const achievedDates = ref([]);
+const isFailed = ref(false);
+const failedDate = ref('');
 const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
@@ -139,6 +145,9 @@ const GCapsuleDetails = () => {
     total.value = response.data.goalCount;
     dailyCheck.value = response.data.dailyCheck;
     isChecked.value = !dailyCheck.value;
+    achievedDates.value = response.data.achievedDates;
+    isFailed.value = response.data.isFailed;
+    failedDate.value = response.data.updatedAt.split('T')[0];
     console.log(dailyCheck.value);
   })
   .catch(error => {

@@ -45,6 +45,9 @@
             <p>{{now}}</p>
             <p>{{total}}</p>
             <p>백분률: {{progress}}</p>
+            <p v-for="(date, index) in achievedDates" :key="index">
+              {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} ✔
+            </p>
           </div>
         </div>
       </div>    
@@ -71,6 +74,7 @@ const now = ref(0);
 const total = ref(0);
 const dailyCheck = ref(0);
 const isChecked = ref(true);
+const achievedDates = ref([]);
 const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
@@ -89,6 +93,7 @@ const GCapsuleDetails = () => {
     total.value = response.data.goalCount;
     dailyCheck.value = response.data.dailyCheck;
     isChecked.value = !dailyCheck.value;
+    achievedDates.value = response.data.achievedDates;
     console.log(dailyCheck.value);
   })
   .catch(error => {
@@ -124,6 +129,7 @@ const increaseProgress = () => {
       },
     }).then((response) => {
       if (response.status === 200){
+        achievedDates.value = response.data.achievedDates;
         console.log("nowCount 전달 성공");
       }
     }).catch((error) => {
