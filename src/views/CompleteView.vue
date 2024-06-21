@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="capsule-filter">
-      <select id="capsuleSelect" v-model="selected" @change="selectCapsule">
+      <select id="capsuleSelect" class="select-box" v-model="selected" @change="selectCapsule">
         <option value="">모두보기</option>
         <option value="option1">목표캡슐</option>
         <option value="option2">타임캡슐</option>
@@ -148,6 +148,17 @@ body {
   height: 100vh;
   margin: 0;
 }
+.select-box {
+  border: 2px solid #000;
+  margin: 8px 16px 0px 0px;
+  width: 103px;
+  border-radius: 16px;
+}
+.capsule-filter {
+  /* border: 2px solid #000; */
+  display: flex;
+  justify-content: flex-end;
+}
 .image-container {
   position: relative;
   display: inline-block;
@@ -213,16 +224,29 @@ body {
   color: black;
 }
 .parent {
-  margin: 8px;
-  padding: 8px;
-  text-align: justify;
-  height: 70%;
+  margin: 0px 8px 0px 8px;
+  /* padding: 8px; */
+  /* text-align: justify; */
   width: 97%;
+  height: 68%;
   overflow: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 8px;
+  /* row-gap: 8px;*/
 }
+.parent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.parent::-webkit-scrollbar-thumb { 
+    background-color: #cbcbcbbd;
+    border-radius: 15px;
+}
+
+.parent::-webkit-scrollbar-button {
+    display: none;
+}
+
 .button-container {
   display: flex;
   justify-content: space-around;
