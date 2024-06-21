@@ -1275,6 +1275,7 @@ const timeCapsuleSubmit = () => {
   /* border-top: 2px double #000; */
   display: flex;
   padding: 0px 0px 8px 8px;
+  width:100%
 }
 
 .files button {

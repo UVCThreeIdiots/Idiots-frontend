@@ -85,7 +85,7 @@ const updateName = () => {
           alert('이름이 성공적으로 변경되었습니다.');
           if (initialPosition === 'home'){
             navigateTo(`/maingameview/${loginedId}?initialPosition=userinfo`)
-          } else navigateTo(`/main/${loginedId}`);
+          } else navigateTo(`/main/`);
       })
     }
   }).catch((error) => {

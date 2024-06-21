@@ -14,7 +14,7 @@
           <label for="id">ID :</label>
           <input type="text" id="id" v-model="userId" class="custom-input">
           <p v-if="userId.length <1" class="warn">아이디는 공백으로 사용할 수 없습니다!</p>
-          <p v-else-if="userId.length >=1 && userId.length <4" class="warn">ID는 최소 4자리를 사용해야 합니다!</p>
+          <p v-else-if="userId.length >=1 && userId.length <4" class="warn">아이디는 최소 4자리 이상 입력해주세요!</p>
           <p v-else-if="!isValidUserId" class="warn">아이디는 영문 및 숫자를 사용해야 합니다!</p>
           <p v-else-if="canUseUserIdforMent===2" class="warn">이미 사용중인 아이디입니다!</p>
           <p v-else-if="canUseUserIdforMent===1" class="warn">사용가능한 아이디입니다!</p>
@@ -75,10 +75,11 @@
     <div v-if="showModalEmail" class="modal-overlay">
       <div class="modal-content">
         <h2>유효 이메일 확인</h2>
-        <p>{{ email }}로 인증문자가 포함된 메일을 발송했습니다.</p>
-        <p>인증문자를 확인 후 아래에 입력해 주세요.</p>
-        <input type="text" v-model="emailKey"/>
-        <button @click="checkKey" style="width: 80px; height: 30px; font-size: 16px;">확인</button>
+	<p>{{ email }}로 인증문자가 포함된</p>
+	<p>메일을 발송했습니다.</p>
+	<p>인증문자를 확인 후 아래에 입력해 주세요.</p>
+        <input type="text" style="width : 200px; height:30px; font-size:20px;" v-model="emailKey"/>
+        <button @click="checkKey" style="width: 100px; height: 40px; font-size: 20px;">확인</button>
         <p v-if="isCheckKey">유효한 이메일입니다.</p>
         <p v-else class="warn">잘못된 인증문자 입니다.</p> 
         <button @click="closeModalEmail">취소</button>
@@ -120,7 +121,7 @@ let interval = null;
 
 
 
-const typedText = ref('시작에 앞서, 너에 대해 알려다오! 아이디는 무엇으로 할까?\n아이디는 영어/숫자의 조합으로 작성하렴!');
+const typedText = ref('시작에 앞서, 너에 대해 알려다오!! 아이디는 무엇으로 할까??\n아이디는 영어/숫자의 조합으로 작성하렴!!');
 const showMent = ref('');
 
 const navigateTo = (route) => {
@@ -131,15 +132,15 @@ const nextStep = () => {
   if (currentStep.value < stepsInfo.length - 1) {
     currentStep.value++;
     if (currentStep.value <= 0)
-      typedText.value = '시작에 앞서, 너에 대해 알려다오! 아이디는 무엇으로 할까?';
+      typedText.value = '시작에 앞서, 너에 대해 알려다오!! 아이디는 무엇으로 할까??\앞으로 이 아이디로 로그인을 한단다!!';
     else if (currentStep.value === 1)
-      typedText.value = '그렇다면 비밀번호는 무엇으로 할까?\n비밀번호는 4자리 이상 설정하렴!';
+      typedText.value = '그렇다면 비밀번호는 무엇으로 할까??\n비밀번호는 4자리 이상 설정하렴!!';
     else if (currentStep.value === 2)
-      typedText.value = '그렇다면 너의 이름을 알려다오!\n(주의 : 페이지 내에서 해당 이름이 사용됩니다.)';
+      typedText.value = '그렇다면 너의 이름을 알려다오!!\n페이지 내에서 해당 이름이 사용된단다!!)';
     else if (currentStep.value === 3)
-      typedText.value = '이번에는 나이를 알려다오!';
+      typedText.value = '이번에는 너의 나이를 알려다오!!';
     else if (currentStep.value === 4)
-      typedText.value = '마지막으로 이메일을 알려다오!\n(주의 : 아이디/비밀번호 찾기 및 알림 전송에 사용됩니다.)';
+      typedText.value = '마지막으로 너의 이메일을 알려다오!!\n아이디/비밀번호 찾기 및 알림 전송에 사용된단다!!';
   }
 };
 // 유효성 검사
