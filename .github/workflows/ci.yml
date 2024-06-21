@@ -1,31 +1,31 @@
 name: CI
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # 수동 실행을 위한 트리거
   push:
-    branches: [ main ]
-
+    branches: [ main ] # main 브랜치에 푸시될 때 트리거
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 빌드 환경으로 Ubuntu 최신 버전 사용
+
     steps:
-      - name: Get Github Actions IP
+      - name: Get Github Actions IP # GitHub Actions의 IP 주소를 가져오는 단계
         id: ip
         uses: haythem/public-ip@v1.2
 
-    - name: Configure AWS Credentials
+      - name: Configure AWS Credentials # AWS 자격 증명을 설정하는 단계
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Add Github Actions IP to Security group
+      - name: Add Github Actions IP to Security group # GitHub Actions의 IP 주소를 보안 그룹에 추가하는 단계
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
-      - name: SSH Commands
+      - name: SSH Commands # SSH를 통해 원격 서버에 명령어를 실행하는 단계
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.AWS_SSH_HOST }}
@@ -37,6 +37,6 @@ jobs:
             cd ~/Idiots/Idiots-frontend
             ./deploy.sh
 
-      - name: Remove Github Actions IP From Security Group
+      - name: Remove Github Actions IP From Security Group # GitHub Actions의 IP 주소를 보안 그룹에서 제거하는 단계
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
