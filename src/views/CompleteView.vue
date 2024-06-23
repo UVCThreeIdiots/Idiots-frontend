@@ -41,14 +41,6 @@
           <p :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.4 : ''}">{{ GCapsule.completeGCapsules }}%</p>
         </div>
       </div>
-        
-        <div class="progress">
-          <div class="progress-bar-container">
-            <div class="progress-bar" :style="{ width: GCapsule.completeGCapsules + '%' }"></div>
-          </div>
-          <p>{{ GCapsule.completeGCapsules }}%</p>
-        </div>
-      </div>
 
       <!-- Render TCapsule List -->
       <div class="child" v-for="TCapsule in filteredTCapsules" :key="TCapsule.id">
@@ -64,11 +56,13 @@
           </router-link>
         </div>
       </div>
-      <div class="button-container">
-        <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
-        <button v-else @click="goBack">뒤로가기</button>
-      </div>
     </div>
+
+    <div class="button-container">
+      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+      <button v-else @click="goBack">뒤로가기</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
