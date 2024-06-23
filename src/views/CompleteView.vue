@@ -20,7 +20,7 @@
     <div class="parent">
       <!-- Render GCapsule List -->
       <div class="child" v-for="GCapsule in filteredGCapsules" :key="GCapsule.id">
-        <div class="image-container">
+        <div class="image-container" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.4 : ''}">
           <img class="capsule" src="../components/images/capsule.gif">
           <img v-if="GCapsule.completeGCapsules == 100" src="../components/images/success.png" class="overlay-image">
           <img v-else src="../components/images/fail.png" class="overlay-image">
@@ -29,10 +29,18 @@
           <router-link v-if="initialPosition === 'center'" :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }, query : {initialPosition : 'center'}}">
             {{ GCapsule.title }}
           </router-link>
-          <router-link v-else :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }}">
+          <router-link v-else :to="{ name: 'completeGoalDetail', params: { id: GCapsule.id }}" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.8 : ''}">
             {{ GCapsule.title }}
           </router-link>
         </div>
+        
+        <div class="progress">
+          <div class="progress-bar-container" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.4 : ''}">
+            <div class="progress-bar" :style="{ width: GCapsule.completeGCapsules + '%' }"></div>
+          </div>
+          <p :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.4 : ''}">{{ GCapsule.completeGCapsules }}%</p>
+        </div>
+      </div>
         
         <div class="progress">
           <div class="progress-bar-container">

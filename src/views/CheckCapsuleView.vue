@@ -20,25 +20,25 @@
     <div class="parent">
       <!-- Render GCapsule List -->
       <div class="child" v-for="GCapsule in filteredGCapsules" :key="GCapsule.id">
-        <div class="image-container">
+        <div class="image-container" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.4 : ''}" >
           <img class="capsule" src="../components/images/capsule.gif">
-          <img v-if="GCapsule.isSuccess == true" src="../components/images/success.png" class="overlay-image">
-          <img v-else-if="GCapsule.isSuccess == false && GCapsule.isFailed == false" src="../components/images/inprogress.png" class="overlay-image">
+          <img v-if="GCapsule.isSuccess" src="../components/images/success.png" class="overlay-image">
+          <img v-else-if="GCapsule.isSuccess === false && GCapsule.isFailed === false" src="../components/images/inprogress.png" class="overlay-image">
           <img v-else src="../components/images/fail.png" class="overlay-image">
         </div>
         <div>
           <router-link v-if="initialPosition === 'center'" :to="{ name: 'checkGDetail', params: { id: GCapsule.id }, query : {initialPosition : 'center'}}">
             {{ GCapsule.title }}
           </router-link>
-          <router-link v-else :to="{ name: 'checkGDetail', params: { id: GCapsule.id }}">
+          <router-link v-else :to="{ name: 'checkGDetail', params: { id: GCapsule.id }}" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.8 : ''}">
             {{ GCapsule.title }}
           </router-link>
         </div>   
         <div class="progress">
-          <div class="progress-bar-container">
+          <div class="progress-bar-container" :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.2 : ''}">
             <div class="progress-bar" :style="{ width: GCapsule.sendGCapsules + '%' }"></div>
           </div>
-          <p>{{ GCapsule.sendGCapsules }}%</p>
+          <p :style="{ opacity : GCapsule.isFailed || GCapsule.isSuccess ? 0.2 : ''}">{{ GCapsule.sendGCapsules }}%</p>
         </div>
       </div>
 
@@ -238,8 +238,7 @@ body {
 .button-container {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 8px;
 }
 .button-container button {
   padding: 10px 20px;
