@@ -64,13 +64,11 @@
           </router-link>
         </div>
       </div>
+      <div class="button-container">
+        <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
+        <button v-else @click="goBack">뒤로가기</button>
+      </div>
     </div>
-
-    <div class="button-container">
-      <button v-if="initialPosition === 'center'" @click="gamemain">뒤로가기</button>
-      <button v-else @click="goBack">뒤로가기</button>
-    </div>
-  </div>
 </template>
 
 <script setup>
