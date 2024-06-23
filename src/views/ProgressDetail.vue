@@ -42,12 +42,23 @@
             </div>
           </div>
           <div class="board-bottom">
-            <p>{{now}}</p>
-            <p>{{total}}</p>
-            <p>백분률: {{progress}}</p>
+            <div class="achieved-ment">
+              <p>
+                {{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 
+                라는 멋진 목표를 세웠구나 ?
+              </p>
+              <p>
+                지금의 너는 총 {{ now }}회 달성 하였단다. 
+              </p>
+              <p>
+                이제 {{ total - now }} 번만 더 달성하면 성공이야 !  조금만 더 힘을 내렴 ! !
+              </p>
+            </div>
+            <div class="achieved">
             <p v-for="(date, index) in achievedDates" :key="index">
               {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
             </p>
+            </div>
           </div>
         </div>
       </div>    
@@ -154,6 +165,23 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.achieved-ment {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 136px;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.achieved {
+  border: 2px solid red;
+  padding: 16px;
+  font-size: 16px;
+  height: 152px;
 }
 
 .progress {
