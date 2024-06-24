@@ -18,9 +18,9 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
+          <p>{{ capsuleDetail.createdAt.slice(0, 10) }} ~ {{ capsuleDetail.expired.slice(0, 10) }}</p>
         </div>
       </div>
-
       <div class="right-board">
         <div class="inner-board">
           <div class="board-top">
@@ -141,10 +141,10 @@ const increaseProgress = () => {
     }).then((response) => {
       if (response.status === 200){
         achievedDates.value = response.data.achievedDates;
-        console.log("nowCount 전달 성공");
       }
     }).catch((error) => {
-      console.error("전달 실패: " ,error);
+      console.error(error);
+  
   });
 };
 
@@ -178,10 +178,11 @@ body {
 }
 
 .achieved {
-  border: 2px solid red;
+  border-top: 2px double #ccc;
   padding: 16px;
   font-size: 16px;
   height: 152px;
+  overflow: auto;
 }
 
 .progress {
