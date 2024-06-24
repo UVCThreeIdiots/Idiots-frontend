@@ -53,6 +53,8 @@
                 </p>
                 <p>
                   이제 {{ total - now }}번만 더 달성하면 성공이란다..!
+                </p>
+                <p>
                   끝까지 최선을 다한다면 분명 성공할꺼야!
                 </p>
               </div>
@@ -214,7 +216,7 @@ body {
   display: flex;
   justify-content: space-evenly;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   height: 136px;
   padding: 16px;
   font-size: 16px;
