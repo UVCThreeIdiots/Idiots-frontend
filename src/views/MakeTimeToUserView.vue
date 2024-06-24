@@ -989,7 +989,7 @@ const stampMessage = ref('');
 const stamp = () => {
   stampMessage.value = message.value+`
 
-  from. ${userName.value}`
+from. ${userName.value}`
 }
 const timeCapsuleSubmit = () => {
   const formData = new FormData();

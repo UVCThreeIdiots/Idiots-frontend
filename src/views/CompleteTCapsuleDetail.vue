@@ -205,6 +205,8 @@ body {
   border: none;
   pointer-events: none;
   overflow: hidden;
+  font-family: 'CustomFont';
+  font-size: 16px;
 }
 
 .no-data {

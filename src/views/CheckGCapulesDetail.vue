@@ -23,6 +23,7 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
+          <p>{{ formattedCreatedAt }} ~ {{ formattedExpired }}</p>
         </div>
       </div>
 
@@ -113,6 +114,9 @@ const initialPosition = route.query.initialPosition; // 초기 위치
 
 const showImageModal = ref(false);
 
+const createdAt = ref('');
+const expired = ref('');
+
 
 const openImageModal = () => {
   showImageModal.value = true;
@@ -139,6 +143,8 @@ const GCapsuleDetails = () => {
     console.log(response.data);
     imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });
     capsuleDetail.value = response.data;
+    createdAt.value = response.data.createdAt;
+    expired.value = response.data.expired;
     now.value = response.data.nowCount;
     total.value = response.data.goalCount;
     dailyCheck.value = response.data.dailyCheck;
@@ -149,7 +155,17 @@ const GCapsuleDetails = () => {
   .catch(error => {
     console.error(error);
   })
-}
+};
+
+const formattedCreatedAt = computed(() => {
+  console.log(createdAt.value);
+  return createdAt.value.slice(0, 10);
+});
+
+const formattedExpired = computed(() => {
+  console.log(expired.value);
+  return expired.value.slice(0, 10);
+});
 
 onMounted(GCapsuleDetails);
 </script>
@@ -367,7 +383,10 @@ body {
   margin-top: 10px;
   font-size: 20px;
   color: black;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .capsule-box {
@@ -426,7 +445,7 @@ body {
 }
 
 .capsule-name {
-  border: 2px solid #000;
+  /* border: 2px solid #000; */
   margin: 16px 10px;
   display: flex;
   align-items: center;
