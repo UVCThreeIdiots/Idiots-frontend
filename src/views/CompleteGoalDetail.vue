@@ -43,10 +43,21 @@
               <img :src="image" width="300px" height="200px">
             </div> -->
             <div class="inner-content">
-              <p v-for="(date, index) in achievedDates" :key="index">
+              <div v-if="capsuleDetail.isSuccess == true">
+                <p>{{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 하기로한 목표를 성공적으로 완수했구나!!</p>
+                <p>정말 고생많았다 ! 다음 목표도 성공을 향해 힘차게 나아가보자 !</p>
+              </div>
+              <div v-else>
+                <p>{{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 하기로 하였지만,</p>
+                <p>총 {{ now }}회 달성했구나.. 아쉽게도 {{ capsuleDetail.goalCount - now }}회 부족하여 목표를 성공하지는 못했어..</p>
+                <p>다음 목표는 꼭 성공하길 바란다 ! !</p>
+              </div>
+              <div>
+                <p v-for="(date, index) in achievedDates" :key="index">
                 {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
-              </p>
-              <p v-if="isFailed">{{ now }} / {{ total }} 목표 실패 날짜 : {{ failedDate }} <span :style="{ color: 'red' }"> ✘ </span></p>
+                </p>
+                <p v-if="isFailed">{{ now }} / {{ total }} 목표 실패 날짜 : {{ failedDate }} <span :style="{ color: 'red' }"> ✘ </span></p>
+              </div>
             </div>
             <div v-if="progress == 100" class="show-image-box">
               <button type="button" @click="openImageModal">
