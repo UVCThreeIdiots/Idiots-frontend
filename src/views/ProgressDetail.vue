@@ -43,7 +43,7 @@
           </div>
           <div class="board-bottom">
             <div class="achieved-ment">
-              <div v-if="capsuleDetail.otherEmail !== ''">
+              <div v-if="otherEmail !== ''">
                 <p>
                   {{ capsuleDetail.user.name }}이 보낸 
                   {{ capsuleDetail.goalTerm / 7 }}주 동안 
@@ -116,6 +116,7 @@ const progress = computed(() => {
 const createdAt = ref('');
 const expired = ref('');
 const otherEmail = ref('');
+const otherUser = ref('');
 
 //메인메뉴로 갈지 게임메뉴로 갈지 선택
 const initialPosition = route.query.initialPosition; // 초기 위치
@@ -132,6 +133,7 @@ const GCapsuleDetails = () => {
     dailyCheck.value = response.data.dailyCheck;
     isChecked.value = !dailyCheck.value;
     achievedDates.value = response.data.achievedDates;
+    otherUser.value = response.data.user.name;
     if (otherEmail.value == "") {
       otherEmail.value = '';
     } else {
