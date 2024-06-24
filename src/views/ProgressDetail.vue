@@ -43,9 +43,9 @@
           </div>
           <div class="board-bottom">
             <div class="achieved-ment">
-              <div v-if="otherEmail !== ''">
+              <div v-if="capsuleDetail.otherEmail !== ''">
                 <p>
-                  {{ capsuleDetail.user.name }}이 보낸 
+                  {{ otherUser }}이 보낸 
                   {{ capsuleDetail.goalTerm / 7 }}주 동안 
                   {{ capsuleDetail.goalCount }}회
                   {{ capsuleDetail.title }}를
