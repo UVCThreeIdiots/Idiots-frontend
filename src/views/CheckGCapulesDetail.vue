@@ -41,19 +41,43 @@
             </div> 
           </div>
           <div class="board-bottom">
-            <!-- <div v-for="image in imagePath" :key="image.id" class="image-box">
-              <img :src="image" width="300px" height="200px">
-            </div> -->
             <div class="inner-content">
-              <p v-for="(date, index) in achievedDates" :key="index">
-                {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
-              </p>
+              <div class="achieved-ment">
+                <div v-if="capsuleDetail.isSuccess == true">
+                  <p>
+                    {{ capsuleDetail.otherEmail }}님께서
+                    {{ capsuleDetail.title }} 목표를 성공적으로 달성하였습니다!
+                    다음 목표는 조금 더 어려운 목표 캡슐을 전송해 보는 것도 좋을 것 같네요..!
+                  </p>
+                </div>
+                <div v-else-if="capsuleDetail.isFailed == true">
+                  <p>
+                    {{ capsuleDetail.otherEmail }}님께서
+                    {{ capsuleDetail.title }} {{ capsuleDetail.goalCount }}회를 {{ capsuleDetail.nowCount }} 달성하였지만..
+                    {{ capsuleDetail.goalCount - capsuleDetail.nowCount }}회 부족하여 목표를 성공하지 못했습니다..
+                    다음 목표는 조금 더 쉬운 목표 캡슐을 전송해 보는게 좋을 것 같네요..!
+                  </p>
+                </div>
+                <div v-else-if="capsuleDetail.isSuccess == false && capsuleDetail.isFailed == false">
+                  <p>
+                    {{ capsuleDetail.otherEmail }}님께서
+                    {{ capsuleDetail.title }} {{ capsuleDetail.goalCount }}회 목표를 현재 
+                    {{ capsuleDetail.nowCount }}회 수행하였습니다!
+                    {{ capsuleDetail.otherEmail }}님께서 목표를 달성하실 수 있도록 응원해주세요..!
+                  </p>
+                </div>
+              </div>
+              <div class="achieved">
+                <p v-for="(date, index) in achievedDates" :key="index">
+                  {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
+                </p>
+              </div>
             </div>
             <div v-if="capsuleDetail.isSuccess == true" class="show-image-box">
-              <p>상대방이 목표를 달성하여 보상을 확인할 수 있습니다 ! ! !</p>
+              <p>상대방이 목표를 달성하여 보상을 확인할 수 있습니다 ! !</p>
             </div>
             <div v-else-if="capsuleDetail.isSuccess == false && capsuleDetail.isFailed == false" class="show-image-box">
-              <p>과연 성공적으로 목표를 달성할 수 있을까요?! 끝까지 응원해주세요 ! !</p>
+              <p>목표를 달성할 수 있도록 응원과 관심 부탁드립니다 !</p>
             </div>
             <div v-else class="show-image-box">
               <p>아쉽게도 상대방이 목표를 달성하지 못하여 보상을 확인할 수 없습니다..</p>
@@ -183,6 +207,18 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.achieved {
+  border-top: 2px double #eee;
+  padding-top: 8px;
+  font-size: 16px;
+  height: 152px;
+  overflow: auto;
+}
+
+.achieved-ment {
+    margin-bottom: 16px;
 }
 
 .image-box{
