@@ -46,7 +46,7 @@
             <div class="inner-content">
               <div class="achieved-ment">
                 <div v-if="capsuleDetail.isSuccess == true">
-                  <div v-if="capsuleDetail.otherEmail != ''  || capsuleDetail.otherEmail != null">
+                  <div v-if="capsuleDetail.otherEmail !== '' ">
                     <p>{{ capsuleDetail.user.name }}이 보낸 {{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 모두 완수하였구나!</p>
                     <p>정말 고생많았다! 앞으로 새로운 목표도 성공을 향해 힘차게 나아가보자!</p>
                   </div>
@@ -56,7 +56,7 @@
                   </div>
                 </div>
               <div v-else-if="capsuleDetail.isFailed == true">
-                <div v-if="capsuleDetail.otherEmail != '' || capsuleDetail.otherEmail != null">
+                <div v-if="capsuleDetail.otherEmail !== ''">
                   <p>{{ capsuleDetail.user.name }}이 보낸 {{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 성공하였구나..</p>
                   <p>아쉽게도 {{ capsuleDetail.goalCount - now }}회 부족하여 목표를 성공하지는 못했어..</p>
                   <p>그래도 다음 목표는 꼭 성공하길 바란다!</p>
