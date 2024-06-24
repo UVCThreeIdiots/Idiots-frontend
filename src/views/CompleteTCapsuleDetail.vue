@@ -18,6 +18,7 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
+          <p>{{ formattedCreatedAt }} ~ {{ formattedExpired }}</p>
         </div>
       </div>
       <div class="right-board">
@@ -44,8 +45,8 @@
     </div>
 
     <div v-if="showImageModal" class="modal-overlay">
-      <div v-if="imagePath === ''" class="modal-content">
-        <p>저장하신 사진이 없습니다.</p>
+      <div v-if="imagePath == ''" class="modal-content">
+        <p class="no-data">저장하신 사진이 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>이미지보기</h2>
@@ -64,7 +65,7 @@
 
     <div v-if="showVideoModal" class="modal-overlay">
       <div v-if="videoPath === ''" class="modal-content">
-        <p>저장하신 비디오가 없습니다.</p>
+        <p class="no-data">저장하신 비디오가 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>동영상보기</h2>
@@ -77,7 +78,7 @@
 
     <div v-if="showAudioModal" class="modal-overlay">
       <div v-if="audioPath === ''" class="modal-content">
-        <p>저장하신 음성녹음이 없습니다.</p>
+        <p class="no-data">저장하신 음성녹음이 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>음성듣기</h2>
@@ -95,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 import axiosInstance from '@/config/axiosInstance';
@@ -109,6 +110,9 @@ const audioPath = ref('');
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
 const initialPosition = route.query.initialPosition; // 초기 위치
+
+const createdAt = ref('');
+const expired = ref('');
 
 const showImageModal = ref(false);
 const showVideoModal = ref(false);
@@ -142,6 +146,8 @@ const TCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
+    createdAt.value = response.data.createdAt;
+    expired.value = response.data.expired;
     imagePath.value = response.data.imagePath ? response.data.imagePath.map(imagePath => { return imagePath }) : [];
     videoPath.value = response.data.videoPath ? response.data.videoPath : '';
     audioPath.value = response.data.audioPath ? response.data.audioPath : '';
@@ -149,7 +155,17 @@ const TCapsuleDetails = () => {
   .catch(error => {
     console.error(error);
   })
-}
+};
+
+const formattedCreatedAt = computed(() => {
+  console.log(createdAt.value);
+  return createdAt.value.slice(0, 10);
+});
+
+const formattedExpired = computed(() => {
+  console.log(expired.value);
+  return expired.value.slice(0, 10);
+});
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -178,6 +194,13 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
 }
 
 .image-box{
@@ -391,7 +414,10 @@ body {
   margin-top: 10px;
   font-size: 20px;
   color: black;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .right-board {
