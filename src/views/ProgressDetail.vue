@@ -43,16 +43,38 @@
           </div>
           <div class="board-bottom">
             <div class="achieved-ment">
-              <p>
+              <div v-if="capsuleDetail.otherEmail !== ''">
+                <p>
+                  {{ capsuleDetail.user.name }}이 보낸 
+                  {{ capsuleDetail.goalTerm / 7 }}주 동안 
+                  {{ capsuleDetail.goalCount }}회
+                  {{ capsuleDetail.title }}를
+                  {{ now }}회 달성 하였구나..!
+                </p>
+                <p>
+                  이제 {{ total - now }}번만 더 달성하면 성공이란다..!
+                  끝까지 최선을 다한다면 분명 성공할꺼야!
+                </p>
+              </div>
+              <div v-else-if="progress == 100">
+                <p>
+                  {{ capsuleDetail.title }} 목표를 모두 달성하였구나! 
+                  목표 캡슐 달성을 위한 머나먼 여정에 고생많았다..!
+                  이제 달성한 목표캡슐은 캡슐 도감에서 확인 할 수 있단다..!
+                </p>
+              </div>
+              <div v-else>
+                <p>
                 {{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 
                 라는 멋진 목표를 세웠구나 ?
-              </p>
-              <p>
-                지금의 너는 총 {{ now }}회 달성 하였단다. 
-              </p>
-              <p>
-                이제 {{ total - now }} 번만 더 달성하면 성공이야 !  조금만 더 힘을 내렴 ! !
-              </p>
+                </p>
+                <p>
+                  지금의 너는 총 {{ now }}회 달성 하였단다. 
+                </p>
+                <p>
+                  이제 {{ total - now }} 번만 더 달성하면 성공이야 !  조금만 더 힘을 내렴 ! !
+                </p>
+              </div>   
             </div>
             <div class="achieved">
             <p v-for="(date, index) in achievedDates" :key="index">
@@ -93,6 +115,7 @@ const progress = computed(() => {
 
 const createdAt = ref('');
 const expired = ref('');
+const otherEmail = ref('');
 
 //메인메뉴로 갈지 게임메뉴로 갈지 선택
 const initialPosition = route.query.initialPosition; // 초기 위치
@@ -109,7 +132,11 @@ const GCapsuleDetails = () => {
     dailyCheck.value = response.data.dailyCheck;
     isChecked.value = !dailyCheck.value;
     achievedDates.value = response.data.achievedDates;
-    console.log(dailyCheck.value);
+    if (otherEmail.value == "") {
+      otherEmail.value = '';
+    } else {
+      otherEmail.value = response.data.otherEmail
+    }
   })
   .catch(error => {
     console.error(error);
