@@ -66,10 +66,10 @@
               <button type="button" @click="openImageModal">
                 <img src="../components/images/giftbox.png"/>
               </button>
-              <p> <== 보상을 확인하세요 ! ! ! </p>
+              <p> <== 보상을 확인하세요 ! !</p>
             </div>
             <div v-else class="show-image-box">
-              <p>목표를 달성하지 못하여 보상을 확인할 수 없습니다...ㅜㅜ</p>
+              <p>목표를 달성하지 못해 아쉽게도 보상을 확인할 수 없습니다...</p>
             </div>
           </div>
         </div>
@@ -205,19 +205,19 @@ body {
 
 .achieved {
   border-top: 3px double #eee;
-  padding: 16px;
+  padding-top: 8px;
   font-size: 16px;
-  height: 152px;
+  /* height: 152px; */
+  overflow: auto;
 }
 
 .achieved-ment {
   display: flex;
-  justify-content: space-evenly;
-  flex-direction: column;
-  align-items: flex-start;
-  height: 136px;
-  padding: 16px;
-  font-size: 16px;
+    flex-direction: column;
+    height: 136px;
+    /* padding: 16px; */
+    /* font-size: 16px; */
+    justify-content: space-around;
 }
 
 .image-box{
