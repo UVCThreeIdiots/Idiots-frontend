@@ -47,14 +47,20 @@
                   <p>
                     {{ capsuleDetail.otherEmail }}님께서
                     {{ capsuleDetail.title }} 목표를 성공적으로 달성하였습니다!
+                  </p>
+                  <p>
                     다음 목표는 조금 더 어려운 목표 캡슐을 전송해 보는 것도 좋을 것 같네요..!
                   </p>
                 </div>
                 <div v-else-if="capsuleDetail.isFailed == true">
                   <p>
                     {{ capsuleDetail.otherEmail }}님께서
-                    {{ capsuleDetail.title }} {{ capsuleDetail.goalCount }}회를 {{ capsuleDetail.nowCount }} 달성하였지만..
+                    {{ capsuleDetail.title }} {{ capsuleDetail.goalCount }}회를 {{ capsuleDetail.nowCount }}회 달성하였지만..
+                  </p>
+                  <p>
                     {{ capsuleDetail.goalCount - capsuleDetail.nowCount }}회 부족하여 목표를 성공하지 못했습니다..
+                  </p>
+                  <p>
                     다음 목표는 조금 더 쉬운 목표 캡슐을 전송해 보는게 좋을 것 같네요..!
                   </p>
                 </div>
@@ -63,6 +69,8 @@
                     {{ capsuleDetail.otherEmail }}님께서
                     {{ capsuleDetail.title }} {{ capsuleDetail.goalCount }}회 목표를 현재 
                     {{ capsuleDetail.nowCount }}회 수행하였습니다!
+                  </p>
+                  <p>
                     {{ capsuleDetail.otherEmail }}님께서 목표를 달성하실 수 있도록 응원해주세요..!
                   </p>
                 </div>
