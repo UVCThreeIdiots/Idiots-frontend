@@ -22,6 +22,7 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
+          <p>{{ formattedCreatedAt }} ~ {{ formattedExpired }}</p>
         </div>
       </div>
 
@@ -43,7 +44,8 @@
               <img :src="image" width="300px" height="200px">
             </div> -->
             <div class="inner-content">
-              <div v-if="capsuleDetail.isSuccess == true">
+              <div class="achieved-ment">
+                <div v-if="capsuleDetail.isSuccess == true">
                 <p>{{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 하기로한 목표를 성공적으로 완수했구나!!</p>
                 <p>정말 고생많았다 ! 다음 목표도 성공을 향해 힘차게 나아가보자 !</p>
               </div>
@@ -52,7 +54,8 @@
                 <p>총 {{ now }}회 달성했구나.. 아쉽게도 {{ capsuleDetail.goalCount - now }}회 부족하여 목표를 성공하지는 못했어..</p>
                 <p>다음 목표는 꼭 성공하길 바란다 ! !</p>
               </div>
-              <div>
+              </div>
+              <div class="achieved">
                 <p v-for="(date, index) in achievedDates" :key="index">
                 {{ index + 1 }} / {{ total }} 목표 달성 날짜 : {{ date }} <span :style="{ color: 'green' }"> ✔ </span>
                 </p>
@@ -122,6 +125,10 @@ const progress = computed(() => {
   let average = (now.value / total.value) * 100;
   return average.toFixed(1);
 });
+
+const createdAt = ref('');
+const expired = ref('');
+
 const initialPosition = route.query.initialPosition; // 초기 위치
 
 const showImageModal = ref(false);
@@ -145,6 +152,16 @@ const gamemain = () => {
   navigateTo(`/complete/}?initialPosition=center`);
 }
 
+const formattedCreatedAt = computed(() => {
+  console.log(createdAt.value);
+  return createdAt.value.slice(0, 10);
+});
+
+const formattedExpired = computed(() => {
+  console.log(expired.value);
+  return expired.value.slice(0, 10);
+});
+
 const GCapsuleDetails = () => {
   const goalId = route.params.id;
   axiosInstance.get(`https://www.3idiots.xyz:3000/goal/${goalId}`)
@@ -159,12 +176,14 @@ const GCapsuleDetails = () => {
     achievedDates.value = response.data.achievedDates;
     isFailed.value = response.data.isFailed;
     failedDate.value = response.data.updatedAt.split('T')[0];
+    createdAt.value = response.data.createdAt;
+    expired.value = response.data.expired;
     console.log(dailyCheck.value);
   })
   .catch(error => {
     console.error(error);
   })
-}
+};
 
 onMounted(GCapsuleDetails);
 </script>
@@ -182,6 +201,23 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.achieved {
+  border-top: 3px double #eee;
+  padding: 16px;
+  font-size: 16px;
+  height: 152px;
+}
+
+.achieved-ment {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 136px;
+  padding: 16px;
+  font-size: 16px;
 }
 
 .image-box{
@@ -382,7 +418,10 @@ body {
   margin-top: 10px;
   font-size: 20px;
   color: black;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .capsule-box {
