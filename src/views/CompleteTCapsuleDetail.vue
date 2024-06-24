@@ -147,7 +147,7 @@ const TCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
-    capsuleBody.value = response.date.body;
+    capsuleBody.value = response.data.body;
     createdAt.value = response.data.createdAt;
     expired.value = response.data.expired;
     imagePath.value = response.data.imagePath ? response.data.imagePath.map(imagePath => { return imagePath }) : [];

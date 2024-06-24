@@ -45,7 +45,7 @@
     </div>
 
     <div v-if="showImageModal" class="modal-overlay">
-      <div v-if="imagePath === ''" class="modal-content">
+      <div v-if="imagePath == ''" class="modal-content">
         <p class="no-data">저장하신 사진이 없습니다.</p>
       </div>
       <div v-else class="modal-content">
@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../stores/user.js';
 import { useRoute } from 'vue-router';
 import axiosInstance from '@/config/axiosInstance';
@@ -115,6 +115,9 @@ const initialPosition = route.query.initialPosition; // 초기 위치
 const showImageModal = ref(false);
 const showVideoModal = ref(false);
 const showAudioModal = ref(false);
+
+const createdAt = ref('');
+const expired = ref('');
 
 const openImageModal = () => {
   showImageModal.value = true;
@@ -143,7 +146,9 @@ const TCapsuleDetails = () => {
   axiosInstance.get(`https://www.3idiots.xyz:3000/time/TCapsule/${capsuleId}`)
   .then(response => {
     capsuleDetail.value = response.data;
-    capsuleBody.value = response.date.body;
+    capsuleBody.value = response.data.body;
+    createdAt.value = response.data.createdAt;
+    expired.value = response.data.expired;
     imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });
     videoPath.value = response.data.videoPath ? response.data.videoPath : '';
     audioPath.value = response.data.audioPath ? response.data.audioPath : '';
@@ -151,7 +156,17 @@ const TCapsuleDetails = () => {
   .catch(error => {
     console.error(error);
   })
-}
+};
+
+const formattedCreatedAt = computed(() => {
+  console.log(createdAt.value);
+  return createdAt.value.slice(0, 10);
+});
+
+const formattedExpired = computed(() => {
+  console.log(expired.value);
+  return expired.value.slice(0, 10);
+});
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -429,7 +444,7 @@ body {
   border: 2px solid #000;
   border-radius: 15px;
   width: 100%;
-  height: 100%;
+  height: 98%;
   margin-top: 10px;
 }
 
