@@ -222,9 +222,9 @@
           <video class="video-display" ref="videoRecorder" autoplay></video>
         </div>
         <div class="capture-check-bottom">
-          <button class="btn-style" @click="startVideoRecording">녹화 시작</button>
-          <button class="btn-style" @click="stopVideoRecording">녹화 종료</button>
-          <button class="btn-style" @click="closeVideoCaptureModal">닫기</button>
+          <button class="btn-style" @click="startVideoRecording" :disabled="isRecording">녹화 시작</button>
+          <button class="btn-style" @click="stopVideoRecording" :disabled="!isRecording">녹화 종료</button>
+          <button class="btn-style" @click="closeVideoCaptureModal" :disabled="isRecording">닫기</button>
         </div>
       </div>
     </div>
@@ -277,9 +277,9 @@
             <h2>음성 녹음</h2>
           </div>
           <div class="capture-check-bottom">
-            <button class="btn-style" @click="startAudioRecording">녹음 시작</button>
-            <button class="btn-style" @click="stopAudioRecording">녹음 종료</button>
-            <button class="btn-style" @click="closeRecordingModal">닫기</button>
+            <button class="btn-style" @click="startAudioRecording" :disabled="isAudioRecording">녹음 시작</button>
+            <button class="btn-style" @click="stopAudioRecording" :disabled="!isAudioRecording">녹음 종료</button>
+            <button class="btn-style" @click="closeRecordingModal" :disabled="isAudioRecording">닫기</button>
           </div>
         </div>
       </div>
@@ -365,6 +365,8 @@ let audioRecorderInstance = null;
 const videoChunks = [];
 const audioChunks = [];
 const files = ref([]);
+const isRecording = ref(false);
+const isAudioRecording = ref(false);
 
 const handleFileUpload = (event, type) => {
   const uploadedFiles = event.target.files;
@@ -619,11 +621,13 @@ const startVideoRecording = async () => {
     videoChunks.push(event.data);
   };
   videoRecorderInstance.start();
+  isRecording.value = true;
 }
 
 //동영상 녹화 중지 시
 const stopVideoRecording = () => {
   videoRecorderInstance.stop();
+  isRecording.value = false;
   videoRecorderInstance.onstop = () => {
     const blob = new Blob(videoChunks, { type: 'video/mp4' });
     recordedVideoUrl.value = URL.createObjectURL(blob);
@@ -686,11 +690,13 @@ const startAudioRecording = async () => {
     audioChunks.push(event.data);
   };
   audioRecorderInstance.start();
+  isAudioRecording.value = true;
 }
 
 // 녹음 중지
 const stopAudioRecording = () => {
   audioRecorderInstance.stop();
+  isAudioRecording.value = false;
   audioRecorderInstance.onstop = () => {
     const blob = new Blob(audioChunks, { type: 'audio/webm' });
     recordedAudioUrl.value = URL.createObjectURL(blob);
@@ -1029,11 +1035,11 @@ const timeCapsuleSubmit = () => {
 
 .upload-video-body {
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   flex-direction: column;
   width: 100%;
   align-items: center;
-  height: 100%;
+  height: 48%;
 }
 
 .upload-video-bottom {
