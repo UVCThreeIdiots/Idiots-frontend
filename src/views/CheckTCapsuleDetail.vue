@@ -18,6 +18,7 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
+          <p>{{ formattedCreatedAt }} ~ {{ formattedExpired }}</p>
         </div>
       </div>
       <div class="right-board">
@@ -26,7 +27,7 @@
             <p>제목 : {{capsuleDetail.title}}</p>
           </div>
           <div class="content">
-            <textarea class="cap-body" readonly></textarea>
+            <textarea class="cap-body" v-model="capsuleBody" readonly></textarea>
           </div>
           <div class="files">
             <button type="button" @click="openImageModal">
@@ -45,7 +46,7 @@
 
     <div v-if="showImageModal" class="modal-overlay">
       <div v-if="imagePath === ''" class="modal-content">
-        <p>저장하신 사진이 없습니다.</p>
+        <p class="no-data">저장하신 사진이 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>이미지보기</h2>
@@ -64,7 +65,7 @@
 
     <div v-if="showVideoModal" class="modal-overlay">
       <div v-if="videoPath === ''" class="modal-content">
-        <p>저장하신 비디오가 없습니다.</p>
+        <p class="no-data">저장하신 비디오가 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>동영상보기</h2>
@@ -77,7 +78,7 @@
 
     <div v-if="showAudioModal" class="modal-overlay">
       <div v-if="audioPath === ''" class="modal-content">
-        <p>저장하신 음성녹음이 없습니다.</p>
+        <p class="no-data">저장하신 음성녹음이 없습니다.</p>
       </div>
       <div v-else class="modal-content">
         <h2>음성듣기</h2>
@@ -107,6 +108,7 @@ const videoPath = ref('');
 const imagePath = ref([]);
 const audioPath = ref('');
 const useStore = useUserStore();
+const capsuleBody = ref('');
 const userId = ref(useStore.getUser().id);
 const initialPosition = route.query.initialPosition; // 초기 위치
 
@@ -140,8 +142,8 @@ const TCapsuleDetails = () => {
   const capsuleId = route.params.id;
   axiosInstance.get(`https://www.3idiots.xyz:3000/time/TCapsule/${capsuleId}`)
   .then(response => {
-    console.log(response.data);
     capsuleDetail.value = response.data;
+    capsuleBody.value = response.date.body;
     imagePath.value = response.data.imagePath.map(imagePath => { return imagePath });
     videoPath.value = response.data.videoPath ? response.data.videoPath : '';
     audioPath.value = response.data.audioPath ? response.data.audioPath : '';
@@ -180,10 +182,20 @@ body {
   margin: 0;
 }
 
+.no-data {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
 .cap-body {
   /* border: 1px solid #000; */
-  resize: none; /* 크기 조절 금지 */
+  resize: none;
   width: 100%;
+  border: none;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .image-box{
@@ -397,7 +409,10 @@ body {
   margin-top: 10px;
   font-size: 20px;
   color: black;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .right-board {

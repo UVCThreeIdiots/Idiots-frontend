@@ -27,7 +27,7 @@
             <p>제목 : {{capsuleDetail.title}}</p>
           </div>
           <div class="content">
-            <p>{{capsuleDetail.body}}</p>
+            <textarea class="cap-body" v-model="capsuleBody" readonly></textarea>
           </div>
           <div class="files">
             <button type="button" @click="openImageModal">
@@ -110,6 +110,7 @@ const audioPath = ref('');
 const useStore = useUserStore();
 const userId = ref(useStore.getUser().id);
 const initialPosition = route.query.initialPosition; // 초기 위치
+const capsuleBody = ref('');
 
 const createdAt = ref('');
 const expired = ref('');
@@ -146,6 +147,7 @@ const TCapsuleDetails = () => {
   .then(response => {
     console.log(response.data);
     capsuleDetail.value = response.data;
+    capsuleBody.value = response.date.body;
     createdAt.value = response.data.createdAt;
     expired.value = response.data.expired;
     imagePath.value = response.data.imagePath ? response.data.imagePath.map(imagePath => { return imagePath }) : [];
@@ -194,6 +196,15 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+}
+
+.cap-body {
+  /* border: 1px solid #000; */
+  resize: none;
+  width: 100%;
+  border: none;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .no-data {
