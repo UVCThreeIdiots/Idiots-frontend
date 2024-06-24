@@ -50,7 +50,7 @@
                 <p>정말 고생많았다 ! 다음 목표도 성공을 향해 힘차게 나아가보자 !</p>
               </div>
               <div v-else>
-                <p>{{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 하기로 하였지만,</p>
+                <p>{{ capsuleDetail.title }}를 {{ capsuleDetail.goalTerm / 7 }}주 동안 {{ capsuleDetail.goalCount }}회 하기로 하였지만..</p>
                 <p>총 {{ now }}회 달성했구나.. 아쉽게도 {{ capsuleDetail.goalCount - now }}회 부족하여 목표를 성공하지는 못했어..</p>
                 <p>다음 목표는 꼭 성공하길 바란다 ! !</p>
               </div>
@@ -204,20 +204,15 @@ body {
 }
 
 .achieved {
-  border-top: 3px double #eee;
+  border-top: 2px double #eee;
   padding-top: 8px;
   font-size: 16px;
-  /* height: 152px; */
+  height: 152px;
   overflow: auto;
 }
 
 .achieved-ment {
-  display: flex;
-    flex-direction: column;
-    height: 136px;
-    /* padding: 16px; */
-    /* font-size: 16px; */
-    justify-content: space-around;
+    margin-bottom: 16px;
 }
 
 .image-box{
@@ -307,7 +302,6 @@ body {
   /* border: 1px solid green; */
   height: 88%;
   /* display: flex; */
-  padding: 8px;
   border-bottom: 2px double #eee;
 }
 
@@ -489,7 +483,7 @@ body {
 }
 
 .capsule-name {
-  border: 2px solid #000;
+  /* border: 2px solid #000; */
   margin: 16px 10px;
   display: flex;
   align-items: center;
