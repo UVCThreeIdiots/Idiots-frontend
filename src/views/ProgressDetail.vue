@@ -18,7 +18,7 @@
         </div>
         <div class="capsule"> 
           <p>{{ capsuleDetail.title }}</p>
-          <p>{{ capsuleDetail.createdAt.slice(0, 10) }} ~ {{ capsuleDetail.expired.slice(0, 10) }}</p>
+          <p>{{ formattedCreatedAt }} ~ {{ formattedExpired }}</p>
         </div>
       </div>
       <div class="right-board">
@@ -91,6 +91,9 @@ const progress = computed(() => {
   return average.toFixed(1);
 });
 
+const createdAt = ref('');
+const expired = ref('');
+
 //메인메뉴로 갈지 게임메뉴로 갈지 선택
 const initialPosition = route.query.initialPosition; // 초기 위치
 
@@ -98,8 +101,9 @@ const GCapsuleDetails = () => {
   const goalId = route.params.goalId;
   axiosInstance.get(`https://www.3idiots.xyz:3000/goal/${goalId}`)
   .then(response => {
-    console.log(response.data);
     capsuleDetail.value = response.data;
+    createdAt.value = response.data.createdAt;
+    expired.value = response.data.expired;
     now.value = response.data.nowCount;
     total.value = response.data.goalCount;
     dailyCheck.value = response.data.dailyCheck;
@@ -110,7 +114,17 @@ const GCapsuleDetails = () => {
   .catch(error => {
     console.error(error);
   })
-}
+};
+
+const formattedCreatedAt = computed(() => {
+  console.log(createdAt.value);
+  return createdAt.value.slice(0, 10);
+});
+
+const formattedExpired = computed(() => {
+  console.log(expired.value);
+  return expired.value.slice(0, 10);
+});
 
 const navigateTo = (route) => {
   window.location.href = route;
@@ -287,7 +301,10 @@ body {
   margin-top: 10px;
   font-size: 20px;
   color: black;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .right-board {
